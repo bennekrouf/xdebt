@@ -8,6 +8,7 @@ use std::error::Error;
 pub fn analyze_pom_content(
     app_name: &str, 
     content: &str, 
+    version_keywords: &[&str],
     reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
     let mut versions = HashMap::new();
@@ -18,55 +19,56 @@ pub fn analyze_pom_content(
     // Parse the XML content
     let doc = Document::parse(&cleaned_content)?;
 
-    // Check for Java version
-    if let Some(java_version_node) = doc.descendants().find(|node| node.tag_name().name() == "java.version") {
-        if let Some(mut java_version) = java_version_node.text() {
-            java_version = java_version.trim_start_matches('~').trim_start_matches('^');
-            versions.insert("Java".to_string(), java_version.to_string());
-        }
-    }
+    // Extract versions from dependencies and basic version strings
+    for keyword in version_keywords {
+        // println!("Checking for version of keyword: {}", keyword);
 
-    // Check for Spring Boot version
-    if let Some(parent_node) = doc.descendants().find(|node| node.tag_name().name() == "parent") {
-        if let Some(group_id_node) = parent_node.descendants().find(|node| node.tag_name().name() == "groupId") {
-            if group_id_node.text() == Some("org.springframework.boot") {
-                if let Some(version_node) = parent_node.descendants().find(|node| node.tag_name().name() == "version") {
-                    if let Some(mut spring_boot_version) = version_node.text() {
-                        spring_boot_version = spring_boot_version.trim_start_matches('~').trim_start_matches('^');
-                        versions.insert("Spring Boot".to_string(), spring_boot_version.to_string());
+        // Check for dependencies
+        for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
+            let group_id = dep.descendants().find(|node| node.tag_name().name() == "groupId");
+            let artifact_id = dep.descendants().find(|node| node.tag_name().name() == "artifactId");
+
+            if let (Some(group_id_node), Some(artifact_id_node)) = (group_id, artifact_id) {
+                let group_id_text = group_id_node.text();
+                let artifact_id_text = artifact_id_node.text();
+
+                // Check if artifactId matches the keyword
+                if artifact_id_text == Some(*keyword) {
+                    // println!("Found dependency for artifactId: {}", keyword);
+
+                    // Optionally, you could check for a specific groupId
+                    // if let Some(group_id_value) = group_id_text {
+                    //     println!("Found groupId: {}", group_id_value);
+                    // }
+
+                    if let Some(version_node) = dep.descendants().find(|node| node.tag_name().name() == "version") {
+                        if let Some(version) = version_node.text() {
+                            let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
+                            println!("Version for {}: {}", keyword, cleaned_version);
+                            versions.insert(keyword.to_string(), cleaned_version.to_string());
+                        }
                     }
                 }
             }
         }
-    }
 
-    // Check for Spring version
-    if let Some(spring_version_node) = doc.descendants().find(|node| node.tag_name().name() == "spring.version") {
-        if let Some(mut spring_version) = spring_version_node.text() {
-            spring_version = spring_version.trim_start_matches('~').trim_start_matches('^');
-            versions.insert("Spring".to_string(), spring_version.to_string());
-        }
-    } else if content.contains("spring") {
-        references.push("Spring".to_string());
-    }
-
-    // Dynamically check for all references passed in 'reference_keywords' array
-    for &keyword in reference_keywords {
-        if content.contains(keyword) {
-            references.push(keyword.to_string());
-        }
-    }
-
-    // Check for Hibernate version in dependencies
-    if let Some(hibernate_dep) = doc.descendants().find(|node| {
-        node.tag_name().name() == "dependency"
-            && node.descendants().any(|n| n.tag_name().name() == "artifactId" && n.text() == Some("hibernate-core"))
-    }) {
-        if let Some(version_node) = hibernate_dep.descendants().find(|node| node.tag_name().name() == "version") {
-            if let Some(mut hibernate_version) = version_node.text() {
-                hibernate_version = hibernate_version.trim_start_matches('~').trim_start_matches('^');
-                versions.insert("Hibernate".to_string(), hibernate_version.to_string());
+        // Check for basic version strings in properties
+        let version_key = format!("{}.version", keyword);
+        if let Some(version_node) = doc.descendants().find(|node| node.tag_name().name() == &version_key) {
+            if let Some(version) = version_node.text() {
+                let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
+                println!("Found version for {} in properties: {}", keyword, cleaned_version);
+                versions.insert(keyword.to_string(), cleaned_version.to_string());
             }
+        }
+    }
+
+    // Check for references in the content
+    for &keyword in reference_keywords {
+        // println!("Checking for presence of reference: {}", keyword);
+        if content.contains(keyword) {
+            println!("Found reference for: {}", keyword);
+            references.push(keyword.to_string());
         }
     }
 
@@ -76,6 +78,8 @@ pub fn analyze_pom_content(
         "versions": versions,
         "references": references
     });
+
+    println!("Final result: {}", result);
 
     Ok(result)
 }

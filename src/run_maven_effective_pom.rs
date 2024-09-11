@@ -9,7 +9,7 @@ pub fn run_maven_effective_pom(pom_file: &str, repo: &str) -> Result<String, Box
     let output_option = format!("-Doutput={}", output_file);
 
     // Print current working directory
-    println!("Current working directory: {}", std::env::current_dir()?.display());
+    // println!("Current working directory: {}", std::env::current_dir()?.display());
 
     // Check if the POM file exists and is not empty
     let metadata = fs::metadata(pom_file)

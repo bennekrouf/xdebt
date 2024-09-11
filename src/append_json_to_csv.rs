@@ -5,10 +5,11 @@ use std::path::Path;
 use serde_json::Value;
 use csv::WriterBuilder;
 use serde_json::Map;
+use std::fs::OpenOptions;
+// use std::io::Write;
 
 pub fn append_json_to_csv(project_name: &str, json_data: &Value) -> Result<(), Box<dyn Error>> {
-    let target_folder = env::var("TARGET_FOLDER")
-        .unwrap_or_else(|_| "tmp".to_string()); // Default to "tmp" if not set
+    let target_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| "tmp".to_string()); // Default to "tmp" if not set
 
     // Create or open the CSV file for the project
     let file_path = format!("{}/{}.csv", &target_folder, project_name);
@@ -22,24 +23,21 @@ pub fn append_json_to_csv(project_name: &str, json_data: &Value) -> Result<(), B
     let mut headers: Vec<String> = versions.keys().cloned().collect();
     headers.sort(); // Optional: sort headers alphabetically
 
-    // Open the CSV file
-    let mut writer = if path.exists() {
-        // Open the file in append mode, without headers
-        WriterBuilder::new().has_headers(false).from_path(&file_path)?
-    } else {
-        // Create the file and write headers
-        let mut writer = WriterBuilder::new().from_path(&file_path)?;
+    // Check if file exists and open it in append mode
+    let file_exists = path.exists();
+    let file = OpenOptions::new().create(true).append(true).open(&file_path)?;
 
-        // Write the header row
+    let mut writer = WriterBuilder::new().has_headers(false).from_writer(file);
+
+    // Write headers only if the file did not previously exist
+    if !file_exists {
         writer.write_record(
             ["repository".to_string()]
                 .into_iter()
                 .chain(headers.clone())
                 .chain(vec!["references".to_string()]) // References is the last column
         )?;
-
-        writer
-    };
+    }
 
     // Flatten the JSON data
     let repository = json_data.get("repository").and_then(Value::as_str).unwrap_or("");

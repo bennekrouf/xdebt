@@ -50,6 +50,11 @@ pub fn generate_pom_analysis_json(
         .unwrap_or_else(|_| "jencks,nexus,xfile,php,richfaces".to_string());
     let reference_keywords: Vec<&str> = references_str.split(',').collect();
 
+    // Get VERSIONS array from .env
+    let versions_str = env::var("VERSIONS_OF")
+        .unwrap_or_else(|_| "spring,java".to_string());
+    let versions_keywords: Vec<&str> = versions_str.split(',').collect();
+
     // Replace placeholders in POM URL
     let pom_url = base_url
         .replace("{project_name}", project_name)
@@ -63,7 +68,7 @@ pub fn generate_pom_analysis_json(
         println!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         // Download the file if it doesn't exist or if FORCE_REFRESH is true
-        println!("Downloading POM file from URL: {}", pom_url);
+        // println!("Downloading POM file from URL: {}", pom_url);
         download_file(&client, &auth_header, &pom_url, &target_folder, repo_name)
             .map_err(|e| format!("Error while downloading POM file: {}", e))?;
     }
@@ -87,7 +92,9 @@ pub fn generate_pom_analysis_json(
         file.read_to_string(&mut content)
             .map_err(|e| format!("Failed to read content of effective POM file '{:?}': {}", effective_pom_path, e))?;
 
-        let pom_analysis_result = analyze_pom_content(repo_name, &content, &reference_keywords)?;
+        let pom_analysis_result = analyze_pom_content(repo_name, &content, &versions_keywords, &reference_keywords)?;
+        println!("analyze_pom_content returns {}", pom_analysis_result);
+
         pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
     }
 
@@ -116,9 +123,17 @@ pub fn generate_pom_analysis_json(
         final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
         final_result.insert("versions".to_string(), Value::Object(pom_versions));
         final_result.insert("references".to_string(), package_json_analysis_result.get("references").cloned().unwrap_or(Value::Array(Vec::new())));
+    } else if pkg_response.status() == 404 {
+        println!("package.json not found (HTTP 404), continuing without it.");
+        // Insert only POM data in final_result
+        final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
+        final_result.insert("versions".to_string(), Value::Object(pom_versions));
+        final_result.insert("references".to_string(), Value::Array(Vec::new())); // Empty references
     } else {
         eprintln!("Failed to fetch package.json: HTTP {}", pkg_response.status());
     }
+
+    println!("Final result of generate pom analysis: {:?}", final_result);
 
     Ok(Value::Object(final_result))
 }

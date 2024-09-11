@@ -77,14 +77,13 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Fetch repositories using the new function
         let all_repos = fetch_repositories(&client, &auth_header, &repos_url_template, project_name)?;
 
-
-        let all_repos = vec!["gpecs"];
+        // let all_repos = vec!["rdu-parent-pom"];
 
         // Iterate over all the repos and process each one
         for repo in &all_repos {
-            // let repo_name = repo["name"].as_str()
-            //     .ok_or("Missing repo name")?;
-            let repo_name = "rdu-parent-pom";
+            let repo_name = repo["name"].as_str()
+                .ok_or("Missing repo name")?;
+            // let repo_name = repo;
             if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
                 continue;
             }
