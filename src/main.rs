@@ -12,16 +12,18 @@ use tracing_subscriber;
 mod download_file;
 mod run_maven_effective_pom;
 mod analyze_pom_content;
-mod generate_pom_analysis_json;
+mod generate_analysis;
 mod fetch_repositories;
 mod append_json_to_file;
 mod analyze_package_json_content;
 mod append_json_to_csv;
+// mod csv_to_excel;
 
-use crate::generate_pom_analysis_json::generate_pom_analysis_json;
+use crate::generate_analysis::generate_analysis;
 use crate::fetch_repositories::fetch_repositories;  // Import the new function
 use crate::append_json_to_file::append_json_to_file;
 use crate::append_json_to_csv::append_json_to_csv;
+// use crate::csv_to_excel::csv_to_excel;
 
 fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();  // Load environment variables from .env file
@@ -66,13 +68,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     let projects = projects_json["values"].as_array()
         .ok_or("Failed to parse projects list")?;
 
-    let projects = vec!["SES"];
+    // let projects = vec!["SES"];
 
     // Iterate over the list of projects
     for project in projects {
-        // let project_name = project["key"].as_str()
-        //     .ok_or("Failed to get project name")?;
-        let project_name = "SES";
+        let project_name = project["key"].as_str()
+            .ok_or("Failed to get project name")?;
+        // let project_name = "SES";
 
         // Fetch repositories using the new function
         let all_repos = fetch_repositories(&client, &auth_header, &repos_url_template, project_name)?;
@@ -89,7 +91,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
 
             // Call the function to generate the JSON result for each repo
-            match generate_pom_analysis_json(project_name, repo_name) {
+            match generate_analysis(project_name, repo_name) {
                 Ok(json_result) => {
                     println!("Project: {}, Repo: {}", project_name, repo_name);
                     println!("{}", serde_json::to_string_pretty(&json_result)?);
@@ -103,6 +105,14 @@ fn main() -> Result<(), Box<dyn Error>> {
                     if let Err(e) = append_json_to_csv(project_name, &json_result) {
                         eprintln!("Failed to append JSON to CSV for project '{}', repo '{}': {}", project_name, repo_name, e);
                     }
+
+                    // Convert the CSV to Excel with the same name
+                    // let target_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| "tmp".to_string());
+                    // let csv_file_path = format!("{}/{}.csv", &target_folder, project_name);
+                    // let excel_file_path = format!("{}/{}.xlsx", &target_folder, project_name);
+                    // if let Err(e) = csv_to_excel(&csv_file_path, &excel_file_path) {
+                    //     eprintln!("Failed to convert CSV to Excel for project '{}': {}", project_name, e);
+                    // }
                 }
                 Err(e) => {
                     eprintln!("Failed to generate POM analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);

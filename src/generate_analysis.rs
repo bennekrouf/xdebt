@@ -13,7 +13,7 @@ use crate::analyze_package_json_content::analyze_package_json_content;
 use crate::download_file::download_file;
 use crate::run_maven_effective_pom::run_maven_effective_pom;
 
-pub fn generate_pom_analysis_json(
+pub fn generate_analysis(
     project_name: &str,
     repo_name: &str,
 ) -> Result<serde_json::Value, Box<dyn Error>> {

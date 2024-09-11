@@ -27,10 +27,12 @@ pub fn analyze_package_json_content(
     if let Some(dependencies) = package_json_value.get("dependencies") {
         if let Some(deps_obj) = dependencies.as_object() {
             if let Some(version) = &deps_obj.get("@angular/core").and_then(|v| v.as_str()) {
-                versions.insert("Angular".to_string(), version.to_string());
+                let cleaned_version = version.trim_start_matches(['~', '^']);
+                versions.insert("Angular".to_string(), cleaned_version.to_string());
             }
             if let Some(version) = &deps_obj.get("angular").and_then(|v| v.as_str()) {
-                versions.insert("AngularJS".to_string(), version.to_string());
+                let cleaned_version = version.trim_start_matches(['~', '^']);
+                versions.insert("AngularJS".to_string(), cleaned_version.to_string());
             }
         }
     }
@@ -39,10 +41,12 @@ pub fn analyze_package_json_content(
     if let Some(dev_dependencies) = package_json_value.get("devDependencies") {
         if let Some(dev_deps_obj) = dev_dependencies.as_object() {
             if let Some(version) = &dev_deps_obj.get("angular").and_then(|v| v.as_str()) {
-                versions.insert("AngularJS in Dev deps".to_string(), version.to_string());
+                let cleaned_version = version.trim_start_matches(['~', '^']);
+                versions.insert("AngularJS in Dev deps".to_string(), cleaned_version.to_string());
             }
             if let Some(version) = &dev_deps_obj.get("@angular/core").and_then(|v| v.as_str()) {
-                versions.insert("Angular in Dev deps".to_string(), version.to_string());
+                let cleaned_version = version.trim_start_matches(['~', '^']);
+                versions.insert("Angular in Dev deps".to_string(), cleaned_version.to_string());
             }
         }
     }
