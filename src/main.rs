@@ -66,18 +66,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     let projects = projects_json["values"].as_array()
         .ok_or("Failed to parse projects list")?;
 
+    let projects = vec!["SES"];
+
     // Iterate over the list of projects
     for project in projects {
-        let project_name = project["key"].as_str()
-            .ok_or("Failed to get project name")?;
+        // let project_name = project["key"].as_str()
+        //     .ok_or("Failed to get project name")?;
+        let project_name = "SES";
 
         // Fetch repositories using the new function
         let all_repos = fetch_repositories(&client, &auth_header, &repos_url_template, project_name)?;
 
+
+        let all_repos = vec!["gpecs"];
+
         // Iterate over all the repos and process each one
         for repo in &all_repos {
-            let repo_name = repo["name"].as_str()
-                .ok_or("Missing repo name")?;
+            // let repo_name = repo["name"].as_str()
+            //     .ok_or("Missing repo name")?;
+            let repo_name = "rdu-parent-pom";
             if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
                 continue;
             }

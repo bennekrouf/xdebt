@@ -6,7 +6,7 @@ use std::error::Error;
 use base64::{engine::general_purpose, Engine as _};
 use std::env;
 use std::path::{Path, PathBuf};
-use serde_json::Value;
+use serde_json::{Value, Map};
 
 use crate::analyze_pom_content::analyze_pom_content;
 use crate::analyze_package_json_content::analyze_package_json_content;
@@ -71,43 +71,34 @@ pub fn generate_pom_analysis_json(
     // Run Maven on the downloaded (or existing) POM file
     let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy(), &repo_name);
 
-    // Handle the result of Maven command execution
-    let mut pom_analysis_result = match effective_pom_result {
-        Ok(effective_pom_file) => {
-            // Construct the full path for the effective POM file
-            let effective_pom_path = Path::new(&target_folder).join(&effective_pom_file);
+    // Initialize the final result JSON
+    let mut final_result = Map::new();
 
-            // Check if the effective POM file exists
-            if !effective_pom_path.exists() {
-                return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
-            }
-
-            // Read the effective POM file content
-            let mut file = File::open(&effective_pom_path)
-                .map_err(|e| format!("Failed to open effective POM file '{:?}': {}", effective_pom_path, e))?;
-            let mut content = String::new();
-            file.read_to_string(&mut content)
-                .map_err(|e| format!("Failed to read content of effective POM file '{:?}': {}", effective_pom_path, e))?;
-
-            // Analyze the POM content and generate JSON output
-            analyze_pom_content(repo_name, &content, &reference_keywords)
-        },
-        Err(e) => {
-            eprintln!("Failed to run Maven effective POM: {}", e);
-            Err(e.into()) // Return the error directly
+    let mut pom_versions = Map::new();
+    if let Ok(effective_pom_file) = effective_pom_result {
+        let effective_pom_path = Path::new(&target_folder).join(&effective_pom_file);
+        if !effective_pom_path.exists() {
+            return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
         }
-    }?;
+
+        let mut file = File::open(&effective_pom_path)
+            .map_err(|e| format!("Failed to open effective POM file '{:?}': {}", effective_pom_path, e))?;
+        let mut content = String::new();
+        file.read_to_string(&mut content)
+            .map_err(|e| format!("Failed to read content of effective POM file '{:?}': {}", effective_pom_path, e))?;
+
+        let pom_analysis_result = analyze_pom_content(repo_name, &content, &reference_keywords)?;
+        pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
+    }
 
     // Get package.json URL from .env
     let package_json_url = env::var("PACKAGE_JSON_URL")
         .map_err(|e| format!("Missing PACKAGE_JSON_URL environment variable: {}", e))?;
 
-    // Replace placeholders in package.json URL
     let package_json_url = package_json_url
         .replace("{project_name}", project_name)
         .replace("{repo_name}", repo_name);
 
-    // Fetch the package.json content from the "front" folder
     println!("Fetching package.json from URL: {}", package_json_url);
 
     let pkg_response = client.get(&package_json_url)
@@ -119,15 +110,16 @@ pub fn generate_pom_analysis_json(
         let pkg_content = pkg_response.text()?;
         let package_json: Value = serde_json::from_str(&pkg_content)?;
 
-        // Analyze the package.json content and append to results
         let package_json_analysis_result = analyze_package_json_content(repo_name, &package_json)?;
+        pom_versions.extend(package_json_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
 
-        // Combine the POM and package.json analysis results
-        pom_analysis_result["packageJsonAnalysis"] = package_json_analysis_result;
+        final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
+        final_result.insert("versions".to_string(), Value::Object(pom_versions));
+        final_result.insert("references".to_string(), package_json_analysis_result.get("references").cloned().unwrap_or(Value::Array(Vec::new())));
     } else {
         eprintln!("Failed to fetch package.json: HTTP {}", pkg_response.status());
     }
 
-    Ok(pom_analysis_result)
+    Ok(Value::Object(final_result))
 }
 
