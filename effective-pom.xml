@@ -1,0 +1,15 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< ch.vd.registre:shared-aceclient >-------------------
+[INFO] Building Shared - ACE Client 3.0.2-SNAPSHOT
+[INFO]   from shared-ace-client_pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- help:3.4.0:effective-pom (default-cli) @ shared-aceclient ---
+[INFO] Effective-POM written to: /home/t5h0qo/code/effective_pom/tmp/effective_shared-ace-client.xml
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.006 s
+[INFO] Finished at: 2024-09-11T10:58:59+02:00
+[INFO] ------------------------------------------------------------------------
