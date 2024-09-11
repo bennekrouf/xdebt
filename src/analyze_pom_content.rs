@@ -10,7 +10,7 @@ pub fn analyze_pom_content(
     content: &str, 
     reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
-    let mut tech_versions = HashMap::new();
+    let mut versions = HashMap::new();
     let mut references = Vec::new();
 
     let cleaned_content = content.replace("?>\n<", "?>\n<").replace("?>\r\n<", "?>\n<");
@@ -22,7 +22,7 @@ pub fn analyze_pom_content(
     if let Some(java_version_node) = doc.descendants().find(|node| node.tag_name().name() == "java.version") {
         if let Some(mut java_version) = java_version_node.text() {
             java_version = java_version.trim_start_matches('~').trim_start_matches('^');
-            tech_versions.insert("Java".to_string(), java_version.to_string());
+            versions.insert("Java".to_string(), java_version.to_string());
         }
     }
 
@@ -33,7 +33,7 @@ pub fn analyze_pom_content(
                 if let Some(version_node) = parent_node.descendants().find(|node| node.tag_name().name() == "version") {
                     if let Some(mut spring_boot_version) = version_node.text() {
                         spring_boot_version = spring_boot_version.trim_start_matches('~').trim_start_matches('^');
-                        tech_versions.insert("Spring Boot".to_string(), spring_boot_version.to_string());
+                        versions.insert("Spring Boot".to_string(), spring_boot_version.to_string());
                     }
                 }
             }
@@ -44,7 +44,7 @@ pub fn analyze_pom_content(
     if let Some(spring_version_node) = doc.descendants().find(|node| node.tag_name().name() == "spring.version") {
         if let Some(mut spring_version) = spring_version_node.text() {
             spring_version = spring_version.trim_start_matches('~').trim_start_matches('^');
-            tech_versions.insert("Spring".to_string(), spring_version.to_string());
+            versions.insert("Spring".to_string(), spring_version.to_string());
         }
     } else if content.contains("spring") {
         references.push("Spring".to_string());
@@ -65,15 +65,15 @@ pub fn analyze_pom_content(
         if let Some(version_node) = hibernate_dep.descendants().find(|node| node.tag_name().name() == "version") {
             if let Some(mut hibernate_version) = version_node.text() {
                 hibernate_version = hibernate_version.trim_start_matches('~').trim_start_matches('^');
-                tech_versions.insert("Hibernate".to_string(), hibernate_version.to_string());
+                versions.insert("Hibernate".to_string(), hibernate_version.to_string());
             }
         }
     }
 
     // Build the JSON output
     let result = json!({
-        "app": app_name,
-        "tech_versions": tech_versions,
+        "repository": app_name,
+        "versions": versions,
         "references": references
     });
 
