@@ -1,19 +1,16 @@
 
 use reqwest::blocking::Client;
-use std::fs::File;
-use std::io::Read;
 use std::error::Error;
-use base64::{engine::general_purpose, Engine as _};
 use std::env;
-use std::path::{Path, PathBuf};
 use serde_json::{Value, Map};
+use reqwest::header::HeaderValue;
 
-use crate::analyze_pom_content::analyze_pom_content;
-use crate::analyze_package_json_content::analyze_package_json_content;
-use crate::download_file::download_file;
-use crate::run_maven_effective_pom::run_maven_effective_pom;
+use crate::utils::analyze_package_json_content::analyze_package_json_content;
+use crate::process_pom::process_pom;
 
 pub fn generate_analysis(
+    client: &Client,
+    auth_header: &str,
     project_name: &str,
     repo_name: &str,
 ) -> Result<serde_json::Value, Box<dyn Error>> {
@@ -21,19 +18,6 @@ pub fn generate_analysis(
     let target_folder = env::var("TARGET_FOLDER")
         .unwrap_or_else(|_| "tmp".to_string());  // Default to "tmp" if not set
     let target_folder = format!("{}/{}", &target_folder, &project_name);
-
-    // Initialize reqwest client
-    let client = Client::new();
-
-    // Get credentials from environment variables
-    let username = env::var("BITBUCKET_USERNAME")
-        .map_err(|e| format!("Missing BITBUCKET_USERNAME environment variable: {}", e))?;
-    let password = env::var("BITBUCKET_PASSWORD")
-        .map_err(|e| format!("Missing BITBUCKET_PASSWORD environment variable: {}", e))?;
-    let auth_header = format!(
-        "Basic {}",
-        general_purpose::STANDARD.encode(format!("{}:{}", username, password))
-    );
 
     // Get POM URL from .env
     let base_url = env::var("BITBUCKET_POM_URL")
@@ -60,43 +44,11 @@ pub fn generate_analysis(
         .replace("{project_name}", project_name)
         .replace("{repo_name}", repo_name);
 
-    // Determine the download path for the POM file
-    let pom_file_path: PathBuf = Path::new(&target_folder).join(format!("{}_pom.xml", repo_name));
-
-    // Check if the POM file already exists and handle FORCE_REFRESH
-    if pom_file_path.exists() && !force_refresh {
-        println!("POM file '{}' already exists, skipping download.", pom_file_path.display());
-    } else {
-        // Download the file if it doesn't exist or if FORCE_REFRESH is true
-        // println!("Downloading POM file from URL: {}", pom_url);
-        download_file(&client, &auth_header, &pom_url, &target_folder, repo_name)
-            .map_err(|e| format!("Error while downloading POM file: {}", e))?;
-    }
-
-    // Run Maven on the downloaded (or existing) POM file
-    let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy(), &repo_name);
+    // Process POM and retrieve the versions
+    let mut pom_versions = process_pom(client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, &reference_keywords, force_refresh)?;
 
     // Initialize the final result JSON
     let mut final_result = Map::new();
-
-    let mut pom_versions = Map::new();
-    if let Ok(effective_pom_file) = effective_pom_result {
-        let effective_pom_path = Path::new(&target_folder).join(&effective_pom_file);
-        if !effective_pom_path.exists() {
-            return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
-        }
-
-        let mut file = File::open(&effective_pom_path)
-            .map_err(|e| format!("Failed to open effective POM file '{:?}': {}", effective_pom_path, e))?;
-        let mut content = String::new();
-        file.read_to_string(&mut content)
-            .map_err(|e| format!("Failed to read content of effective POM file '{:?}': {}", effective_pom_path, e))?;
-
-        let pom_analysis_result = analyze_pom_content(repo_name, &content, &versions_keywords, &reference_keywords)?;
-        println!("analyze_pom_content returns {}", pom_analysis_result);
-
-        pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
-    }
 
     // Get package.json URL from .env
     let package_json_url = env::var("PACKAGE_JSON_URL")
@@ -109,7 +61,7 @@ pub fn generate_analysis(
     println!("Fetching package.json from URL: {}", package_json_url);
 
     let pkg_response = client.get(&package_json_url)
-        .header("Authorization", &auth_header)
+        .header("Authorization", HeaderValue::from_str(&auth_header)?)
         .header("Content-Type", "application/json")
         .send()?;
 
@@ -137,4 +89,3 @@ pub fn generate_analysis(
 
     Ok(Value::Object(final_result))
 }
-

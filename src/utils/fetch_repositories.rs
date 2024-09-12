@@ -11,6 +11,7 @@ pub fn fetch_repositories(
     repos_url_template: &str,
     project_name: &str,
 ) -> Result<Vec<Value>, Box<dyn Error>> {
+    println!("repos_url_template : {}", &repos_url_template);
     let repos_url = repos_url_template.replace("{project_name}", project_name);
 
     let mut start = 0;
@@ -28,7 +29,7 @@ pub fn fetch_repositories(
             .get(&paginated_repos_url)
             .header(AUTHORIZATION, auth_header)
             .send()
-            .map_err(|e| format!("Error fetching repos URL: {}", e))?;
+            .map_err(|e| format!("Error fetching repos URL {}: {}",paginated_repos_url, e))?;
 
         if response.status().is_success() {
             let repos_body = response.text()
