@@ -8,7 +8,7 @@ use reqwest::header::HeaderValue;
 use crate::utils::analyze_package_json_content::analyze_package_json_content;
 use crate::process_pom::process_pom;
 
-pub fn generate_analysis(
+pub fn analyze_one_repo(
     client: &Client,
     auth_header: &str,
     project_name: &str,
@@ -17,7 +17,7 @@ pub fn generate_analysis(
     // Get the target folder from the environment
     let target_folder = env::var("TARGET_FOLDER")
         .unwrap_or_else(|_| "tmp".to_string());  // Default to "tmp" if not set
-    let target_folder = format!("{}/{}", &target_folder, &project_name);
+    let target_folder = format!("{}/{}/{}", &target_folder, &project_name, &repo_name);
 
     // Get POM URL from .env
     let base_url = env::var("BITBUCKET_POM_URL")

@@ -31,7 +31,7 @@ pub fn analyze_pom_content(
             let group_id = dep.descendants().find(|node| node.tag_name().name() == "groupId");
             let artifact_id = dep.descendants().find(|node| node.tag_name().name() == "artifactId");
 
-            if let (Some(group_id_node), Some(artifact_id_node)) = (group_id, artifact_id) {
+            if let (Some(_group_id_node), Some(artifact_id_node)) = (group_id, artifact_id) {
                 let artifact_id_text = artifact_id_node.text();
 
                 // Check if artifactId matches the keyword

@@ -10,7 +10,7 @@ pub fn download_file(
     auth_header: &str,
     url: &str,
     target_folder: &str,
-    repo_name: &str,
+    // file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
     // Ensure the target folder exists
     let target_path = Path::new(target_folder);
@@ -19,8 +19,7 @@ pub fn download_file(
             .map_err(|e| format!("Failed to create directory '{}': {}", target_folder, e))?;
     }
 
-    let filename = format!("{}_pom.xml", repo_name);
-    let full_path = target_path.join(&filename);
+    let full_path = target_path.join("pom.xml");
 
     // Perform the HTTP GET request with the authorization header
     let mut response = client
@@ -40,13 +39,13 @@ pub fn download_file(
     // Create a file to save the content
     let mut file = File::create(&full_path)
         .map_err(|e| format!("Failed to create file '{}': {}", full_path.display(), e))?;
-    
+
     // Write the content to the file
     copy(&mut response, &mut file)
         .map_err(|e| format!("Failed to write to file '{}': {}", full_path.display(), e))?;
 
     println!("File downloaded successfully to {:?}", full_path);
 
-    Ok(full_path.to_string_lossy().to_string()) // Return the full path of the downloaded file
+    Ok(full_path.to_string_lossy().to_string())
 }
 

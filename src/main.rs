@@ -3,11 +3,11 @@ use std::error::Error;
 use tracing_subscriber;
 use std::env;
 
-mod generate_analysis;
+mod analyze_one_repo;
 mod utils;
 mod process_pom;
 
-use crate::generate_analysis::generate_analysis;
+use crate::analyze_one_repo::analyze_one_repo;
 use crate::utils::fetch_repositories::fetch_repositories;
 use crate::utils::append_json_to_file::append_json_to_file;
 use crate::utils::append_json_to_csv::append_json_to_csv;
@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .map_err(|e| format!("Missing REPOS_URL environment variable: {}", e))?;
 
 
-    let projects = vec!["PTEP"];
+    let projects = vec!["SES"];
 
     // Iterate over the list of projects
     for project in projects {
@@ -38,7 +38,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Fetch repositories using the new function
         let all_repos = fetch_repositories(&client, &auth_header, &repos_url_template, project_name)?;
 
-        let all_repos = vec!["cadero"];
+        let all_repos = vec!["divess"];
 
         // Iterate over all the repos and process each one
         for repo in &all_repos {
@@ -50,7 +50,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
 
             // Call the function to generate the JSON result for each repo
-            match generate_analysis(&client, &auth_header, project_name, repo_name) {
+            match analyze_one_repo(&client, &auth_header, project_name, repo_name) {
                 Ok(json_result) => {
                     println!("Project: {}, Repo: {}", project_name, repo_name);
                     println!("{}", serde_json::to_string_pretty(&json_result)?);
