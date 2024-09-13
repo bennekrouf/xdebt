@@ -10,7 +10,7 @@ pub fn download_file(
     auth_header: &str,
     url: &str,
     target_folder: &str,
-    // file_name: &str,
+    file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
     // Ensure the target folder exists
     let target_path = Path::new(target_folder);
@@ -19,7 +19,7 @@ pub fn download_file(
             .map_err(|e| format!("Failed to create directory '{}': {}", target_folder, e))?;
     }
 
-    let full_path = target_path.join("pom.xml");
+    let full_path = target_path.join(file_name);
 
     // Perform the HTTP GET request with the authorization header
     let mut response = client

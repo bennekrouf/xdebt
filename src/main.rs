@@ -5,7 +5,7 @@ use std::env;
 
 mod analyze_one_repo;
 mod utils;
-mod process_pom;
+mod plugins;
 
 use crate::analyze_one_repo::analyze_one_repo;
 use crate::utils::fetch_repositories::fetch_repositories;
@@ -26,8 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let repos_url_template = env::var("REPOS_URL")
         .map_err(|e| format!("Missing REPOS_URL environment variable: {}", e))?;
 
-
-    let projects = vec!["SES"];
+    let projects = vec!["PTEP"];
 
     // Iterate over the list of projects
     for project in projects {
@@ -38,7 +37,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         // Fetch repositories using the new function
         let all_repos = fetch_repositories(&client, &auth_header, &repos_url_template, project_name)?;
 
-        let all_repos = vec!["divess"];
+        let all_repos = vec!["xcad"];
 
         // Iterate over all the repos and process each one
         for repo in &all_repos {

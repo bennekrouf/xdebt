@@ -5,8 +5,11 @@ use std::env;
 use serde_json::{Value, Map};
 use reqwest::header::HeaderValue;
 
-use crate::utils::analyze_package_json_content::analyze_package_json_content;
-use crate::process_pom::process_pom;
+use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
+use crate::plugins::maven::process_pom::process_pom;
+use crate::plugins::docker::check_dockerfile_exists::check_dockerfile_exists;
+use crate::plugins::dotnet::check_csproj_files::check_csproj_files;
+use crate::plugins::php::check_php_files::check_php_files;
 
 pub fn analyze_one_repo(
     client: &Client,
@@ -23,8 +26,8 @@ pub fn analyze_one_repo(
     let base_url = env::var("BITBUCKET_POM_URL")
         .map_err(|e| format!("Missing BITBUCKET_POM_URL environment variable: {}", e))?;
 
-    // Get FORCE_REFRESH from .env
-    let force_refresh = env::var("FORCE_REFRESH")
+    // Get FORCE_GIT_PULL from .env
+    let force_git_pull = env::var("FORCE_GIT_PULL")
         .unwrap_or_else(|_| "false".to_string())
         .parse::<bool>()
         .unwrap_or(false); // Default to `false` if parsing fails
@@ -44,12 +47,18 @@ pub fn analyze_one_repo(
         .replace("{project_name}", project_name)
         .replace("{repo_name}", repo_name);
 
-    // Process POM and retrieve the versions
-    let mut pom_versions = process_pom(client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, &reference_keywords, force_refresh)?;
+   // Try to process POM and continue even if there's an error
+    let mut pom_versions = match process_pom(client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, &reference_keywords, force_git_pull) {
+        Ok(versions) => versions,
+        Err(e) => {
+            eprintln!("Warning: Failed to generate POM analysis for project '{}', repo '{}': {}", project_name, repo_name, e);
+            // Insert empty versions if POM analysis fails
+            Map::new()
+        }
+    };
 
     // Initialize the final result JSON
     let mut final_result = Map::new();
-
     // Get package.json URL from .env
     let package_json_url = env::var("PACKAGE_JSON_URL")
         .map_err(|e| format!("Missing PACKAGE_JSON_URL environment variable: {}", e))?;
@@ -84,6 +93,18 @@ pub fn analyze_one_repo(
     } else {
         eprintln!("Failed to fetch package.json: HTTP {}", pkg_response.status());
     }
+
+    // Check if Dockerfile exists in the repository
+    let dockerfile_exists = check_dockerfile_exists(client, auth_header, project_name, repo_name)?;
+    final_result.insert("Docker".to_string(), Value::Bool(dockerfile_exists));
+
+    // Check if .csproj exists in the repository
+    let csproj_exists = check_csproj_files(client, auth_header, project_name, repo_name)?;
+    final_result.insert("C#".to_string(), Value::Bool(csproj_exists));
+
+    // Check if php repository
+    let php_files_exists = check_php_files(client, auth_header, project_name, repo_name)?;
+    final_result.insert("php".to_string(), Value::Bool(php_files_exists));
 
     println!("Final result of generate pom analysis: {:?}", final_result);
 

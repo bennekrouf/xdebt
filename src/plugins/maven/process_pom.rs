@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use serde_json::{Value, Map};
 use std::error::Error;
 
-use crate::utils::analyze_pom_content::analyze_pom_content;
+use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 use crate::utils::download_file::download_file;
 use crate::utils::run_maven_effective_pom::run_maven_effective_pom;
 
@@ -18,17 +18,26 @@ pub fn process_pom(
     pom_url: &str,
     versions_keywords: &[&str],
     reference_keywords: &[&str],
-    force_refresh: bool,
+    force_git_pull: bool,
 ) -> Result<Map<String, Value>, Box<dyn Error>> {
     let pom_file_path: PathBuf = Path::new(target_folder).join("pom.xml");
 
-    // Check if the POM file already exists and handle FORCE_REFRESH
-    if pom_file_path.exists() && !force_refresh {
+    // Check if the POM file already exists and handle FORCE_GIT_PULL
+    if pom_file_path.exists() && !force_git_pull {
         println!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         println!("Downloading POM file from '{}'", pom_url);
-        download_file(&client, &auth_header, pom_url, target_folder)
-            .map_err(|e| format!("Error while downloading POM file: {}", e))?;
+        let result = download_file(&client, &auth_header, pom_url, target_folder, "pom.xml");
+        // .map_err(|e| format!("Error while downloading POM file: {}", e))?;
+
+        // If the POM file returns a 404, log and return an empty result
+        if let Err(e) = result {
+            if e.to_string().contains("404 Not Found") {
+                return Err(format!("POM file not found at URL '{}'. Skipping repository '{}'.", pom_url, repo_name).into());
+            } else {
+                return Err(format!("Error while downloading POM file: {}", e).into());
+            }
+        }
     }
 
     // Read and parse the main POM file
@@ -65,6 +74,7 @@ pub fn process_pom(
                 &auth_header,
                 &download_url,
                 module_target_folder.to_str().unwrap(),
+                "pom.xml"
             )?;
 
             println!("Module POM for '{}' downloaded successfully.", module);
