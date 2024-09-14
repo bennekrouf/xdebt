@@ -7,6 +7,7 @@ use tracing_subscriber;
 mod analyze_one_repo;
 mod utils;
 mod plugins;
+mod roadmap;
 
 use crate::analyze_one_repo::analyze_one_repo;
 use crate::utils::fetch_repositories::fetch_repositories;
@@ -14,9 +15,18 @@ use crate::utils::append_json_to_file::append_json_to_file;
 use crate::utils::append_json_to_csv::append_json_to_csv;
 use crate::utils::get_projects::get_projects;
 use utils::create_client_with_auth::create_client_with_auth;
+use crate::roadmap::process_yaml_files::process_yaml_files;
 
 fn main() -> Result<(), Box<dyn Error>> {
     tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
+
+    // Open the Sled database
+    let db = sled::open("roadmap_db")?;
+
+    // Process all YAML files in the 'roadmap' folder
+    process_yaml_files(&db, "roadmap")?;
+
+
     let (client, auth_header) = create_client_with_auth()?;
     let repos_url_template = env::var("REPOS_URL")
         .map_err(|e| format!("Missing REPOS_URL environment variable: {}", e))?;
