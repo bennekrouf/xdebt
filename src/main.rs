@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use std::env;
-use dialog::Input;
+use dialoguer::Input;
 use tracing_subscriber;
 
 mod analyze_one_repo;
@@ -40,9 +40,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn display_menu() -> Result<String, Box<dyn Error>> {
-    let choice: String = Input::new()
-        .with_prompt("Select an option:\n1. Run analysis on all projects and all repositories\n2. Enter a project and analyze all repositories\n3. Select a repository to analyze across all projects\n4. Exit")
-        .interact_text()?;
+    let prompt = "Select an option:\n1. Run analysis on all projects and all repositories\n2. Enter a project and analyze all repositories\n3. Select a repository to analyze across all projects\n4. Exit";
+    let choice = Input::new()
+        .with_prompt(prompt)
+        .interact()?;
     Ok(choice)
 }
 
@@ -70,24 +71,38 @@ fn analyze_project_repositories(
 ) -> Result<(), Box<dyn Error>> {
     let project_name: String = Input::new()
         .with_prompt("Enter the project name (e.g., PTEP):")
-        .interact_text()?;
+        .interact()?;
 
     let all_repos = fetch_repositories(client, auth_header, repos_url_template, &project_name)?;
+
     for repo in all_repos {
-        let repo_name = repo["name"].as_str().ok_or("Missing repo name")?;
-        run_analysis(client, auth_header, &project_name, repo_name)?;
+        // Assume each 'repo' is a JSON object; we try to treat it as an object
+        if let Some(repo_obj) = repo.as_object() {
+            // Safely extract the "name" field
+            let repo_name = repo_obj.get("name")
+                .and_then(|v| v.as_str())
+                .ok_or("Missing repo name")?;
+
+            // Call the analysis function with the extracted repo name
+            run_analysis(client, auth_header, &project_name, repo_name)?;
+        } else {
+            // If the repo is not an object, return an error
+            return Err("Invalid repository format".into());
+        }
     }
+
     Ok(())
 }
+
 
 fn analyze_specific_repository(
     client: &reqwest::blocking::Client,
     auth_header: &str,
     repos_url_template: &str
 ) -> Result<(), Box<dyn Error>> {
-    let repo_name: String = Input::new()
+    let repo_name:String = Input::new()
         .with_prompt("Enter the repository name (e.g., xcad):")
-        .interact_text()?;
+        .interact()?;
 
     let projects = get_projects(client, auth_header)?;
     for project in projects {
@@ -96,7 +111,7 @@ fn analyze_specific_repository(
         for repo in all_repos {
             let repo_actual_name = repo["name"].as_str().ok_or("Missing repo name")?;
             if repo_actual_name == repo_name {
-                run_analysis(client, auth_header, project_name, &repo_name)?;
+                let _ = run_analysis(client, auth_header, &project_name, &repo_name);
             }
         }
     }
