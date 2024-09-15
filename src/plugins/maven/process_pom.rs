@@ -5,6 +5,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use serde_json::{Value, Map};
 use std::error::Error;
+use tracing::{trace,info,debug};
 
 use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 use crate::utils::download_file::download_file;
@@ -24,11 +25,10 @@ pub fn process_pom(
 
     // Check if the POM file already exists and handle FORCE_GIT_PULL
     if pom_file_path.exists() && !force_git_pull {
-        println!("POM file '{}' already exists, skipping download.", pom_file_path.display());
+        info!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
-        println!("Downloading POM file from '{}'", pom_url);
+        info!("Downloading POM file from '{}'", pom_url);
         let result = download_file(&client, &auth_header, pom_url, target_folder, "pom.xml");
-        // .map_err(|e| format!("Error while downloading POM file: {}", e))?;
 
         // If the POM file returns a 404, log and return an empty result
         if let Err(e) = result {
@@ -50,16 +50,15 @@ pub fn process_pom(
     let modules = parse_pom_for_modules(&main_pom_content)?;
 
     if !modules.is_empty() {
-        println!("Multi-module POM detected. Modules: {:?}", modules);
+        info!("Multi-module POM detected. Modules: {:?}", modules);
 
         for module in modules {
             let module_pom_url = format!("{}/{}", pom_url.trim_end_matches("/pom.xml?raw"), module);
             let module_pom_url = format!("{}/pom.xml", module_pom_url);
             let module_target_folder = Path::new(target_folder).join(&module);
 
-            // Add logs for debugging the URL and target folder
-            println!("Downloading POM for module '{}' from URL: {}", module, module_pom_url);
-            println!("Target folder for module '{}': {}", module, module_target_folder.display());
+            debug!("Downloading POM for module '{}' from URL: {}", module, module_pom_url);
+            debug!("Target folder for module '{}': {}", module, module_target_folder.display());
 
             // Create a folder for each module
             std::fs::create_dir_all(&module_target_folder)
@@ -67,7 +66,7 @@ pub fn process_pom(
 
             // Download the module's POM as 'pom.xml'
             let download_url = format!("{}?raw", module_pom_url);
-            println!("Executing download for URL: {}", download_url);  // Log the exact URL for the request
+            debug!("Executing download for URL: {}", download_url);
 
             download_file(
                 &client,
@@ -77,7 +76,7 @@ pub fn process_pom(
                 "pom.xml"
             )?;
 
-            println!("Module POM for '{}' downloaded successfully.", module);
+            info!("Module POM for '{}' downloaded successfully.", module);
         }
     }
 
@@ -98,7 +97,7 @@ pub fn process_pom(
 
         // Analyze the POM content
         let pom_analysis_result = analyze_pom_content(repo_name, &content, versions_keywords, reference_keywords)?;
-        println!("analyze_pom_content returns {}", pom_analysis_result);
+        info!("analyze_pom_content returns {}", pom_analysis_result);
 
         pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
     }
@@ -109,7 +108,7 @@ pub fn process_pom(
 
 // Function to parse the POM content for modules
 fn parse_pom_for_modules(pom_content: &str) -> Result<Vec<String>, Box<dyn Error>> {
-    println!("Parse for modules call");
+    trace!("Parsing POM content for modules");
     let doc = roxmltree::Document::parse(pom_content)
         .map_err(|e| format!("Failed to parse POM XML: {}", e))?;
 

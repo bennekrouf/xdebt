@@ -1,161 +1,35 @@
 
 use std::error::Error;
 use std::env;
-use dialoguer::Input;
 use tracing_subscriber;
 
 mod analyze_one_repo;
 mod utils;
 mod plugins;
 mod roadmap;
+mod services;
+mod display_menu;
 
-use crate::analyze_one_repo::analyze_one_repo;
-use crate::utils::fetch_repositories::fetch_repositories;
-use crate::utils::append_json_to_file::append_json_to_file;
-use crate::utils::append_json_to_csv::append_json_to_csv;
-use crate::utils::get_projects::get_projects;
 use utils::create_client_with_auth::create_client_with_auth;
 use crate::roadmap::process_yaml_files::process_yaml_files;
+use crate::display_menu::display_menu;
 
 fn main() -> Result<(), Box<dyn Error>> {
     tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
 
-    // Open the Sled database
+    // Open the Sled database - Process all YAML files in the 'roadmap' folder
     let db = sled::open("roadmap_db")?;
-
-    // Process all YAML files in the 'roadmap' folder
     process_yaml_files(&db, "roadmap")?;
-
 
     let (client, auth_header) = create_client_with_auth()?;
     let repos_url_template = env::var("REPOS_URL")
         .map_err(|e| format!("Missing REPOS_URL environment variable: {}", e))?;
 
     loop {
-        let choice = display_menu()?;
-
-        match choice.trim() {
-            "1" => analyze_all_repositories(&client, &auth_header, &repos_url_template)?,
-            "2" => analyze_project_repositories(&client, &auth_header, &repos_url_template)?,
-            "3" => analyze_specific_repository(&client, &auth_header, &repos_url_template)?,
-            "4" => {
-                println!("Exiting...");
-                break;
-            }
-            _ => println!("Invalid choice, please try again."),
+        // The menu will now handle both input and actions
+        if let Err(e) = display_menu(&client, &auth_header, &repos_url_template) {
+            tracing::error!("Error in menu execution: {}", e);
         }
     }
-
-    Ok(())
-}
-
-fn display_menu() -> Result<String, Box<dyn Error>> {
-    let prompt = "Select an option:\n1. Run analysis on all projects and all repositories\n2. Enter a project and analyze all repositories\n3. Select a repository to analyze across all projects\n4. Exit";
-    let choice = Input::new()
-        .with_prompt(prompt)
-        .interact()?;
-    Ok(choice)
-}
-
-fn analyze_all_repositories(
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
-    repos_url_template: &str
-) -> Result<(), Box<dyn Error>> {
-    let projects = get_projects(client, auth_header)?;
-    for project in projects {
-        let project_name = project["key"].as_str().ok_or("Failed to get project name")?;
-        let all_repos = fetch_repositories(client, auth_header, repos_url_template, project_name)?;
-        for repo in all_repos {
-            let repo_name = repo["name"].as_str().ok_or("Missing repo name")?;
-            run_analysis(client, auth_header, project_name, repo_name)?;
-        }
-    }
-    Ok(())
-}
-
-fn analyze_project_repositories(
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
-    repos_url_template: &str
-) -> Result<(), Box<dyn Error>> {
-    let project_name: String = Input::new()
-        .with_prompt("Enter the project name (e.g., PTEP):")
-        .interact()?;
-
-    let all_repos = fetch_repositories(client, auth_header, repos_url_template, &project_name)?;
-
-    for repo in all_repos {
-        // Assume each 'repo' is a JSON object; we try to treat it as an object
-        if let Some(repo_obj) = repo.as_object() {
-            // Safely extract the "name" field
-            let repo_name = repo_obj.get("name")
-                .and_then(|v| v.as_str())
-                .ok_or("Missing repo name")?;
-
-            // Call the analysis function with the extracted repo name
-            run_analysis(client, auth_header, &project_name, repo_name)?;
-        } else {
-            // If the repo is not an object, return an error
-            return Err("Invalid repository format".into());
-        }
-    }
-
-    Ok(())
-}
-
-
-fn analyze_specific_repository(
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
-    repos_url_template: &str
-) -> Result<(), Box<dyn Error>> {
-    let repo_name:String = Input::new()
-        .with_prompt("Enter the repository name (e.g., xcad):")
-        .interact()?;
-
-    let projects = get_projects(client, auth_header)?;
-    for project in projects {
-        let project_name = project["key"].as_str().ok_or("Failed to get project name")?;
-        let all_repos = fetch_repositories(client, auth_header, repos_url_template, project_name)?;
-        for repo in all_repos {
-            let repo_actual_name = repo["name"].as_str().ok_or("Missing repo name")?;
-            if repo_actual_name == repo_name {
-                let _ = run_analysis(client, auth_header, &project_name, &repo_name);
-            }
-        }
-    }
-    Ok(())
-}
-
-fn run_analysis(
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
-    project_name: &str,
-    repo_name: &str,
-) -> Result<(), Box<dyn Error>> {
-    if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
-        return Ok(());
-    }
-
-    match analyze_one_repo(client, auth_header, project_name, repo_name) {
-        Ok(json_result) => {
-            println!("Project: {}, Repo: {}", project_name, repo_name);
-            println!("{}", serde_json::to_string_pretty(&json_result)?);
-
-            if let Err(e) = append_json_to_file(project_name, &json_result) {
-                eprintln!("Failed to append JSON to file for project '{}', repo '{}': {}", project_name, repo_name, e);
-            }
-
-            if let Err(e) = append_json_to_csv(project_name, &json_result) {
-                eprintln!("Failed to append JSON to CSV for project '{}', repo '{}': {}", project_name, repo_name, e);
-            }
-        }
-        Err(e) => {
-            eprintln!("Failed to generate POM analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);
-        }
-    }
-
-    Ok(())
 }
 
