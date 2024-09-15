@@ -1,9 +1,9 @@
 
 use reqwest::blocking::Client;
 use reqwest::header::AUTHORIZATION;
-// use base64::{engine::general_purpose, Engine as _};
 use serde_json::Value;
 use std::error::Error;
+use tracing::{error,info};
 
 pub fn fetch_repositories(
     client: &Client,
@@ -11,7 +11,7 @@ pub fn fetch_repositories(
     repos_url_template: &str,
     project_name: &str,
 ) -> Result<Vec<Value>, Box<dyn Error>> {
-    println!("repos_url_template : {}", &repos_url_template);
+    info!("repos_url_template : {}", &repos_url_template);
     let repos_url = repos_url_template.replace("{project_name}", project_name);
 
     let mut start = 0;
@@ -29,7 +29,7 @@ pub fn fetch_repositories(
             .get(&paginated_repos_url)
             .header(AUTHORIZATION, auth_header)
             .send()
-            .map_err(|e| format!("Error fetching repos URL {}: {}",paginated_repos_url, e))?;
+            .map_err(|e| format!("Error fetching repos URL {}: {}", paginated_repos_url, e))?;
 
         if response.status().is_success() {
             let repos_body = response.text()
@@ -49,10 +49,11 @@ pub fn fetch_repositories(
                 start += limit;
             }
         } else {
-            eprintln!("Failed to fetch repos {}, status: {}", paginated_repos_url, response.status());
+            error!("Failed to fetch repos {}, status: {}", paginated_repos_url, response.status());
             more_pages = false;
         }
     }
 
     Ok(all_repos)
 }
+

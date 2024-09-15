@@ -1,7 +1,7 @@
 
 use std::error::Error;
 
-use crate::analyze_one_repo::analyze_one_repo;
+use crate::plugins::analyze_one_repo::analyze_one_repo;
 use crate::utils::append_json_to_file::append_json_to_file;
 use crate::utils::append_json_to_csv::append_json_to_csv;
 

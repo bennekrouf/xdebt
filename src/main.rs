@@ -3,7 +3,6 @@ use std::error::Error;
 use std::env;
 use tracing_subscriber;
 
-mod analyze_one_repo;
 mod utils;
 mod plugins;
 mod roadmap;
@@ -15,7 +14,7 @@ use crate::roadmap::process_yaml_files::process_yaml_files;
 use crate::display_menu::display_menu;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
+    tracing_subscriber::fmt().with_max_level(tracing::Level::TRACE).init();
 
     // Open the Sled database - Process all YAML files in the 'roadmap' folder
     let db = sled::open("roadmap_db")?;

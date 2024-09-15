@@ -17,7 +17,7 @@ pub fn display_menu(
         "1. Analyser une application (GPECS, XCAD...etc)",
         "2. Analyser un domaine entier (SES, PTEP...etc)",
         "3. Analyser toute les applications",
-        "4. Exit",
+        "4. Exit \n\n",
     ];
 
     // Combine the text and options dynamically
