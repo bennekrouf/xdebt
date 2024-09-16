@@ -12,9 +12,10 @@ pub fn analyze_pom_content(
     version_keywords: &[&str],
     reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
-    // Define equivalences for versions_keywords
+    // Define precise equivalences for version_keywords
     let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
-    equivalences.insert("spring", vec!["spring-context", "spring-beans"]);
+    // equivalences.insert("spring", vec!["spring-context", "spring-beans", "spring-framework"]);
+    // No need to include spring-boot in equivalences, let it be handled directly
 
     // Regex pattern to extract version numbers
     let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
@@ -36,6 +37,7 @@ pub fn analyze_pom_content(
     for keyword in version_keywords {
         // Check for dependencies
         for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
+            // Only check equivalences for keywords that are explicitly in the map
             if let Some(refs) = equivalences.get(keyword) {
                 for &reference in refs {
                     // Search for the reference in the POM content
@@ -56,7 +58,7 @@ pub fn analyze_pom_content(
             if let (Some(_group_id_node), Some(artifact_id_node)) = (group_id, artifact_id) {
                 let artifact_id_text = artifact_id_node.text();
 
-                // Check if artifactId matches the keyword
+                // Check if artifactId matches the keyword directly
                 if artifact_id_text == Some(*keyword) {
                     if let Some(version_node) = dep.descendants().find(|node| node.tag_name().name() == "version") {
                         if let Some(version) = version_node.text() {
@@ -68,7 +70,7 @@ pub fn analyze_pom_content(
             }
         }
 
-        // Check for basic version strings in properties
+        // Check for basic version strings in properties, ignoring anything already matched by equivalences
         let version_key = format!("{}.version", keyword);
         if let Some(version_node) = doc.descendants().find(|node| node.tag_name().name() == &version_key) {
             if let Some(version) = version_node.text() {
@@ -94,4 +96,5 @@ pub fn analyze_pom_content(
 
     Ok(result)
 }
+
 

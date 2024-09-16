@@ -1,5 +1,5 @@
 versions:
-  - product: "Spring"
+  - product: "spring-framework"
     domain: "rs directive"
     chapter: "#N/A"
     records:
