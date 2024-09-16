@@ -14,7 +14,7 @@ use crate::roadmap::process_yaml_files::process_yaml_files;
 use crate::display_menu::display_menu;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    tracing_subscriber::fmt().with_max_level(tracing::Level::TRACE).init();
+    tracing_subscriber::fmt().with_max_level(tracing::Level::INFO).init();
 
     // Open the Sled database - Process all YAML files in the 'roadmap' folder
     let db = sled::open("roadmap_db")?;
@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     loop {
         // The menu will now handle both input and actions
-        if let Err(e) = display_menu(&client, &auth_header, &repos_url_template) {
+        if let Err(e) = display_menu(&client, &auth_header, &repos_url_template, &db) {
             tracing::error!("Error in menu execution: {}", e);
         }
     }
