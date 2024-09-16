@@ -11,8 +11,10 @@ use crate::plugins::maven::process_pom::process_pom;
 use crate::plugins::docker::check_dockerfile_exists::check_dockerfile_exists;
 use crate::plugins::dotnet::check_csproj_files::check_csproj_files;
 use crate::plugins::php::check_php_files::check_php_files;
+use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
 
 pub fn analyze_one_repo(
+    db: &sled::Db,
     client: &Client,
     auth_header: &str,
     project_name: &str,
@@ -118,6 +120,17 @@ pub fn analyze_one_repo(
     final_result.insert("php".to_string(), Value::Bool(php_files_exists));
 
     debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, final_result);
+
+    // Extract the "versions" object from the result
+    if let Some(versions) = final_result.get("versions").and_then(Value::as_object) {
+        // Call the transform function
+        let transformed_versions = enrich_versions_with_roadmap(&db, versions)?;
+
+        // Update the final_result with the transformed versions
+        final_result.insert("versions".to_string(), Value::Object(transformed_versions));
+
+        debug!("Updated result: {:?}", final_result);
+    }
 
     Ok(Value::Object(final_result))
 }

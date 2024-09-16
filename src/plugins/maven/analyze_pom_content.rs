@@ -4,6 +4,7 @@ use std::collections::HashMap;
 use serde_json::json;
 use serde_json::Value;
 use std::error::Error;
+use regex::Regex;
 
 pub fn analyze_pom_content(
     app_name: &str, 
@@ -11,6 +12,13 @@ pub fn analyze_pom_content(
     version_keywords: &[&str],
     reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
+    // Define equivalences for versions_keywords
+    let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
+    equivalences.insert("spring", vec!["spring-context", "spring-beans"]);
+
+    // Regex pattern to extract version numbers
+    let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
+
     let mut versions = HashMap::new();
     let mut references = Vec::new();
 
@@ -28,6 +36,20 @@ pub fn analyze_pom_content(
     for keyword in version_keywords {
         // Check for dependencies
         for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
+            if let Some(refs) = equivalences.get(keyword) {
+                for &reference in refs {
+                    // Search for the reference in the POM content
+                    if content.contains(reference) {
+                        // Extract the version number
+                        if let Some(caps) = version_regex.captures(content) {
+                            let version = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");
+                            versions.insert(keyword.to_string(), version.to_string());
+                            break;  // Stop after the first occurrence
+                        }
+                    }
+                }
+            }
+
             let group_id = dep.descendants().find(|node| node.tag_name().name() == "groupId");
             let artifact_id = dep.descendants().find(|node| node.tag_name().name() == "artifactId");
 

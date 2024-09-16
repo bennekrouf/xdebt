@@ -6,6 +6,7 @@ use crate::utils::append_json_to_file::append_json_to_file;
 use crate::utils::append_json_to_csv::append_json_to_csv;
 
 pub fn run_analysis(
+    db: &sled::Db,
     client: &reqwest::blocking::Client,
     auth_header: &str,
     project_name: &str,
@@ -15,10 +16,10 @@ pub fn run_analysis(
         return Ok(());
     }
 
-    match analyze_one_repo(client, auth_header, project_name, repo_name) {
+    match analyze_one_repo(db, client, auth_header, project_name, repo_name) {
         Ok(json_result) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
-            tracing::debug!("Analysis result: {}", serde_json::to_string_pretty(&json_result)?);
+            tracing::info!("Analysis result: {}", serde_json::to_string_pretty(&json_result)?);
 
             if let Err(e) = append_json_to_file(project_name, &json_result) {
                 tracing::error!("Failed to append JSON to file for project '{}', repo '{}': {}", project_name, repo_name, e);

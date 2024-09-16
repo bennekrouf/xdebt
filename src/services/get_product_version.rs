@@ -5,8 +5,8 @@ use std::error::Error;
 
 use crate::roadmap::models::ProductVersion;
 
-// Retrieve a product from sled DB (case-insensitive)
-pub fn retrieve_from_sled(db: &sled::Db, product: &str) -> Result<Option<ProductVersion>, Box<dyn Error>> {
+// Get a product version from sled DB (case-insensitive)
+pub fn get_product_version(db: &sled::Db, product: &str) -> Result<Option<ProductVersion>, Box<dyn Error>> {
     // Convert the product key to lowercase for case-insensitive search
     let product_lower = product.to_lowercase();
 

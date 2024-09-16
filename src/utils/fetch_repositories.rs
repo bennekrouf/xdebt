@@ -3,7 +3,7 @@ use reqwest::blocking::Client;
 use reqwest::header::AUTHORIZATION;
 use serde_json::Value;
 use std::error::Error;
-use tracing::{error,info};
+use tracing::{error,trace};
 
 pub fn fetch_repositories(
     client: &Client,
@@ -11,7 +11,7 @@ pub fn fetch_repositories(
     repos_url_template: &str,
     project_name: &str,
 ) -> Result<Vec<Value>, Box<dyn Error>> {
-    info!("repos_url_template : {}", &repos_url_template);
+    trace!("repos_url_template : {}", &repos_url_template);
     let repos_url = repos_url_template.replace("{project_name}", project_name);
 
     let mut start = 0;

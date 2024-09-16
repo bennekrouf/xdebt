@@ -1,10 +1,9 @@
-
 versions:
   - product: "Spring"
     domain: "rs directive"
+    chapter: "#N/A"
     records:
-      - chapter: "#N/A"
-        version: "3.x"
+      - version: "3.x"
         etat: "out"
         start_date: "2012-01-01" # Use YYYY-MM-DD format
         end_date: null            # Use null for missing optional field
@@ -12,9 +11,8 @@ versions:
         comment: "fin de vie atteinte. Remplacer dès que possible. Impact très important"
         source_name: "Jean-Eric Cuendet"
         source_entity: "ACT-INT"
-        updated_at: "2023-10-06"  # Ensure this field is present
-      - chapter: "#N/A"
-        version: "4.x"
+        updated_at: "2023-10-06"
+      - version: "4.x"
         etat: "end"
         start_date: "2012-01-01" # Use YYYY-MM-DD format
         end_date: "2016-01-01"   # Use YYYY-MM-DD format
@@ -23,8 +21,7 @@ versions:
         source_name: "Jean-Eric Cuendet"
         source_entity: "ACT-INT"
         updated_at: "2023-10-06"  # Ensure this field is present
-      - chapter: "#N/A"
-        version: "5.x"
+      - version: "5.x"
         etat: "in"
         start_date: "2012-01-01" # Use YYYY-MM-DD format
         end_date: null            # Use null for missing optional field
@@ -32,5 +29,5 @@ versions:
         comment: "La version majeure ne doit pas être plus ancienne que 6 mois à la date de livraison par le fournisseur pour les tests de recette finaux"
         source_name: "Jean-Eric Cuendet"
         source_entity: "ACT-INT"
-        updated_at: "2023-10-06"  # Ensure this field is present
+        updated_at: "2023-10-06"
 

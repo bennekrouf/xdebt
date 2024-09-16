@@ -33,13 +33,13 @@ pub fn display_menu(
 
     match choice.trim() {
         "1" => {
-            analyze_specific_repository(client, auth_header, repos_url_template)?;
+            analyze_specific_repository(db, client, auth_header, repos_url_template)?;
         },
         "2" => {
-            analyze_project_repositories(client, auth_header, repos_url_template)?;
+            analyze_project_repositories(db, client, auth_header, repos_url_template)?;
         },
         "3" => {
-            analyze_all_repositories(client, auth_header, repos_url_template)?;
+            analyze_all_repositories(db, client, auth_header, repos_url_template)?;
         },
         "4" => {
             search_dependency_in_sled(db)?;

@@ -10,12 +10,12 @@ pub struct Versions {
 pub struct ProductVersion {
     pub product: String,
     domain: String,
+    chapter: String,
     records: Vec<Record>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Record {
-    chapter: String,
     version: String,
     etat: String,
     start_date: NaiveDate,                // Date field
