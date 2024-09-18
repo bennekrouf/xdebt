@@ -13,6 +13,7 @@ pub struct AppConfig {
     pub auth_header: String,
     pub db: Db,
     pub url_config: Box<dyn UrlConfig>,
+    pub force_git_pull: bool,
 }
 
 pub fn create_config() -> Result<AppConfig, Box<dyn Error>> {
@@ -33,10 +34,17 @@ pub fn create_config() -> Result<AppConfig, Box<dyn Error>> {
         _ => return Err("Unsupported platform".into()),
     };
 
+    // Get FORCE_GIT_PULL from .env
+    let force_git_pull = env::var("FORCE_GIT_PULL")
+        .unwrap_or_else(|_| "false".to_string())
+        .parse::<bool>()
+        .unwrap_or(false); // Default to `false` if parsing fails
+
     Ok(AppConfig {
         client,
         auth_header,
         db,
         url_config,
+        force_git_pull,
     })
 }

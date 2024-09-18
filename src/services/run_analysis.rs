@@ -14,10 +14,6 @@ pub fn run_analysis(
     if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
         return Ok(());
     }
-    let client = &config.client;
-    let auth_header = &config.auth_header;
-    let url_config = &*config.url_config; // Dereference the Box
-    let db = &config.db;
 
     match analyze_one_repo(config, project_name, repo_name) {
         Ok(json_result) => {

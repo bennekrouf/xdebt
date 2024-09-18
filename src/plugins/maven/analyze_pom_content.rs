@@ -12,7 +12,7 @@ pub fn analyze_pom_content(
     version_keywords: &[&str],
 ) -> Result<Value, Box<dyn Error>> {
     // Define precise equivalences for version_keywords
-    let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
+    let equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
     // equivalences.insert("spring", vec!["spring-context", "spring-beans", "spring-framework"]);
     // No need to include spring-boot in equivalences, let it be handled directly
 

@@ -11,9 +11,6 @@ use crate::create_config::AppConfig;
 pub fn display_menu(
     config: &AppConfig,
     ) -> Result<(), Box<dyn Error>> {
-    let client = &config.client;
-    let auth_header = &config.auth_header;
-    let url_config = &*config.url_config; // Dereference the Box
     let db = &config.db;
 
     // Define the menu text and options

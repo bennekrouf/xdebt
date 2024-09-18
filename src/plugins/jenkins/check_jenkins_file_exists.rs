@@ -8,7 +8,6 @@ pub fn check_jenkins_file_exists(
     project_name: &str,
     repo_name: &str,
 ) -> Result<Option<String>, Box<dyn Error>> {
-
     // List of Groovy files to check
     let groovy_files = [
         "Jenkinsfile.groovy", 

@@ -17,12 +17,11 @@ pub fn process_pom(
     target_folder: &str,
     pom_url: &str,
     versions_keywords: &[&str],
-    force_git_pull: bool,
 ) -> Result<Map<String, Value>, Box<dyn Error>> {
     let pom_file_path: PathBuf = Path::new(target_folder).join("pom.xml");
 
     // Check if the POM file already exists and handle FORCE_GIT_PULL
-    if pom_file_path.exists() && !force_git_pull {
+    if pom_file_path.exists() && !&config.force_git_pull {
         info!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         info!("Downloading POM file from '{}'", pom_url);
