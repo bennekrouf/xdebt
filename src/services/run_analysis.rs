@@ -4,19 +4,22 @@ use std::error::Error;
 use crate::plugins::analyze_one_repo::analyze_one_repo;
 use crate::utils::append_json_to_file::append_json_to_file;
 use crate::utils::append_json_to_csv::append_json_to_csv;
+use crate::create_config::AppConfig;
 
 pub fn run_analysis(
-    db: &sled::Db,
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
+    config: &AppConfig,
     project_name: &str,
     repo_name: &str,
 ) -> Result<(), Box<dyn Error>> {
     if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
         return Ok(());
     }
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+    let db = &config.db;
 
-    match analyze_one_repo(db, client, auth_header, project_name, repo_name) {
+    match analyze_one_repo(config, project_name, repo_name) {
         Ok(json_result) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
             tracing::info!("Analysis result: {}", serde_json::to_string_pretty(&json_result)?);

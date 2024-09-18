@@ -1,5 +1,4 @@
 
-use reqwest::blocking::Client;
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -10,10 +9,10 @@ use tracing::{trace,info,debug};
 use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 use crate::utils::download_file::download_file;
 use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
+use crate::create_config::AppConfig;
 
 pub fn process_pom(
-    client: &Client,
-    auth_header: &str,
+    config: &AppConfig,
     repo_name: &str,
     target_folder: &str,
     pom_url: &str,
@@ -27,7 +26,7 @@ pub fn process_pom(
         info!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         info!("Downloading POM file from '{}'", pom_url);
-        let result = download_file(&client, &auth_header, pom_url, target_folder, "pom.xml");
+        let result = download_file(config, pom_url, target_folder, "pom.xml");
 
         // If the POM file returns a 404, log and return an empty result
         if let Err(e) = result {
@@ -68,8 +67,7 @@ pub fn process_pom(
             debug!("Executing download for URL: {}", download_url);
 
             download_file(
-                &client,
-                &auth_header,
+                config,
                 &download_url,
                 module_target_folder.to_str().unwrap(),
                 "pom.xml"

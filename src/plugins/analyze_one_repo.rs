@@ -1,10 +1,9 @@
 
-use reqwest::blocking::Client;
 use std::error::Error;
 use std::env;
 use serde_json::{Value, Map};
 use reqwest::header::HeaderValue;
-use tracing::{info, warn, error, debug};
+use tracing::{info, warn, error, debug, trace};
 
 use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
 use crate::plugins::maven::process_pom::process_pom;
@@ -14,22 +13,23 @@ use crate::plugins::php::check_php_files::check_php_files;
 use crate::plugins::jenkins::check_jenkins_file_exists::check_jenkins_file_exists;
 use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_groovy;
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
+use crate::services::get_distinct_products::get_distinct_products;
+use crate::create_config::AppConfig;
 
 pub fn analyze_one_repo(
-    db: &sled::Db,
-    client: &Client,
-    auth_header: &str,
+    config: &AppConfig,
     project_name: &str,
     repo_name: &str,
 ) -> Result<serde_json::Value, Box<dyn Error>> {
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+    let db = &config.db;
+
     // Get the target folder from the environment
     let target_folder = env::var("TARGET_FOLDER")
         .unwrap_or_else(|_| "tmp".to_string());  // Default to "tmp" if not set
     let target_folder = format!("{}/{}/{}", &target_folder, &project_name, &repo_name);
-
-    // Get POM URL from .env
-    let base_url = env::var("BITBUCKET_POM_URL")
-        .map_err(|e| format!("Missing BITBUCKET_POM_URL environment variable: {}", e))?;
 
     // Get FORCE_GIT_PULL from .env
     let force_git_pull = env::var("FORCE_GIT_PULL")
@@ -37,19 +37,18 @@ pub fn analyze_one_repo(
         .parse::<bool>()
         .unwrap_or(false); // Default to `false` if parsing fails
 
-    // Get VERSIONS array from .env
-    let versions_str = env::var("VERSIONS_OF")
-        .unwrap_or_else(|_| "spring,java".to_string());
-    let versions_keywords: Vec<&str> = versions_str.split(',').collect();
+    // Fetch distinct product names from the Sled DB
+    let product_names = get_distinct_products(db)?;
 
-    // Replace placeholders in POM URL
-    let pom_url = base_url
-        .replace("{project_name}", project_name)
-        .replace("{repo_name}", repo_name);
+    // Convert Vec<String> to Vec<&str>
+    let versions_keywords: Vec<&str> = product_names.iter().map(|s| s.as_str()).collect();
+
+    // Get POM URL using UrlConfig
+    let pom_url = url_config.file_url(project_name, repo_name, "pom.xml");
 
     // Try to process POM and continue even if there's an error
     let mut pom_versions = match process_pom(
-        client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, force_git_pull
+        config, repo_name, &target_folder, &pom_url, &versions_keywords, force_git_pull
     ) {
         Ok(versions) => versions,
         Err(e) => {
@@ -62,13 +61,8 @@ pub fn analyze_one_repo(
     // Initialize the final result JSON
     let mut final_result = Map::new();
 
-    // Get package.json URL from .env
-    let package_json_url = env::var("PACKAGE_JSON_URL")
-        .map_err(|e| format!("Missing PACKAGE_JSON_URL environment variable: {}", e))?;
-
-    let package_json_url = package_json_url
-        .replace("{project_name}", project_name)
-        .replace("{repo_name}", repo_name);
+    // Get package.json URL using UrlConfig
+    let package_json_url = url_config.package_json_url(project_name, repo_name);
 
     info!("Fetching package.json from URL: {}", package_json_url);
 
@@ -112,25 +106,25 @@ pub fn analyze_one_repo(
     }
 
     // Check if Dockerfile exists in the repository
-    let dockerfile_exists = check_dockerfile_exists(client, auth_header, project_name, repo_name)?;
+    let dockerfile_exists = check_dockerfile_exists(config, project_name, repo_name)?;
     if dockerfile_exists {
         final_result.insert("Docker".to_string(), Value::Bool(dockerfile_exists));
     }
 
     // Check if .csproj exists in the repository
-    let csproj_exists = check_csproj_files(client, auth_header, project_name, repo_name)?;
+    let csproj_exists = check_csproj_files(config, project_name, repo_name)?;
     if csproj_exists {
         final_result.insert("C#".to_string(), Value::Bool(csproj_exists));
     }
 
     // Check if PHP repository files exist
-    let php_files_exists = check_php_files(client, auth_header, project_name, repo_name)?;
+    let php_files_exists = check_php_files(config, project_name, repo_name)?;
     if php_files_exists {
         final_result.insert("php".to_string(), Value::Bool(php_files_exists));
     }
 
     // Jenkins analysis: Check if Jenkins file exists
-    if let Some(jenkins_file_url) = check_jenkins_file_exists(client, auth_header, project_name, repo_name)? {
+    if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repo_name)? {
         info!("Found Jenkins file at: {}", jenkins_file_url);
         let jenkins_file_content = client.get(&jenkins_file_url)
             .header("Authorization", HeaderValue::from_str(auth_header)?)
@@ -147,11 +141,11 @@ pub fn analyze_one_repo(
                     .unwrap()
                     .insert(keyword.to_string(), Value::String(version));
             } else {
-                warn!("No version found for keyword '{}' in Jenkins file.", keyword);
+                trace!("No version found for keyword '{}' in Jenkins file.", keyword);
             }
         }
     } else {
-        warn!("No Jenkins file found for project '{}', repo '{}'.", project_name, repo_name);
+        info!("No Jenkins file found for project '{}', repo '{}'.", project_name, repo_name);
     }
 
     debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, final_result);
@@ -169,3 +163,4 @@ pub fn analyze_one_repo(
 
     Ok(Value::Object(final_result))
 }
+

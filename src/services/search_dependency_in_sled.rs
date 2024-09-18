@@ -1,7 +1,8 @@
 
 use dialoguer::Input;
-use crate::services::get_product_version::get_product_version;
 use std::error::Error;
+
+use crate::services::get_product_version::get_product_version;
 
 // Function to search for a dependency in Sled DB
 pub fn search_dependency_in_sled(db: &sled::Db) -> Result<(), Box<dyn Error>> {

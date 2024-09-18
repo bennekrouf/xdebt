@@ -1,18 +1,23 @@
 
-use reqwest::blocking::Client;
 use std::fs::{self, File};
 use std::io::copy;
 use std::path::Path;
 use std::error::Error;
 use tracing::trace;
 
+use crate::create_config::AppConfig;
+
 pub fn download_file(
-    client: &Client,
-    auth_header: &str,
+    config: &AppConfig,
     url: &str,
     target_folder: &str,
     file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    // let url_config = &*config.url_config; // Dereference the Box
+    // let db = &config.db;
+
     // Ensure the target folder exists
     trace!("Ensuring target folder '{}' exists.", target_folder);
     let target_path = Path::new(target_folder);

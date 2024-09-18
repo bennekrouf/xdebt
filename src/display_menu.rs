@@ -6,13 +6,16 @@ use crate::services::analyze_all_repositories::analyze_all_repositories;
 use crate::services::analyze_project_repositories::analyze_project_repositories;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::services::search_dependency_in_sled::search_dependency_in_sled;
+use crate::create_config::AppConfig;
 
 pub fn display_menu(
-    client: &reqwest::blocking::Client,
-    auth_header: &str,
-    repos_url_template: &str,
-    db: &sled::Db,
-) -> Result<(), Box<dyn Error>> {
+    config: &AppConfig,
+    ) -> Result<(), Box<dyn Error>> {
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+    let db = &config.db;
+
     // Define the menu text and options
     let menu_text = "Select an option:";
     let menu_options = vec![
@@ -33,13 +36,13 @@ pub fn display_menu(
 
     match choice.trim() {
         "1" => {
-            analyze_specific_repository(db, client, auth_header, repos_url_template)?;
+            analyze_specific_repository(config)?;
         },
         "2" => {
-            analyze_project_repositories(db, client, auth_header, repos_url_template)?;
+            analyze_project_repositories(config)?;
         },
         "3" => {
-            analyze_all_repositories(db, client, auth_header, repos_url_template)?;
+            analyze_all_repositories(config)?;
         },
         "4" => {
             search_dependency_in_sled(db)?;

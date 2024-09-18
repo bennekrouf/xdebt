@@ -1,18 +1,21 @@
 
 use std::error::Error;
-use std::env;
 use serde_json::Value;
-use reqwest::blocking::Client;
 use reqwest::header::AUTHORIZATION;
 use tracing::trace;
 
-/// Function to get the list of projects
-pub fn get_projects(client: &Client, auth_header: &str) -> Result<Vec<Value>, Box<dyn Error>> {
-    // Get the base URL for the API to fetch the list of projects from the .env
-    let projects_url = env::var("PROJECTS_URL")
-        .map_err(|e| format!("Missing PROJECTS_URL environment variable: {}", e))?;
+use crate::create_config::AppConfig;
 
-    // Fetch the list of projects
+pub fn get_projects(
+    config: &AppConfig,
+    ) -> Result<Vec<Value>, Box<dyn Error>> {
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+
+    // Get the base URL for the API to fetch the list of projects from the .env
+    let projects_url = url_config.projects_url();    // Fetch the list of projects
+                                                          //
     let projects_response = client
         .get(&projects_url)
         .header(AUTHORIZATION, auth_header)

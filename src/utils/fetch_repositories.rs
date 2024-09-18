@@ -1,18 +1,23 @@
 
-use reqwest::blocking::Client;
 use reqwest::header::AUTHORIZATION;
 use serde_json::Value;
 use std::error::Error;
 use tracing::{error,trace};
 
+use crate::create_config::AppConfig;
+
 pub fn fetch_repositories(
-    client: &Client,
-    auth_header: &str,
-    repos_url_template: &str,
+    config: &AppConfig,
     project_name: &str,
 ) -> Result<Vec<Value>, Box<dyn Error>> {
-    trace!("repos_url_template : {}", &repos_url_template);
-    let repos_url = repos_url_template.replace("{project_name}", project_name);
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+
+    trace!("Fetching repositories for project: {}", project_name);
+
+    // Use UrlConfig to get the URL for repositories
+    let repos_url = url_config.repos_url(project_name, ""); // Assuming repos_url needs only project_name
 
     let mut start = 0;
     let limit = 50;  // Adjust limit as needed

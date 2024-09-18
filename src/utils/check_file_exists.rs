@@ -1,26 +1,30 @@
 
-use reqwest::blocking::Client;
 use std::error::Error;
-use std::env;
 use reqwest::header::HeaderValue;
 use tracing::{info, warn};
 
+use crate::create_config::AppConfig;
+
 pub fn check_file_exists(
-    client: &Client,
-    auth_header: &str,
+    config: &AppConfig,
     project_name: &str,
     repo_name: &str,
     file_name: &str,
 ) -> Result<Option<String>, Box<dyn Error>> {
+    let client = &config.client;
+    let auth_header = &config.auth_header;
+    let url_config = &*config.url_config; // Dereference the Box
+
+    let file_url = url_config.file_url(project_name, repo_name, file_name);
     // Get base URL for files from .env
-    let base_url = env::var("FILE_URL")
-        .map_err(|e| format!("Missing FILE_URL environment variable: {}", e))?;
+    // let base_url = env::var("FILE_URL")
+        // .map_err(|e| format!("Missing FILE_URL environment variable: {}", e))?;
 
     // Replace placeholders in the URL
-    let file_url = base_url
-        .replace("{project_name}", project_name)
-        .replace("{repo_name}", repo_name)
-        .replace("{file_name}", file_name);
+    // let file_url = base_url
+    //     .replace("{project_name}", project_name)
+    //     .replace("{repo_name}", repo_name)
+    //     .replace("{file_name}", file_name);
 
     info!("Checking for {} at URL: {}", file_name, file_url);
 
