@@ -84,40 +84,53 @@ pub fn analyze_one_repo(
         let pkg_content = pkg_response.text()?;
         let package_json: Value = serde_json::from_str(&pkg_content)?;
 
-        let package_json_analysis_result = analyze_package_json_content(repo_name, &package_json)?;
+        let package_json_analysis_result = analyze_package_json_content(
+            repo_name, &package_json, &versions_keywords, &reference_keywords
+            )?;
         pom_versions.extend(package_json_analysis_result
             .get("versions")
             .and_then(Value::as_object)
             .unwrap_or(&Map::new())
             .clone());
 
+        if !pom_versions.is_empty() {
+            final_result.insert("versions".to_string(), Value::Object(pom_versions));
+        }
+
+        if let Some(references) = package_json_analysis_result.get("references").cloned() {
+            if !references.as_array().unwrap_or(&Vec::new()).is_empty() {
+                final_result.insert("references".to_string(), references);
+            }
+        }
+
         final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
-        final_result.insert("versions".to_string(), Value::Object(pom_versions));
-        final_result.insert("references".to_string(), package_json_analysis_result
-            .get("references")
-            .cloned()
-            .unwrap_or(Value::Array(Vec::new())));
     } else if pkg_response.status() == 404 {
         warn!("package.json not found (HTTP 404), continuing without it.");
-        // Insert only POM data in final_result
         final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
-        final_result.insert("versions".to_string(), Value::Object(pom_versions));
-        final_result.insert("references".to_string(), Value::Array(Vec::new())); // Empty references
+        if !pom_versions.is_empty() {
+            final_result.insert("versions".to_string(), Value::Object(pom_versions));
+        }
     } else {
         error!("Failed to fetch package.json: HTTP {}", pkg_response.status());
     }
 
     // Check if Dockerfile exists in the repository
     let dockerfile_exists = check_dockerfile_exists(client, auth_header, project_name, repo_name)?;
-    final_result.insert("Docker".to_string(), Value::Bool(dockerfile_exists));
+    if dockerfile_exists {
+        final_result.insert("Docker".to_string(), Value::Bool(dockerfile_exists));
+    }
 
     // Check if .csproj exists in the repository
     let csproj_exists = check_csproj_files(client, auth_header, project_name, repo_name)?;
-    final_result.insert("C#".to_string(), Value::Bool(csproj_exists));
+    if csproj_exists {
+        final_result.insert("C#".to_string(), Value::Bool(csproj_exists));
+    }
 
     // Check if PHP repository files exist
     let php_files_exists = check_php_files(client, auth_header, project_name, repo_name)?;
-    final_result.insert("php".to_string(), Value::Bool(php_files_exists));
+    if php_files_exists {
+        final_result.insert("php".to_string(), Value::Bool(php_files_exists));
+    }
 
     debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, final_result);
 
@@ -134,4 +147,3 @@ pub fn analyze_one_repo(
 
     Ok(Value::Object(final_result))
 }
-

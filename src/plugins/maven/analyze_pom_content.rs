@@ -29,9 +29,9 @@ pub fn analyze_pom_content(
     let doc = Document::parse(&cleaned_content)?;
 
     // Initialize all version keywords with an empty string
-    for keyword in version_keywords {
-        versions.insert(keyword.to_string(), "".to_string());
-    }
+    // for keyword in version_keywords {
+    //     versions.insert(keyword.to_string(), "".to_string());
+    // }
 
     // Extract versions from dependencies and basic version strings
     for keyword in version_keywords {
