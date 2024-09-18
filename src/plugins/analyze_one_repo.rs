@@ -35,11 +35,6 @@ pub fn analyze_one_repo(
         .parse::<bool>()
         .unwrap_or(false); // Default to `false` if parsing fails
 
-    // Get REFERENCES array from .env
-    let references_str = env::var("REFERENCES")
-        .unwrap_or_else(|_| "jencks,nexus,xfile,php,richfaces".to_string());
-    let reference_keywords: Vec<&str> = references_str.split(',').collect();
-
     // Get VERSIONS array from .env
     let versions_str = env::var("VERSIONS_OF")
         .unwrap_or_else(|_| "spring,java".to_string());
@@ -52,7 +47,7 @@ pub fn analyze_one_repo(
 
     // Try to process POM and continue even if there's an error
     let mut pom_versions = match process_pom(
-        client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, &reference_keywords, force_git_pull
+        client, auth_header, repo_name, &target_folder, &pom_url, &versions_keywords, force_git_pull
     ) {
         Ok(versions) => versions,
         Err(e) => {
@@ -85,7 +80,7 @@ pub fn analyze_one_repo(
         let package_json: Value = serde_json::from_str(&pkg_content)?;
 
         let package_json_analysis_result = analyze_package_json_content(
-            repo_name, &package_json, &versions_keywords, &reference_keywords
+            repo_name, &package_json, &versions_keywords
             )?;
         pom_versions.extend(package_json_analysis_result
             .get("versions")

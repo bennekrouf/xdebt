@@ -10,7 +10,6 @@ pub fn analyze_pom_content(
     app_name: &str, 
     content: &str, 
     version_keywords: &[&str],
-    reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
     // Define precise equivalences for version_keywords
     let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
@@ -77,13 +76,6 @@ pub fn analyze_pom_content(
                 let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
                 versions.insert(keyword.to_string(), cleaned_version.to_string());
             }
-        }
-    }
-
-    // Check for references in the content
-    for &keyword in reference_keywords {
-        if content.contains(keyword) {
-            references.push(keyword.to_string());
         }
     }
 

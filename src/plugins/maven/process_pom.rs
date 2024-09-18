@@ -18,7 +18,6 @@ pub fn process_pom(
     target_folder: &str,
     pom_url: &str,
     versions_keywords: &[&str],
-    reference_keywords: &[&str],
     force_git_pull: bool,
 ) -> Result<Map<String, Value>, Box<dyn Error>> {
     let pom_file_path: PathBuf = Path::new(target_folder).join("pom.xml");
@@ -96,7 +95,7 @@ pub fn process_pom(
             .map_err(|e| format!("Failed to read effective POM file '{}': {}", effective_pom_path.display(), e))?;
 
         // Analyze the POM content
-        let pom_analysis_result = analyze_pom_content(repo_name, &content, versions_keywords, reference_keywords)?;
+        let pom_analysis_result = analyze_pom_content(repo_name, &content, versions_keywords)?;
         info!("analyze_pom_content returns {}", pom_analysis_result);
 
         pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());

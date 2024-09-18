@@ -7,14 +7,12 @@ pub fn analyze_package_json_content(
     app_name: &str,
     package_json: &Value,
     version_keywords: &[&str],
-    reference_keywords: &[&str]
 ) -> Result<Value, Box<dyn Error>> {
     // Define equivalences for version_keywords
     let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
     equivalences.insert("angular", vec!["@angular/core", "angular"]);
-    
+
     let mut versions = HashMap::new();
-    let mut references = Vec::new();
 
     // Access the actual package.json content within the "lines" array
     let lines = package_json.get("lines")
@@ -73,23 +71,10 @@ pub fn analyze_package_json_content(
         }
     }
 
-    // Check for references in the content
-    for &keyword in reference_keywords {
-        if package_json_str.contains(keyword) {
-            references.push(keyword.to_string());
-        }
-    }
-
-    // If no version found for any of the keywords, push a default reference
-    // if versions.is_empty() {
-    //     references.push("No Angular or AngularJS matches found".to_string());
-    // }
-
     // Build the JSON output
     let result = json!({
         "repository": app_name,
         "versions": versions,
-        "references": references
     });
 
     Ok(result)
