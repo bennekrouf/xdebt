@@ -13,7 +13,7 @@ pub fn check_csproj_files(
     let csproj_files = ["*.csproj"]; // Adapt as needed
 
     for file in &csproj_files {
-        if check_file_exists(client, auth_header, project_name, repo_name, file)? {
+        if check_file_exists(client, auth_header, project_name, repo_name, file)?.is_some() {
             return Ok(true);
         }
     }

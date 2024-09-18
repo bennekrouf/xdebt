@@ -20,7 +20,6 @@ pub fn analyze_pom_content(
     let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
 
     let mut versions = HashMap::new();
-    let mut references = Vec::new();
 
     let cleaned_content = content.replace("?>\n<", "?>\n<").replace("?>\r\n<", "?>\n<");
 
@@ -83,7 +82,6 @@ pub fn analyze_pom_content(
     let result = json!({
         "repository": app_name,
         "versions": versions,
-        "references": references
     });
 
     Ok(result)

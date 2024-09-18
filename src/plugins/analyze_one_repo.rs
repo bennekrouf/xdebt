@@ -11,6 +11,8 @@ use crate::plugins::maven::process_pom::process_pom;
 use crate::plugins::docker::check_dockerfile_exists::check_dockerfile_exists;
 use crate::plugins::dotnet::check_csproj_files::check_csproj_files;
 use crate::plugins::php::check_php_files::check_php_files;
+use crate::plugins::jenkins::check_jenkins_file_exists::check_jenkins_file_exists;
+use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_groovy;
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
 
 pub fn analyze_one_repo(
@@ -125,6 +127,31 @@ pub fn analyze_one_repo(
     let php_files_exists = check_php_files(client, auth_header, project_name, repo_name)?;
     if php_files_exists {
         final_result.insert("php".to_string(), Value::Bool(php_files_exists));
+    }
+
+    // Jenkins analysis: Check if Jenkins file exists
+    if let Some(jenkins_file_url) = check_jenkins_file_exists(client, auth_header, project_name, repo_name)? {
+        info!("Found Jenkins file at: {}", jenkins_file_url);
+        let jenkins_file_content = client.get(&jenkins_file_url)
+            .header("Authorization", HeaderValue::from_str(auth_header)?)
+            .send()?
+            .text()?;
+
+        // Extract versions for each keyword from the Jenkins file
+        for keyword in &versions_keywords {
+            if let Some(version) = extract_version_from_groovy(&jenkins_file_content, keyword) {
+                // Insert the version into the "versions" object
+                final_result.entry("versions".to_string())
+                    .or_insert_with(|| Value::Object(Map::new()))
+                    .as_object_mut()
+                    .unwrap()
+                    .insert(keyword.to_string(), Value::String(version));
+            } else {
+                warn!("No version found for keyword '{}' in Jenkins file.", keyword);
+            }
+        }
+    } else {
+        warn!("No Jenkins file found for project '{}', repo '{}'.", project_name, repo_name);
     }
 
     debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, final_result);

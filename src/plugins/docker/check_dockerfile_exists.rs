@@ -13,7 +13,7 @@ pub fn check_dockerfile_exists(
     let docker_files = ["Dockerfile", "docker-compose.yml", ".dockerignore"];
 
     for file in &docker_files {
-        if check_file_exists(client, auth_header, project_name, repo_name, file)? {
+        if check_file_exists(client, auth_header, project_name, repo_name, file)?.is_some() {
             return Ok(true);
         }
     }

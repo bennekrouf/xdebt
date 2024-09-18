@@ -19,7 +19,7 @@ pub fn check_php_files(
     ];
 
     for file in &php_files {
-        if check_file_exists(client, auth_header, project_name, repo_name, file)? {
+        if check_file_exists(client, auth_header, project_name, repo_name, file)?.is_some() {
             return Ok(true);
         }
     }
