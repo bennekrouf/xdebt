@@ -2,6 +2,7 @@
 use sled;
 use std::error::Error;
 use std::fs;
+use tracing::trace;
 
 use crate::roadmap::read_yaml::read_yaml;
 use crate::roadmap::persist_to_sled::persist_to_sled;
@@ -19,7 +20,7 @@ pub fn process_yaml_files(db: &sled::Db, dir_path: &str) -> Result<(), Box<dyn E
                 // Read and process the YAML file
                 let versions = read_yaml(path_str)?;
                 persist_to_sled(db, &versions)?;
-                println!("Processed file: {}", path_str);
+                trace!("Processed file: {}", path_str); // Use trace for logging
             }
         }
     }

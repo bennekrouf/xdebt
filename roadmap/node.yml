@@ -1,0 +1,9 @@
+versions:
+  - product: "node"
+    records:
+      - version: "20"
+        etat: "in"
+      - version: "8"
+        etat: "out"
+
+

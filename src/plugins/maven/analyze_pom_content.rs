@@ -5,14 +5,16 @@ use serde_json::json;
 use serde_json::Value;
 use std::error::Error;
 use regex::Regex;
+use crate::create_config::AppConfig;
 
 pub fn analyze_pom_content(
+    config: &AppConfig,
     app_name: &str, 
     content: &str, 
     version_keywords: &[&str],
 ) -> Result<Value, Box<dyn Error>> {
     // Define precise equivalences for version_keywords
-    let equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
+    let equivalences = config.equivalences.clone(); // : HashMap<&str, Vec<&str>> = HashMap::new();
     // equivalences.insert("spring", vec!["spring-context", "spring-beans", "spring-framework"]);
     // No need to include spring-boot in equivalences, let it be handled directly
 
@@ -36,10 +38,10 @@ pub fn analyze_pom_content(
         // Check for dependencies
         for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
             // Only check equivalences for keywords that are explicitly in the map
-            if let Some(refs) = equivalences.get(keyword) {
-                for &reference in refs {
+            for (keyword, references) in &equivalences {
+                for reference in references {
                     // Search for the reference in the POM content
-                    if content.contains(reference) {
+                    if content.contains(&*reference) {
                         // Extract the version number
                         if let Some(caps) = version_regex.captures(content) {
                             let version = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");

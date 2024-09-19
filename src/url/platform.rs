@@ -9,10 +9,10 @@ enum Platform {
 }
 
 impl Platform {
-    pub fn get_urls(&self) -> &dyn UrlConfig {
-        match self {
-            Platform::Bitbucket(config) => config,
-            Platform::Github(config) => config,
-        }
-    }
+    // pub fn get_urls(&self) -> &dyn UrlConfig {
+    //     match self {
+    //         Platform::Bitbucket(config) => config,
+    //         Platform::Github(config) => config,
+    //     }
+    // }
 }

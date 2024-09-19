@@ -1,0 +1,24 @@
+
+platform: bitbucket
+base_url: https://dsigit.etat-de-vaud.ch/outils/git
+# platform: github
+# base_url: https://api.github.com
+# user: bennekrouf
+force_git_pull: true
+
+equivalences:
+  spring:
+    - spring-context
+    - spring-beans
+    - spring-framework
+  angular:
+    - "@angular/core"
+    - angular
+    - angularjs
+  java:
+    - java-runtime
+    - openjdk
+    - jdk
+  node:
+    - nodejs
+

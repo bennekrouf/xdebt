@@ -105,14 +105,14 @@ pub fn analyze_one_repo(
 
         // Extract versions for each keyword from the Jenkins file
         for keyword in &versions_keywords {
-            if let Some(version) = extract_version_from_groovy(&jenkins_file_content, keyword) {
+            if let Some(version) = extract_version_from_groovy(config, &jenkins_file_content, keyword) {
                 final_result.entry("versions".to_string())
                     .or_insert_with(|| Value::Object(Map::new()))
                     .as_object_mut()
                     .unwrap()
                     .insert(keyword.to_string(), Value::String(version));
             } else {
-                trace!("No version found for keyword '{}' in Jenkins file.", keyword);
+                info!("No version found for keyword '{}' in Jenkins file.", keyword);
             }
         }
     } else {
