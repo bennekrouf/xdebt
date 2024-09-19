@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RoadmapList {
-    pub versions: Vec<Roadmap>,
+    pub roadmap_list: Vec<Roadmap>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

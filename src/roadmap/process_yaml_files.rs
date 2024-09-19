@@ -18,8 +18,8 @@ pub fn process_yaml_files(db: &sled::Db, dir_path: &str) -> Result<(), Box<dyn E
         if path.is_file() && path.extension().and_then(|s| s.to_str()) == Some("yml") {
             if let Some(path_str) = path.to_str() {
                 // Read and process the YAML file
-                let versions = read_yaml(path_str)?;
-                persist_to_sled(db, &versions)?;
+                let roadmap_yaml = read_yaml(path_str)?;
+                persist_to_sled(db, &roadmap_yaml)?;
                 trace!("Processed file: {}", path_str); // Use trace for logging
             }
         }
