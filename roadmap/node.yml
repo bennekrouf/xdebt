@@ -1,6 +1,6 @@
 versions:
   - product: "node"
-    records:
+    entries:
       - version: "20"
         etat: "in"
       - version: "8"

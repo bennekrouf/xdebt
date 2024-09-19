@@ -11,6 +11,7 @@ mod display_menu;
 mod url;
 mod create_config;
 mod kpi;
+mod models;
 
 use roadmap::process_yaml_files::process_yaml_files;
 use display_menu::display_menu;

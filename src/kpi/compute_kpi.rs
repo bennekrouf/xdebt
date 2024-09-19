@@ -1,16 +1,16 @@
 
 use chrono::{NaiveDate, Utc};
 use crate::kpi::compare_versions::compare_versions;
-use crate::kpi::models::{KPIResult, Product};
+use crate::models::{KPIResult, Analysis};
 
-pub fn compute_kpi(product: &Product) -> KPIResult {
-    let current_version = &product.current;
+pub fn compute_kpi(analysis: &Analysis) -> KPIResult {
+    let current_version = &analysis.current;
     let today = Utc::now().date_naive();
 
     let mut compliance_status = "non-compliant".to_string();
     let mut maintenance_action = "Upgrade needed".to_string();
 
-    for record in &product.roadmap.records {
+    for record in &analysis.roadmap.entries {
         let record_version = &record.version;
         let etat = &record.etat;
 
@@ -32,10 +32,10 @@ pub fn compute_kpi(product: &Product) -> KPIResult {
     }
 
     KPIResult {
-        product: product.roadmap.product.clone(),
+        product: analysis.roadmap.product.clone(),
         current_version: current_version.clone(),
         compliance_status,
-        last_updated: product.roadmap.records[0].updated_at.expect("Invalid date").to_string(),
+        last_updated: analysis.roadmap.entries[0].updated_at.expect("Invalid date").to_string(),
         maintenance_action,
     }
 }

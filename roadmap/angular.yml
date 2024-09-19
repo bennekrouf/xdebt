@@ -2,7 +2,7 @@ versions:
   - product: "angular"
     domain: "hors directive"
     chapter: "#N/A"
-    records:
+    entries:
       - version: "18"
         etat: "in"
         start_date: "2024-01-01" # Use YYYY-MM-DD format

@@ -1,6 +1,6 @@
 versions:
   - product: "java"
-    records:
+    entries:
       - version: "21"
         etat: "in"
       - version: "8"

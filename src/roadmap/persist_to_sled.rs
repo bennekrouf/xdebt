@@ -3,7 +3,7 @@ use serde_json;
 use sled;
 use std::error::Error;
 
-use crate::roadmap::models::Versions;
+use crate::models::Versions;
 
 // Persist each product version to sled DB (case-insensitive)
 pub fn persist_to_sled(db: &sled::Db, versions: &Versions) -> Result<(), Box<dyn Error>> {

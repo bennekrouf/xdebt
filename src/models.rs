@@ -3,19 +3,19 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Versions {
-    pub versions: Vec<ProductVersion>,
+    pub versions: Vec<Roadmap>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ProductVersion {
+pub struct Roadmap {
     pub product: String,
     domain: Option<String>,
     chapter: Option<String>,
-    pub records: Vec<Record>,
+    pub entries: Vec<RoadmapEntry>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Record {
+pub struct RoadmapEntry {
     pub version: String,
     pub etat: String,
     start_date: Option<NaiveDate>,                // Date field
@@ -26,3 +26,19 @@ pub struct Record {
     source_entity: Option<String>,
     pub updated_at: Option<NaiveDate>,                // Date field
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Analysis {
+    pub current: String,
+    pub roadmap: Roadmap,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct KPIResult {
+    pub product: String,
+    pub current_version: String,
+    pub compliance_status: String,
+    pub last_updated: String,
+    pub maintenance_action: String,
+}
+

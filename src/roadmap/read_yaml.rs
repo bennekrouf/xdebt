@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use std::fs;
-use crate::roadmap::models::Versions;
+use crate::models::Versions;
 
 // Read and deserialize YAML from a file
 pub fn read_yaml(file_path: &str) -> Result<Versions, Box<dyn Error>> {

@@ -4,7 +4,7 @@ use sled;
 use std::error::Error;
 use std::collections::HashSet;
 
-use crate::roadmap::models::ProductVersion;
+use crate::models::Roadmap;
 
 // Get distinct list of products from sled DB
 pub fn get_distinct_products(db: &sled::Db) -> Result<Vec<String>, Box<dyn Error>> {
@@ -12,7 +12,7 @@ pub fn get_distinct_products(db: &sled::Db) -> Result<Vec<String>, Box<dyn Error
 
     for item in db.iter() {
         let (_, serialized_product) = item?;
-        let product_version: ProductVersion = serde_json::from_slice(&serialized_product)?;
+        let product_version: Roadmap = serde_json::from_slice(&serialized_product)?;
 
         // Insert product into the set (to ensure distinct values)
         product_set.insert(product_version.product);
