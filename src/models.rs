@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Versions {
+pub struct RoadmapList {
     pub versions: Vec<Roadmap>,
 }
 
@@ -18,13 +18,13 @@ pub struct Roadmap {
 pub struct RoadmapEntry {
     pub version: String,
     pub etat: String,
-    start_date: Option<NaiveDate>,                // Date field
-    pub end_date: Option<NaiveDate>,          // Optional Date field
-    extended_end_date: Option<NaiveDate>, // Optional Date field
+    start_date: Option<NaiveDate>,
+    pub end_date: Option<NaiveDate>,
+    extended_end_date: Option<NaiveDate>,
     comment: Option<String>,
     source_name: Option<String>,
     source_entity: Option<String>,
-    pub updated_at: Option<NaiveDate>,                // Date field
+    pub updated_at: Option<NaiveDate>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
