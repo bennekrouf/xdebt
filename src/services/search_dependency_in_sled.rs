@@ -2,7 +2,7 @@
 use dialoguer::Input;
 use std::error::Error;
 
-use crate::services::get_product_version::get_product_version;
+use crate::services::get_roadmap::get_roadmap;
 
 // Function to search for a dependency in Sled DB
 pub fn search_dependency_in_sled(db: &sled::Db) -> Result<(), Box<dyn Error>> {
@@ -12,7 +12,7 @@ pub fn search_dependency_in_sled(db: &sled::Db) -> Result<(), Box<dyn Error>> {
         .interact()?;
 
     // Get the dependency from the Sled database
-    match get_product_version(db, &dependency)? {
+    match get_roadmap(db, &dependency)? {
         Some(roadmap) => {
             // Display the found product version information
             println!("Dependency found: {:#?}", roadmap);

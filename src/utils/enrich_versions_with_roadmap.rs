@@ -2,7 +2,7 @@
 use serde_json::{Value, Map, json};
 use sled::Db;
 use std::error::Error;
-use crate::services::get_product_version::get_product_version;
+use crate::services::get_roadmap::get_roadmap;
 
 pub fn enrich_versions_with_roadmap(
     db: &Db,
@@ -15,7 +15,7 @@ pub fn enrich_versions_with_roadmap(
         let current_version = version_value.as_str().unwrap_or("").to_string();
 
         // Get the product version (roadmap) from the sled DB
-        let roadmap = match get_product_version(db, product)? {
+        let roadmap = match get_roadmap(db, product)? {
             Some(roadmap) => {
                 // Serialize the product version into JSON
                 serde_json::to_value(roadmap)?
