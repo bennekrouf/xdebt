@@ -16,9 +16,9 @@ pub fn enrich_versions_with_roadmap(
 
         // Get the product version (roadmap) from the sled DB
         let roadmap = match get_product_version(db, product)? {
-            Some(product_version) => {
+            Some(roadmap) => {
                 // Serialize the product version into JSON
-                serde_json::to_value(product_version)?
+                serde_json::to_value(roadmap)?
             },
             None => {
                 // If no roadmap is found, set to null or some default

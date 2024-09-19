@@ -12,10 +12,10 @@ pub fn get_distinct_products(db: &sled::Db) -> Result<Vec<String>, Box<dyn Error
 
     for item in db.iter() {
         let (_, serialized_product) = item?;
-        let product_version: Roadmap = serde_json::from_slice(&serialized_product)?;
+        let roadmap: Roadmap = serde_json::from_slice(&serialized_product)?;
 
         // Insert product into the set (to ensure distinct values)
-        product_set.insert(product_version.product);
+        product_set.insert(roadmap.product);
     }
 
     // Convert HashSet to a Vec and return

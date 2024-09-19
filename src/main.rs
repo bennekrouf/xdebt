@@ -2,7 +2,6 @@
 use std::error::Error;
 use tracing_subscriber;
 
-
 mod utils;
 mod plugins;
 mod roadmap;
