@@ -11,18 +11,18 @@ pub struct ProductVersion {
     pub product: String,
     domain: Option<String>,
     chapter: Option<String>,
-    records: Vec<Record>,
+    pub records: Vec<Record>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Record {
-    version: String,
-    etat: String,
+pub struct Record {
+    pub version: String,
+    pub etat: String,
     start_date: Option<NaiveDate>,                // Date field
-    end_date: Option<NaiveDate>,          // Optional Date field
+    pub end_date: Option<NaiveDate>,          // Optional Date field
     extended_end_date: Option<NaiveDate>, // Optional Date field
     comment: Option<String>,
     source_name: Option<String>,
     source_entity: Option<String>,
-    updated_at: Option<NaiveDate>,                // Date field
+    pub updated_at: Option<NaiveDate>,                // Date field
 }

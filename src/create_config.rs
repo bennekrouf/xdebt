@@ -19,6 +19,7 @@ struct ConfigFile {
     base_url: String,
     user: Option<String>,  // Only for GitHub
     force_git_pull: bool,
+    force_maven_effective: bool,
     equivalences: HashMap<String, Vec<String>>,
 }
 
@@ -28,6 +29,7 @@ pub struct AppConfig {
     pub db: Db,
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,
+    pub force_maven_effective: bool,
     pub equivalences: HashMap<String, Vec<String>>,
 }
 
@@ -52,6 +54,7 @@ pub fn create_config() -> Result<AppConfig, Box<dyn Error>> {
         db,
         url_config,
         force_git_pull: config.force_git_pull,
+        force_maven_effective: config.force_maven_effective,
         equivalences: config.equivalences,
     })
 }
@@ -88,5 +91,4 @@ fn read_yaml(file_path: &str) -> Result<ConfigFile, Box<dyn Error>> {
 
     Ok(config)
 }
-
 
