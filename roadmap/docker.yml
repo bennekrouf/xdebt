@@ -1,0 +1,14 @@
+roadmap_list:
+  - dependency: "docker"
+    domain: "migration"
+    chapter: "#N/A"
+    entries:
+      - version: "N/A"
+        start_date: "2024-01-01"
+        end_date: null
+        extended_end_date: null
+        comment: "If no Dockerfile is found in the repository, a migration to Docker is required."
+        source_name: "Migration Policy"
+        source_entity: "ACT-INT"
+        updated_at: "2023-09-08"
+

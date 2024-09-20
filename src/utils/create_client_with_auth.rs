@@ -11,10 +11,18 @@ pub fn create_client_with_auth() -> Result<(Client, String), Box<dyn Error>> {
 
     // Get credentials from environment variables
     let username = env::var("BITBUCKET_USERNAME")
-        .map_err(|e| format!("Missing BITBUCKET_USERNAME environment variable: {}", e))?;
-    let password = env::var("BITBUCKET_PASSWORD")
-        .map_err(|e| format!("Missing BITBUCKET_PASSWORD environment variable: {}", e))?;
+        .map_err(|e| format!(
+            "Missing BITBUCKET_USERNAME environment variable: {}. \
+            Please create a `.env` file at the root of the repository and add a var BITBUCKET_USERNAME=<your_username>",
+            e
+        ))?;
 
+    let password = env::var("BITBUCKET_PASSWORD")
+        .map_err(|e| format!(
+            "Missing BITBUCKET_PASSWORD environment variable: {}. \
+            Please create a `.env` file at the root of the repository and add a var BITBUCKET_PASSWORD=<your_password>",
+            e
+        ))?;
     // Create the HTTP client
     let client = Client::new();
 

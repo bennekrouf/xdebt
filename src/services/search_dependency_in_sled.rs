@@ -14,7 +14,7 @@ pub fn search_dependency_in_sled(db: &sled::Db) -> Result<(), Box<dyn Error>> {
     // Get the dependency from the Sled database
     match get_roadmap(db, &dependency)? {
         Some(roadmap) => {
-            // Display the found product version information
+            // Display the found dependency version information
             println!("Dependency found: {:#?}", roadmap);
         },
         None => {

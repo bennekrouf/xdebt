@@ -3,8 +3,9 @@ use chrono::Utc;
 use crate::kpi::compare_versions::compare_versions;
 use crate::models::{KPIResult, Analysis};
 
-pub fn compute_kpi(analysis: &Analysis) -> KPIResult {
-    let current_version = &analysis.product_version.version_number;
+pub fn compute_kpi<'a>(analysis: &'a Analysis) -> KPIResult<'a> {
+    let current_version = &analysis.dependency_version.version_number;
+    // let repository_name = ;
     let today = Utc::now().date_naive();
 
     let mut compliance_status = "non-compliant".to_string();
@@ -14,14 +15,13 @@ pub fn compute_kpi(analysis: &Analysis) -> KPIResult {
     if let Some(roadmap) = analysis.roadmap.as_ref() {
         for record in &roadmap.entries {
             let record_version = &record.version;
-            let etat = &record.etat;
 
             // Check if the current version is compliant with the record's version
             if compare_versions(current_version, record_version) {
                 compliance_status = "compliant".to_string();
 
                 // Check lifecycle status: parse end_date if it exists, otherwise skip comparison
-                if etat == "out" || record.end_date.as_ref().map_or(false, |date| *date <= today) {
+                if record.end_date.as_ref().map_or(false, |date| *date <= today) {
                     maintenance_action = "Upgrade needed".to_string();
                 } else {
                     maintenance_action = "No action needed".to_string();
@@ -30,7 +30,8 @@ pub fn compute_kpi(analysis: &Analysis) -> KPIResult {
         }
 
         KPIResult {
-            product_name: roadmap.product.clone(),
+            repository_name: &analysis.repository_name,
+            dependency_name: roadmap.dependency.clone(),
             version_number: current_version.clone(),
             compliance_status,
             maintenance_action,

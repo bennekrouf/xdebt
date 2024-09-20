@@ -17,7 +17,7 @@ pub fn fetch_repositories(
     trace!("Fetching repositories for project: {}", project_name);
 
     // Use UrlConfig to get the URL for repositories
-    let repos_url = url_config.repos_url(project_name, ""); // Assuming repos_url needs only project_name
+    let repos_url = url_config.repos_url(project_name, "");
 
     let mut start = 0;
     let limit = 50;  // Adjust limit as needed

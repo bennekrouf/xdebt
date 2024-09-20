@@ -71,7 +71,7 @@ pub fn process_pom(
                 "pom.xml"
             )?;
 
-            info!("Module POM for '{}' downloaded successfully.", module);
+            debug!("Module POM for '{}' downloaded successfully.", module);
         }
     }
 
@@ -100,7 +100,7 @@ pub fn process_pom(
 
             // Analyze the POM content
             let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;
-            info!("analyze_pom_content returns {}", pom_analysis_result);
+            debug!("analyze_pom_content returns {}", pom_analysis_result);
 
             pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
 

@@ -8,7 +8,7 @@ pub struct RoadmapList {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Roadmap {
-    pub product: String,
+    pub dependency: String,
     pub domain: Option<String>,
     pub chapter: Option<String>,
     pub entries: Vec<RoadmapEntry>,
@@ -17,7 +17,6 @@ pub struct Roadmap {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RoadmapEntry {
     pub version: String,
-    pub etat: String,
     start_date: Option<NaiveDate>,
     pub end_date: Option<NaiveDate>,
     extended_end_date: Option<NaiveDate>,
@@ -28,20 +27,22 @@ pub struct RoadmapEntry {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ProductVersion {
+pub struct DependencyVersion {
     pub version_number: String,
-    pub product_name: String,
+    pub dependency_name: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Analysis {
-    pub product_version: ProductVersion,
+    pub repository_name: String,
+    pub dependency_version: DependencyVersion,
     pub roadmap: Option<Roadmap>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct KPIResult {
-    pub product_name: String,
+pub struct KPIResult<'a> {
+    pub repository_name: &'a str,
+    pub dependency_name: String,
     pub version_number: String,
     pub compliance_status: String,
     pub maintenance_action: String,

@@ -22,8 +22,8 @@ impl UrlConfig for BitbucketConfig {
         format!("{}/rest/api/1.0/projects", self.base_url)
     }
 
-    fn repos_url(&self, project_name: &str, repo_name: &str) -> String {
-        format!("{}/rest/api/1.0/projects/{}/repos/{}", self.base_url, project_name, repo_name)
+    fn repos_url(&self, project_name: &str, _: &str) -> String {
+        format!("{}/rest/api/1.0/projects/{}/repos", self.base_url, project_name)
     }
 
     fn file_url(&self, project_name: &str, repo_name: &str, file_path: &str) -> String {

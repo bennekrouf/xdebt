@@ -5,22 +5,22 @@ use crate::services::get_roadmap::get_roadmap;
 use crate::models::{Roadmap, Analysis};
 
 pub fn enrich_versions_with_roadmap(
-    db: &Db,
-    analyses: Vec<Analysis>,
-) -> Result<Vec<Analysis>, Box<dyn Error>> {
+     db: &Db,
+     analyses: Vec<Analysis>,
+ ) -> Result<Vec<Analysis>, Box<dyn Error>> {
     let mut enriched_analyses = analyses;
     // Iterate over the mutable reference of analyses to enrich them
     for analysis in enriched_analyses.iter_mut() {
-        // Extract the product name from the `product_version`
-        let product_name = &analysis.product_version.product_name;
+        // Extract the dependency name from the `dependency_version`
+        let dependency_name = &analysis.dependency_version.dependency_name;
 
-        // Get the roadmap for the product from the sled DB
-        let roadmap = match get_roadmap(db, product_name)? {
+        // Get the roadmap for the dependency from the sled DB
+        let roadmap = match get_roadmap(&db, dependency_name)? {
             Some(roadmap) => roadmap,  // Return the Roadmap struct
             None => {
                 // Handle missing roadmaps by creating a default or empty roadmap
                 Roadmap {
-                    product: product_name.to_string(),
+                    dependency: dependency_name.to_string(),
                     domain: None,
                     chapter: None,
                     entries: vec![],

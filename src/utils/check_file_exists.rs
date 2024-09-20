@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use reqwest::header::HeaderValue;
-use tracing::{info, warn};
+use tracing::{debug, trace};
 
 use crate::create_config::AppConfig;
 
@@ -18,7 +18,7 @@ pub fn check_file_exists(
     // Construct the Bitbucket API URL to check the file
     let file_url = url_config.file_url(project_name, repo_name, file_path);
 
-    info!("Checking for file {} at URL: {}", file_path, file_url);
+    trace!("Checking for file {} at URL: {}", file_path, file_url);
 
     // Make the GET request to the Bitbucket API
     let response = client
@@ -36,17 +36,17 @@ pub fn check_file_exists(
 
         // Check if the response contains a message indicating that the file does not exist
         if body.contains("The path") && body.contains("does not exist") {
-            warn!("{} not found (path does not exist).", file_path);
+            debug!("{} not found (path does not exist).", file_path);
             Ok(None)  // File doesn't exist
         } else if body.trim().is_empty() {
-            warn!("{} found but the file is empty.", file_path);
+            debug!("{} found but the file is empty.", file_path);
             Ok(None)  // Return None if the file is empty
         } else {
-            info!("{} found and is not empty.", file_path);
+            debug!("{} found and is not empty.", file_path);
             Ok(Some(file_url))  // Return the file URL if it exists
         }
     } else if response.status() == 404 {
-        warn!("{} not found (HTTP 404).", file_path);
+        debug!("{} not found (HTTP 404).", file_path);
         Ok(None)  // File doesn't exist
     } else {
         Err(format!("Failed to check {}: HTTP {}", file_path, response.status()).into())
