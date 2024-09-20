@@ -1,40 +1,37 @@
 
-use serde_json::{Value, Map, json};
 use sled::Db;
 use std::error::Error;
 use crate::services::get_roadmap::get_roadmap;
+use crate::models::{Roadmap, Analysis};
 
 pub fn enrich_versions_with_roadmap(
     db: &Db,
-    versions: &Map<String, Value>
-) -> Result<Map<String, Value>, Box<dyn Error>> {
-    let mut transformed_versions = Map::new();
+    analyses: Vec<Analysis>,
+) -> Result<Vec<Analysis>, Box<dyn Error>> {
+    let mut enriched_analyses = analyses;
+    // Iterate over the mutable reference of analyses to enrich them
+    for analysis in enriched_analyses.iter_mut() {
+        // Extract the product name from the `product_version`
+        let product_name = &analysis.product_version.product_name;
 
-    for (product, version_value) in versions.iter() {
-        // Extract the current version as a string
-        let current_version = version_value.as_str().unwrap_or("").to_string();
-
-        // Get the product version (roadmap) from the sled DB
-        let roadmap = match get_roadmap(db, product)? {
-            Some(roadmap) => {
-                // Serialize the product version into JSON
-                serde_json::to_value(roadmap)?
-            },
+        // Get the roadmap for the product from the sled DB
+        let roadmap = match get_roadmap(db, product_name)? {
+            Some(roadmap) => roadmap,  // Return the Roadmap struct
             None => {
-                // If no roadmap is found, set to null or some default
-                Value::Null
+                // Handle missing roadmaps by creating a default or empty roadmap
+                Roadmap {
+                    product: product_name.to_string(),
+                    domain: None,
+                    chapter: None,
+                    entries: vec![],
+                }
             }
         };
 
-        // Create the new version structure with "current" and "roadmap"
-        let version_info = json!({
-            "current": current_version,
-            "roadmap": roadmap
-        });
-
-        // Insert into the transformed map
-        transformed_versions.insert(product.clone(), version_info);
+        // Enrich the existing `analysis` with the fetched roadmap
+        analysis.roadmap = Some(roadmap);
     }
 
-    Ok(transformed_versions)
+    Ok(enriched_analyses)
 }
+

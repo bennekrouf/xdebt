@@ -12,7 +12,7 @@ pub fn analyze_specific_repository(
 ) -> Result<(), Box<dyn Error>> {
 
     let repo_name: String = Input::new()
-        .with_prompt("Enter the repository name (e.g., xcad):")
+        .with_prompt("Enter the repository name (e.g., xcad)")
         .interact()?;
 
     let projects = get_projects(config)?;

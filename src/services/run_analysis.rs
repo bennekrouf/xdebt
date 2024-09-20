@@ -1,10 +1,11 @@
 
 use std::error::Error;
+use serde_json::Value;
 
 use crate::plugins::analyze_one_repo::analyze_one_repo;
-use crate::utils::append_json_to_file::append_json_to_file;
-use crate::utils::append_json_to_csv::append_json_to_csv;
 use crate::create_config::AppConfig;
+use crate::kpi::compute_kpi::compute_kpi;  // Assuming this is your function
+use crate::models::KPIResult;
 
 pub fn run_analysis(
     config: &AppConfig,
@@ -15,21 +16,25 @@ pub fn run_analysis(
         return Ok(());
     }
 
+    // Perform the analysis
     match analyze_one_repo(config, project_name, repo_name) {
-        Ok(json_result) => {
+        Ok(analysis_results) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
-            tracing::info!("Analysis result: {}", serde_json::to_string_pretty(&json_result)?);
+            tracing::info!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);
 
-            if let Err(e) = append_json_to_file(project_name, &json_result) {
-                tracing::error!("Failed to append JSON to file for project '{}', repo '{}': {}", project_name, repo_name, e);
-            }
+            // Compute KPIs
+            let kpi_results: Vec<KPIResult> = analysis_results
+                .iter()
+                .map(|analysis| compute_kpi(analysis))
+                .collect();
 
-            if let Err(e) = append_json_to_csv(project_name, &json_result) {
-                tracing::error!("Failed to append JSON to CSV for project '{}', repo '{}': {}", project_name, repo_name, e);
+            // Display KPIs instead of appending to file or CSV
+            for kpi in &kpi_results {
+                tracing::info!("KPI Result: {}", serde_json::to_string_pretty(kpi)?);
             }
         }
         Err(e) => {
-            tracing::error!("Failed to generate POM analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);
+            tracing::error!("Failed to generate analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);
         }
     }
 

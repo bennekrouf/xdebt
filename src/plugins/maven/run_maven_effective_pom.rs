@@ -3,43 +3,57 @@ use std::io::ErrorKind;
 use std::error::Error;
 use std::process::Command;
 use std::fs;
+use tracing::{info, trace, error};
 
-pub fn run_maven_effective_pom(pom_file: &str, repo: &str) -> Result<String, Box<dyn Error>> {
-    let output_file = format!("{}/effective_pom.xml", &repo);
+pub fn run_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Error>> {
+    let output_file = format!("effective_pom.xml");
     let output_option = format!("-Doutput={}", output_file);
     let pom_file = format!("{}", &pom_file);
-    // Print current working directory
-    // println!("Current working directory: {}", std::env::current_dir()?.display());
-    println!("Running maven effective from {} to {}", &pom_file, &output_option);
+
+    // Trace the working directory and POM details
+    info!("Preparing to run Maven effective-pom for file '{}', outputting to '{}'", &pom_file, &output_option);
 
     // Check if the POM file exists and is not empty
     let metadata = fs::metadata(&pom_file)
-        .map_err(|e| format!("Failed to get metadata for POM file '{}': {}", pom_file, e))?;
+        .map_err(|e| {
+            let err_message = format!("Failed to get metadata for POM file '{}': {}", pom_file, e);
+            error!("{}", err_message); // Log the error
+            err_message
+        })?;
 
     if metadata.len() == 0 {
-        return Err(Box::new(std::io::Error::new(ErrorKind::NotFound, "POM file is empty")));
+        let err_message = "POM file is empty".to_string();
+        error!("{}", err_message); // Log the error
+        return Err(Box::new(std::io::Error::new(ErrorKind::NotFound, err_message)));
     }
+
+    // Trace before running the Maven command
+    info!("Running 'mvn help:effective-pom' for POM file '{}'", &pom_file);
 
     // Run Maven command
     let output = Command::new("mvn")
         .arg("help:effective-pom")
-        .arg("-X")
+        .arg("-X")  // Verbose output to trace Maven
         .arg("-f")
-        .arg(pom_file)
-        .arg(output_option)
+        .arg(&pom_file)
+        .arg(&output_option)
         .output()
-        .map_err(|e| format!("Failed to execute Maven command: {}", e))?;
+        .map_err(|e| {
+            let err_message = format!("Failed to execute Maven command: {}", e);
+            error!("{}", err_message); // Log the error
+            err_message
+        })?;
 
     if output.status.success() {
-        println!("Effective POM generated successfully as '{}'.", output_file);
-        println!("Maven stdout: {}", String::from_utf8_lossy(&output.stdout));
-        println!("Maven stderr: {}", String::from_utf8_lossy(&output.stderr));
-        Ok(output_file) // Return the name of the output file
+        info!("Effective POM generated successfully at '{}'", &output_file);
+        trace!("Maven stdout: {}", String::from_utf8_lossy(&output.stdout));
+        trace!("Maven stderr: {}", String::from_utf8_lossy(&output.stderr));
+        Ok(output_file) // Return the output file name
     } else {
         let status_code = output.status.code().unwrap_or(-1);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!("Maven command failed with status code: {}", status_code);
-        eprintln!("stderr: {}", stderr);
+        error!("Maven command failed with status code: {}", status_code);
+        error!("stderr: {}", stderr);
         Err(Box::new(std::io::Error::new(ErrorKind::Other, "Maven command failed")))
     }
 }

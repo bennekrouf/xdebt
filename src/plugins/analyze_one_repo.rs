@@ -1,8 +1,8 @@
 
 use std::error::Error;
 use std::env;
-use serde_json::{Value, Map};
-use tracing::{info, warn, debug, trace};
+use serde_json::Value;
+use tracing::{info, warn, debug};
 use reqwest::header::HeaderValue;
 
 use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
@@ -15,12 +15,13 @@ use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_g
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
 use crate::services::get_distinct_products::get_distinct_products;
 use crate::create_config::AppConfig;
+use crate::models::{Analysis, ProductVersion};
 
 pub fn analyze_one_repo(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<serde_json::Value, Box<dyn Error>> {
+) -> Result<Vec<Analysis>, Box<dyn Error>> {
     let client = &config.client;
     let auth_header = &config.auth_header;
     let url_config = &*config.url_config;
@@ -41,58 +42,77 @@ pub fn analyze_one_repo(
     let pom_url = url_config.file_url(project_name, repo_name, "pom.xml");
 
     // Try to process POM and continue even if there's an error
-    let mut pom_versions = match process_pom(
-        config, repo_name, &target_folder, &pom_url, &versions_keywords, 
+    let mut analyses = match process_pom(
+        config, repo_name, &target_folder, &pom_url, &versions_keywords,
     ) {
-        Ok(versions) => versions,
+        Ok(versions_map) => {
+            // Convert the `Map<String, Value>` to `Vec<Analysis>`
+            versions_map
+                .iter()
+                .map(|(product_name, value)| Analysis {
+                    product_version: ProductVersion {
+                        product_name: product_name.clone(),
+                        version_number: value.as_str().unwrap_or("").to_string(),
+                    },
+                    roadmap: None, // Assuming `roadmap` is not present in the POM analysis result
+                })
+                .collect::<Vec<Analysis>>()
+        }
         Err(e) => {
             warn!("Failed to generate POM analysis for project '{}', repo '{}': {}", project_name, repo_name, e);
-            Map::new()
+            Vec::new()
         }
     };
-
-    // Initialize the final result JSON
-    let mut final_result = Map::new();
 
     // Call the modified package.json analysis that now handles package.json search internally
     info!("Analyzing package.json for repository: {}", repo_name);
     let package_json_analysis_result = analyze_package_json_content(config, project_name, repo_name, &versions_keywords)?;
 
-    // Merge the results of the package.json analysis
-    pom_versions.extend(package_json_analysis_result
-        .get("versions")
-        .and_then(Value::as_object)
-        .unwrap_or(&Map::new())
-        .clone());
+    // Convert package.json analysis result into `Analysis` structs and add them to `analyses`
+    let package_json_analyses: Vec<Analysis> = package_json_analysis_result
+        .get("analyses")
+        .and_then(Value::as_array)
+        .unwrap_or(&Vec::new())
+        .iter()
+        .filter_map(|v| serde_json::from_value::<Analysis>(v.clone()).ok())
+        .collect();
 
-    if !pom_versions.is_empty() {
-        final_result.insert("versions".to_string(), Value::Object(pom_versions));
-    }
-
-    if let Some(references) = package_json_analysis_result.get("references").cloned() {
-        if !references.as_array().unwrap_or(&Vec::new()).is_empty() {
-            final_result.insert("references".to_string(), references);
-        }
-    }
-
-    final_result.insert("repository".to_string(), Value::String(repo_name.to_string()));
+    analyses.extend(package_json_analyses);
 
     // Check if Dockerfile exists in the repository
     let dockerfile_exists = check_dockerfile_exists(config, project_name, repo_name)?;
     if dockerfile_exists {
-        final_result.insert("Docker".to_string(), Value::Bool(dockerfile_exists));
+        analyses.push(Analysis {
+                    product_version: ProductVersion {
+                        product_name: "Docker".to_string(),
+                        version_number: "exists".to_string(),
+                    },
+                    roadmap: None,
+        });
     }
 
     // Check if .csproj exists in the repository
     let csproj_exists = check_csproj_files(config, project_name, repo_name)?;
     if csproj_exists {
-        final_result.insert("C#".to_string(), Value::Bool(csproj_exists));
+        analyses.push(Analysis {
+                    product_version: ProductVersion {
+                        product_name: "C#".to_string(),
+                        version_number: "exists".to_string(),
+                    },
+                    roadmap: None,
+        });
     }
 
     // Check if PHP repository files exist
     let php_files_exists = check_php_files(config, project_name, repo_name)?;
     if php_files_exists {
-        final_result.insert("php".to_string(), Value::Bool(php_files_exists));
+        analyses.push(Analysis {
+                    product_version: ProductVersion {
+                        product_name: "PHP".to_string(),
+                        version_number: "exists".to_string(),
+                    },
+                    roadmap: None,
+        });
     }
 
     // Jenkins analysis: Check if Jenkins file exists
@@ -106,11 +126,13 @@ pub fn analyze_one_repo(
         // Extract versions for each keyword from the Jenkins file
         for keyword in &versions_keywords {
             if let Some(version) = extract_version_from_groovy(config, &jenkins_file_content, keyword) {
-                final_result.entry("versions".to_string())
-                    .or_insert_with(|| Value::Object(Map::new()))
-                    .as_object_mut()
-                    .unwrap()
-                    .insert(keyword.to_string(), Value::String(version));
+                analyses.push(Analysis {
+                    product_version: ProductVersion {
+                        product_name: keyword.to_string(),
+                        version_number: version.to_string(),
+                    },
+                    roadmap: None,
+                });
             } else {
                 info!("No version found for keyword '{}' in Jenkins file.", keyword);
             }
@@ -119,19 +141,11 @@ pub fn analyze_one_repo(
         info!("No Jenkins file found for project '{}', repo '{}'.", project_name, repo_name);
     }
 
-    debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, final_result);
+    debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repo_name, analyses);
 
-    // Extract the "versions" object from the result
-    if let Some(versions) = final_result.get("versions").and_then(Value::as_object) {
-        // Call the transform function
-        let transformed_versions = enrich_versions_with_roadmap(&db, versions)?;
+    // Enrich analyses with the roadmap data
+    let enriched_analyses = enrich_versions_with_roadmap(db, analyses)?;
 
-        // Update the final_result with the transformed versions
-        final_result.insert("versions".to_string(), Value::Object(transformed_versions));
-
-        debug!("Updated result: {:?}", final_result);
-    }
-
-    Ok(Value::Object(final_result))
+    Ok(enriched_analyses)
 }
 

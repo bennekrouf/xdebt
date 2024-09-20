@@ -77,7 +77,7 @@ pub fn process_pom(
 
     // After downloading all POM files, run 'maven effective-pom'
     let mut pom_versions = Map::new();
-    let effective_pom_file = Path::new(target_folder).join("effective_pom.xml"); // Location of effective POM
+    let effective_pom_file = Path::new(target_folder).join("effective_pom.xml");
 
     // Check if the effective POM exists or force_maven_effective is true
     if !effective_pom_file.exists() || config.force_maven_effective {
@@ -87,10 +87,8 @@ pub fn process_pom(
         );
 
         // Run 'maven effective-pom'
-        let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy(), repo_name)?;
-        // let effective_pom_file_name = effective_pom_result?;
-        // if let Ok(effective_pom_file_name) = effective_pom_result {
-            let effective_pom_path = Path::new(target_folder).join(&effective_pom_result); // Correct file path
+        let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy())?;
+            let effective_pom_path = Path::new(&effective_pom_result);
             if !effective_pom_path.exists() {
                 return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
             }
@@ -107,7 +105,6 @@ pub fn process_pom(
             pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
 
             return Ok(pom_versions);
-        // }
     } else {
         info!(
             "Effective POM file '{}' already exists, skipping generation.",

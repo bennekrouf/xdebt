@@ -1,4 +1,4 @@
-versions:
+roadmap_list:
   - product: "node"
     entries:
       - version: "20"
