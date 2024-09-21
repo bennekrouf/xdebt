@@ -40,8 +40,7 @@ pub struct Analysis {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct KPIResult<'a> {
-    pub repository_name: &'a str,
+pub struct KPIResult {
     pub dependency_name: String,
     pub version_number: String,
     pub compliance_status: String,

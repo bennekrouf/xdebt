@@ -6,3 +6,4 @@ pub mod append_json_to_file;
 pub mod download_file;
 pub mod check_file_exists;
 pub mod enrich_versions_with_roadmap;
+pub mod remove_null_values;

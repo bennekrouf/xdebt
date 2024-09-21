@@ -3,7 +3,7 @@ use chrono::Utc;
 use crate::kpi::compare_versions::compare_versions;
 use crate::models::{KPIResult, Analysis};
 
-pub fn compute_kpi<'a>(analysis: &'a Analysis) -> KPIResult<'a> {
+pub fn compute_kpi<'a>(analysis: &'a Analysis) -> KPIResult {
     let current_version = &analysis.dependency_version.version_number;
     // let repository_name = ;
     let today = Utc::now().date_naive();
@@ -30,7 +30,6 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> KPIResult<'a> {
         }
 
         KPIResult {
-            repository_name: &analysis.repository_name,
             dependency_name: roadmap.dependency.clone(),
             version_number: current_version.clone(),
             compliance_status,

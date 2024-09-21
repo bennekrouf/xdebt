@@ -20,6 +20,7 @@ struct ConfigFile {
     user: Option<String>,  // Only for GitHub
     force_git_pull: bool,
     force_maven_effective: bool,
+    trace: String,
     equivalences: HashMap<String, Vec<String>>,
 }
 
@@ -34,12 +35,21 @@ pub struct AppConfig {
 }
 
 pub fn create_config() -> Result<AppConfig, Box<dyn Error>> {
-    let (client, auth_header) = create_client_with_auth()?;
-    let db = sled::open("roadmap_db").expect("Failed to open DB");
-
     // Read the YAML configuration file
     let config_file_path = "configuration.yml";
     let config: ConfigFile = read_yaml(config_file_path)?;
+
+    let trace_level: tracing::Level = match config.trace.as_str() {
+        "INFO" => tracing::Level::INFO,
+        "DEBUG" => tracing::Level::DEBUG,
+        "ERROR" => tracing::Level::ERROR,
+        "WARN" => tracing::Level::WARN,
+        _ => tracing::Level::INFO, // default to INFO if not matched
+    };
+
+    tracing_subscriber::fmt().with_max_level(trace_level).init();
+    let (client, auth_header) = create_client_with_auth()?;
+    let db = sled::open("roadmap_db").expect("Failed to open DB");
 
     // Match platform and construct the corresponding URL config
     let url_config: Box<dyn UrlConfig> = match config.platform.as_str() {
