@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use crate::utils::check_file_exists::check_file_exists;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn check_csproj_files(
     config: &AppConfig,

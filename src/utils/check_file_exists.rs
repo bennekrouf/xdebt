@@ -1,9 +1,9 @@
 
 use std::error::Error;
-use reqwest::header::HeaderValue;
 use tracing::{debug, trace};
 
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
+use crate::utils::run_get_query::run_get_query;
 
 pub fn check_file_exists(
     config: &AppConfig,
@@ -11,8 +11,6 @@ pub fn check_file_exists(
     repo_name: &str,
     file_path: &str,  // file_path is the full path of the file in the repository
 ) -> Result<Option<String>, Box<dyn Error>> {
-    let client = &config.client;
-    let auth_header = &config.auth_header;
     let url_config = &*config.url_config;
 
     // Construct the Bitbucket API URL to check the file
@@ -20,36 +18,19 @@ pub fn check_file_exists(
 
     trace!("Checking for file {} at URL: {}", file_path, file_url);
 
-    // Make the GET request to the Bitbucket API
-    let response = client
-        .get(&file_url)
-        .header("Authorization", HeaderValue::from_str(auth_header)?)
-        .send()?;
+    // Use the run_get_query helper to perform the request
+    let response_json = run_get_query(config, &file_url)?;
 
-    // Check if the response status is 200 OK
-    if response.status().is_success() {
-        // Read the response body
-        let body = response.text()?;
-
-        // Log the file content for debugging
-        // debug!("Response content of {}:\n{}", file_path, body);
-
-        // Check if the response contains a message indicating that the file does not exist
-        if body.contains("The path") && body.contains("does not exist") {
-            debug!("{} not found (path does not exist).", file_path);
-            Ok(None)  // File doesn't exist
-        } else if body.trim().is_empty() {
-            debug!("{} found but the file is empty.", file_path);
-            Ok(None)  // Return None if the file is empty
-        } else {
-            debug!("{} found and is not empty.", file_path);
-            Ok(Some(file_url))  // Return the file URL if it exists
-        }
-    } else if response.status() == 404 {
-        debug!("{} not found (HTTP 404).", file_path);
+    // Check for existence based on response content
+    if response_json.get("error").is_some() {
+        debug!("{} not found (file does not exist).", file_path);
         Ok(None)  // File doesn't exist
+    } else if response_json.get("content").is_some() && response_json["content"].as_str().unwrap_or("").trim().is_empty() {
+        debug!("{} found but the file is empty.", file_path);
+        Ok(None)  // Return None if the file is empty
     } else {
-        Err(format!("Failed to check {}: HTTP {}", file_path, response.status()).into())
+        debug!("{} found and is not empty.", file_path);
+        Ok(Some(file_url))  // Return the file URL if it exists
     }
 }
 

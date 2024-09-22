@@ -1,11 +1,12 @@
 
 use std::fs::{self, File};
-use std::io::copy;
 use std::path::Path;
 use std::error::Error;
+use std::io::Write;
 use tracing::trace;
 
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
+use crate::utils::run_get_query::run_get_query;
 
 pub fn download_file(
     config: &AppConfig,
@@ -13,11 +14,6 @@ pub fn download_file(
     target_folder: &str,
     file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
-    let client = &config.client;
-    let auth_header = &config.auth_header;
-    // let url_config = &*config.url_config; // Dereference the Box
-    // let db = &config.db;
-
     // Ensure the target folder exists
     trace!("Ensuring target folder '{}' exists.", target_folder);
     let target_path = Path::new(target_folder);
@@ -30,22 +26,20 @@ pub fn download_file(
     let full_path = target_path.join(file_name);
     trace!("Full file path: {:?}", full_path);
 
-    // Perform the HTTP GET request with the authorization header
+    // Use run_get_query to perform the GET request
     trace!("Sending GET request to URL: {}", url);
-    let mut response = client
-        .get(url)
-        .header("Authorization", auth_header)
-        .send()
-        .map_err(|e| format!("Failed to send request to '{}': {}", url, e))?;
+    let response_json = run_get_query(config, url)?;
 
-    trace!("Response received with status: {}", response.status());
-    if !response.status().is_success() {
-        return Err(format!(
-            "Failed to download file: HTTP Status {} for URL '{}'",
-            response.status(),
-            url
-        ).into());
+    // Check if the response indicates an error
+    if response_json.get("error").is_some() {
+        return Err(format!("Failed to download file: Error in response from '{}'", url).into());
     }
+
+    // Assuming the file content is in a specific field of the JSON response, extract it
+    // This part may need to be adjusted based on the actual structure of the response
+    let file_content = response_json["content"]
+        .as_str()
+        .ok_or("Failed to get file content from response")?;
 
     // Create a file to save the content
     trace!("Creating file at '{}'.", full_path.display());
@@ -54,7 +48,7 @@ pub fn download_file(
 
     // Write the content to the file
     trace!("Writing content to file.");
-    copy(&mut response, &mut file)
+    file.write_all(file_content.as_bytes())
         .map_err(|e| format!("Failed to write to file '{}': {}", full_path.display(), e))?;
 
     trace!("File downloaded successfully to {:?}", full_path);

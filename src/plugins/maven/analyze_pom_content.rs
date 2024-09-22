@@ -5,7 +5,7 @@ use serde_json::json;
 use serde_json::Value;
 use std::error::Error;
 use regex::Regex;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn analyze_pom_content(
     config: &AppConfig,

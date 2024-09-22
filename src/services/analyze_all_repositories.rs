@@ -4,7 +4,7 @@ use std::error::Error;
 use crate::utils::fetch_repositories::fetch_repositories;
 use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn analyze_all_repositories(
     config: &AppConfig,

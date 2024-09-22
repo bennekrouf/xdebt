@@ -5,7 +5,7 @@ use dialoguer::Input;
 use crate::utils::fetch_repositories::fetch_repositories;
 use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn analyze_specific_repository(
     config: &AppConfig,

@@ -1,4 +1,4 @@
-use crate::url::models::UrlConfig;
+use crate::models::UrlConfig;
 // use std::env;
 
 pub struct BitbucketConfig {

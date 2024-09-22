@@ -9,7 +9,7 @@ use tracing::{trace, info, debug};
 use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 use crate::utils::download_file::download_file;
 use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn process_pom(
     config: &AppConfig,

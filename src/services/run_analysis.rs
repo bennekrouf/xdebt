@@ -1,8 +1,9 @@
 
 use std::error::Error;
 use serde_json::{Value, json, Map};
+
 use crate::plugins::analyze_one_repo::analyze_one_repo;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 use crate::kpi::compute_kpi::compute_kpi;
 use crate::models::KPIResult;
 use crate::utils::remove_null_values::remove_null_values;

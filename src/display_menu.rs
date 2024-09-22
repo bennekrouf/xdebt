@@ -6,12 +6,12 @@ use crate::services::analyze_all_repositories::analyze_all_repositories;
 use crate::services::analyze_project_repositories::analyze_project_repositories;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::services::search_dependency_in_sled::search_dependency_in_sled;
-use crate::create_config::AppConfig;
+use crate::models::AppConfig;
 
 pub fn display_menu(
     config: &AppConfig,
     ) -> Result<(), Box<dyn Error>> {
-    let db = &config.db;
+    let db = &config.db.as_ref().expect("Db should be initialized");
 
     // Define the menu text and options
     let menu_text = "Select an option:";
