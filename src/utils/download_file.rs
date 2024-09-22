@@ -1,8 +1,7 @@
-
-use std::fs::{self, File};
-use std::path::Path;
 use std::error::Error;
+use std::fs::{self, File};
 use std::io::Write;
+use std::path::Path;
 use tracing::trace;
 
 use crate::models::AppConfig;
@@ -18,7 +17,10 @@ pub fn download_file(
     trace!("Ensuring target folder '{}' exists.", target_folder);
     let target_path = Path::new(target_folder);
     if !target_path.exists() {
-        trace!("Target folder '{}' does not exist. Creating...", target_folder);
+        trace!(
+            "Target folder '{}' does not exist. Creating...",
+            target_folder
+        );
         fs::create_dir_all(target_folder)
             .map_err(|e| format!("Failed to create directory '{}': {}", target_folder, e))?;
     }
@@ -55,4 +57,3 @@ pub fn download_file(
 
     Ok(full_path.to_string_lossy().to_string())
 }
-

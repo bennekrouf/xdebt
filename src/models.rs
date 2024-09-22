@@ -29,15 +29,14 @@ pub struct ConfigFile {
 
 pub struct AppConfig {
     pub client: Client,
-    // pub auth_header: HeaderMap,
     pub auth_header: (HeaderName, HeaderValue),
     pub auth_user_agent: (HeaderName, HeaderValue),
     pub db: Option<Db>,
-    // pub user: Option<String>,  // Only for GitHub
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
     pub trace_level: Level,
+    pub platform: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
 }

@@ -37,6 +37,7 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         auth_user_agent,
         db: None,
         trace_level,
+        platform: config.platform,
         output_folder: config.output_folder,
         url_config,
         force_git_pull: config.force_git_pull,
