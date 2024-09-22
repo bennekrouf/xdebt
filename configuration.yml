@@ -7,7 +7,7 @@ user: bennekrouf
 
 force_git_pull: false
 force_maven_effective: false
-trace: info
+trace: trace
 output_folder: tmp
 
 equivalences:

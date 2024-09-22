@@ -1,37 +1,44 @@
-
 use std::error::Error;
 use tracing_subscriber;
 
 mod boot;
-mod utils;
+mod display_menu;
+mod kpi;
+mod models;
 mod plugins;
 mod roadmap;
 mod services;
-mod display_menu;
 mod url;
-mod kpi;
-mod models;
+mod utils;
 
-use roadmap::process_yaml_files::process_yaml_files;
-use display_menu::display_menu;
 use boot::load_config::load_config;
 use boot::watch_config_for_reload::watch_config_for_reload;
+use display_menu::display_menu;
+use roadmap::process_yaml_files::process_yaml_files;
+use tracing_subscriber::filter::EnvFilter;
 
 use std::sync::{Arc, Mutex};
 // use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Ensure the tracing subscriber is initialized only once
-    static INIT: std::sync::Once = std::sync::Once::new();
-    INIT.call_once(|| {
-        tracing_subscriber::fmt()
-            .with_max_level(tracing::Level::INFO)
-            .init();
-    });
-
     // Initial configuration load
     let config_file_path = "configuration.yml";
     let mut config = load_config(config_file_path)?;
+
+    // Ensure the tracing subscriber is initialized only once
+    static INIT: std::sync::Once = std::sync::Once::new();
+
+    let env_filter = EnvFilter::new(
+        "trace".to_owned()                            // Enable trace-level logs globally
+        + ",sled::pagecache::iobuf=info", // Set sled::pagecache::iobuf to info (hides trace)
+    );
+
+    INIT.call_once(|| {
+        tracing_subscriber::fmt()
+            .with_max_level(config.trace_level)
+            .with_env_filter(env_filter)
+            .init();
+    });
 
     let db = sled::open("roadmap_db")?;
     config.db = Some(db);
@@ -55,4 +62,3 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
     }
 }
-

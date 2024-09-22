@@ -1,10 +1,11 @@
 use chrono::NaiveDate;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use reqwest::blocking::Client;
-use sled::Db;
-use reqwest::header::HeaderValue;
 use reqwest::header::HeaderName;
+use reqwest::header::HeaderValue;
+use serde::{Deserialize, Serialize};
+use sled::Db;
+use std::collections::HashMap;
+use tracing::Level;
 
 pub trait UrlConfig: Send + Sync {
     // fn base_url(&self) -> &str;
@@ -18,7 +19,7 @@ pub trait UrlConfig: Send + Sync {
 pub struct ConfigFile {
     pub platform: String,
     pub base_url: String,
-    pub user: Option<String>,  // Only for GitHub
+    pub user: Option<String>, // Only for GitHub
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
     pub trace: String,
@@ -36,6 +37,7 @@ pub struct AppConfig {
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
+    pub trace_level: Level,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
 }
@@ -85,4 +87,3 @@ pub struct KPIResult {
     pub compliance_status: String,
     pub maintenance_action: String,
 }
-
