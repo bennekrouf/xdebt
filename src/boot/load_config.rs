@@ -8,8 +8,6 @@ use crate::utils::create_client_with_auth::create_client_with_auth;
 pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> {
     let config: ConfigFile = read_yaml(config_file_path)?;
 
-    // tracing_subscriber::fmt().with_max_level(trace_level).init();
-
     let (client, auth_header, auth_user_agent) = create_client_with_auth(config.platform.clone())?;
     // let db = sled::open("roadmap_db")?;
 

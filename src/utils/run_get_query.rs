@@ -1,6 +1,6 @@
 use serde_json::Value;
 use std::error::Error;
-use tracing::{debug, error, info}; // Add tracing macros
+use tracing::{debug, error, info, trace}; // Add tracing macros
 
 use crate::models::AppConfig;
 
@@ -16,10 +16,11 @@ pub fn run_get_query(
     info!("Fetching data from URL: {}", paginated_repos_url);
 
     // Trace the headers that will be used in the request
-    info!("Using header: {} = {:?}", auth_name, auth_value);
-    info!(
+    trace!("Using header: {} = {:?}", auth_name, auth_value);
+    trace!(
         "Using User-Agent: {} = {:?}",
-        user_agent_name, user_agent_value
+        user_agent_name,
+        user_agent_value
     );
 
     // Perform the request

@@ -15,10 +15,8 @@ use boot::load_config::load_config;
 use boot::watch_config_for_reload::watch_config_for_reload;
 use display_menu::display_menu;
 use roadmap::process_yaml_files::process_yaml_files;
-use tracing_subscriber::filter::EnvFilter;
-
 use std::sync::{Arc, Mutex};
-// use std::error::Error;
+use tracing_subscriber::filter::EnvFilter;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Initial configuration load
@@ -30,6 +28,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let env_filter = EnvFilter::new(
         "trace".to_owned()                            // Enable trace-level logs globally
+        + ",sled::pagecache=info"
+        + ",sled::tree=info"
         + ",sled::pagecache::iobuf=info", // Set sled::pagecache::iobuf to info (hides trace)
     );
 
