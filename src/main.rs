@@ -26,13 +26,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Ensure the tracing subscriber is initialized only once
     static INIT: std::sync::Once = std::sync::Once::new();
 
-    let env_filter = EnvFilter::new(
-        "trace".to_owned()                            // Enable trace-level logs globally
-        + ",sled::pagecache=info"
-        + ",sled::tree=info"
-        + ",reqwest::blocking::wait=info"
-        + ",sled::pagecache::iobuf=info", // Set sled::pagecache::iobuf to info (hides trace)
-    );
+    let env_filter = EnvFilter::new(format!(
+        "{},sled::pagecache=info,sled::tree=info,reqwest::blocking::wait=info,sled::pagecache::iobuf=info",
+        config.trace_level
+    ));
 
     INIT.call_once(|| {
         tracing_subscriber::fmt()

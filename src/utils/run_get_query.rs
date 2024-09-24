@@ -41,7 +41,7 @@ pub fn run_get_query(
                 match repos_body {
                     Ok(body) => {
                         // Trace the body received
-                        debug!("Received body: {}", body);
+                        // debug!("Received body: {}", body);
 
                         let repos_json: Result<Value, _> = serde_json::from_str(&body);
                         match repos_json {
@@ -51,8 +51,8 @@ pub fn run_get_query(
                                 Ok(json)
                             }
                             Err(e) => {
-                                error!("Error parsing repos JSON: {}", e);
-                                error!("Raw body received: {}", body); // Show the problematic body
+                                // error!("Error parsing repos JSON: {}", e);
+                                // error!("Raw body received: {}", body); // Show the problematic body
                                 Err(format!("Error parsing repos JSON: {}", e).into())
                             }
                         }

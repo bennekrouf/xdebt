@@ -1,9 +1,9 @@
 
-# platform: bitbucket
-# base_url: https://dsigit.etat-de-vaud.ch/outils/git
-platform: github
-base_url: https://api.github.com
-user: bennekrouf
+platform: bitbucket
+base_url: https://dsigit.etat-de-vaud.ch/outils/git
+# platform: github
+# base_url: https://api.github.com
+# user: bennekrouf
 
 force_git_pull: false
 force_maven_effective: false
