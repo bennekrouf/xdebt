@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{debug, trace};
+use tracing::{debug, trace, info};
 
 use crate::models::AppConfig;
 use crate::utils::run_get_request::run_get_request;
@@ -14,7 +14,7 @@ pub fn check_file_exists(
     let url_config = &*config.url_config;
 
     // Construct the Bitbucket API URL to check the file
-    let file_url = url_config.file_url(project_name, repo_name, file_path);
+    let file_url = url_config.raw_file_url(project_name, repo_name, file_path);
 
     trace!("Checking for file {} at URL: {}", file_path, file_url);
 
@@ -29,7 +29,7 @@ pub fn check_file_exists(
         debug!("{} found but the file is empty.", file_path);
         Ok(None)  // Return None if the file is empty
     } else {
-        debug!("{} found and is not empty.", file_path);
+        info!("{} found and is not empty.", file_path);
         Ok(Some(file_url))  // Return the file URL if it exists
     }
 }

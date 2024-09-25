@@ -12,8 +12,18 @@ use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
 use crate::models::AppConfig;
 use crate::plugins::maven::parse_pom_for_modules::parse_pom_for_modules;
 
+fn remove_dtd(xml_content: &str) -> String {
+    // Remove DTD declaration if it exists
+    xml_content
+        .lines()
+        .filter(|line| !line.trim().starts_with("<!DOCTYPE"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
 pub fn process_pom(
     config: &AppConfig,
+    project_name: &str,
     repo_name: &str,
     target_folder: &str,
     pom_url: &str,
@@ -43,37 +53,39 @@ pub fn process_pom(
         .and_then(|mut file| file.read_to_string(&mut main_pom_content))
         .map_err(|e| format!("Failed to read main POM file '{}': {}", pom_file_path.display(), e))?;
 
+    // Remove DTD if present
+    let main_pom_content_no_dtd = remove_dtd(&main_pom_content);
+
     // Parse the POM content for modules and download their POMs before running maven
-    let modules = parse_pom_for_modules(&main_pom_content)?;
+    let modules = parse_pom_for_modules(&main_pom_content_no_dtd)?;
 
     if !modules.is_empty() {
         info!("Multi-module POM detected. Modules: {:?}", modules);
 
         for module in modules {
-            let module_pom_url = format!("{}/{}", pom_url.trim_end_matches("/pom.xml?raw"), module);
-            let module_pom_url = format!("{}/pom.xml", module_pom_url);
+            let module_pom_url = config.url_config.raw_file_url(
+                project_name,
+                repo_name,
+                &module);
+            info!("module_pom_url {}", module_pom_url);
+
             let module_target_folder = Path::new(target_folder).join(&module);
-
-            debug!("Downloading POM for module '{}' from URL: {}", module, module_pom_url);
-            debug!("Target folder for module '{}': {}", module, module_target_folder.display());
-
+            info!("Downloading POM for module '{}' from URL: {}", module, module_pom_url);
             // Create a folder for each module
             std::fs::create_dir_all(&module_target_folder)
                 .map_err(|e| format!("Failed to create directory for module '{}': {}", module, e))?;
 
-            // Download the module's POM as 'pom.xml'
-            let download_url = format!("{}?raw", module_pom_url);
-            debug!("Executing download for URL: {}", download_url);
-
+            // Download the module's POM using the corrected URL structure
             download_xml_file(
                 config,
-                &download_url,
+                &module_pom_url,
                 module_target_folder.to_str().unwrap(),
                 "pom.xml"
             )?;
 
             debug!("Module POM for '{}' downloaded successfully.", module);
         }
+
     }
 
     // After downloading all POM files, run 'maven effective-pom'

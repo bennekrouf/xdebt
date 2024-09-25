@@ -4,7 +4,7 @@ use serde_json::Value;
 use tracing::info;
 
 use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
-use crate::models::{AppConfig, Analysis};
+use crate::models::{AppConfig, Analysis, DependencyVersion, Roadmap};
 
 pub fn analyze_npm(
     config: &AppConfig,
@@ -14,17 +14,43 @@ pub fn analyze_npm(
     analyses: &mut Vec<Analysis>,
 ) -> Result<(), Box<dyn Error>> {
     info!("Analyzing package.json for repository: {}", repository_name);
+
+    // Analyze the package.json content
     let package_json_analysis_result = analyze_package_json_content(config, project_name, repository_name, versions_keywords)?;
 
-    let package_json_analyses: Vec<Analysis> = package_json_analysis_result
-        .get("analyses")
-        .and_then(Value::as_array)
-        .unwrap_or(&Vec::new())
-        .iter()
-        .filter_map(|v| serde_json::from_value::<Analysis>(v.clone()).ok())
-        .collect();
+    info!("package_json_analysis_result : {:?}", package_json_analysis_result);
 
-    analyses.extend(package_json_analyses);
+    // Extract versions from the result
+    let versions = package_json_analysis_result.get("versions").and_then(Value::as_object);
+
+    if let Some(versions) = versions {
+        // Map the versions into Analysis objects
+        for (dependency, version_value) in versions {
+            let version_str = version_value.as_str().unwrap_or_default();
+
+            // Construct DependencyVersion
+            let dependency_version = DependencyVersion {
+                dependency_name: dependency.to_string(),
+                version_number: version_str.to_string(),
+            };
+
+            // Create the Analysis object
+            let analysis = Analysis {
+                repository_name: repository_name.to_string(),
+                dependency_version,
+                roadmap: None, // Set this to None unless there's logic for it
+            };
+
+            info!(
+                "Created analysis for dependency: {}, version: {}",
+                dependency, version_str
+            );
+            analyses.push(analysis);
+        }
+    } else {
+        info!("No versions found in the package.json result.");
+    }
+
     Ok(())
 }
 

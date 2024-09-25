@@ -4,7 +4,7 @@ use crate::boot::read_yaml::read_yaml;
 use crate::models::{AppConfig, ConfigFile};
 use crate::url::{bitbucket::BitbucketConfig, github::GithubConfig};
 use crate::utils::create_client_with_auth::create_client_with_auth;
-use crate::url::platform::UrlConfig;
+use crate::url::UrlConfig;
 
 pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> {
     let config: ConfigFile = read_yaml(config_file_path)?;

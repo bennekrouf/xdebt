@@ -9,8 +9,8 @@ force_git_pull: false
 force_maven_effective: false
 trace: INFO
 output_folder: tmp
-enable_maven_analysis: true
-enable_npm_analysis: false
+enable_maven_analysis: false
+enable_npm_analysis: true
 enable_docker_analysis: false
 enable_dotnet_analysis: false
 enable_php_analysis: false

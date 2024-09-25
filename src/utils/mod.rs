@@ -8,4 +8,3 @@ pub mod remove_null_values;
 pub mod run_json_get_query;
 pub mod run_get_request;
 pub mod download_xml_file;
-pub mod run_xml_get_query;

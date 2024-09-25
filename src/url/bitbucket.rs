@@ -1,4 +1,4 @@
-use crate::url::platform::UrlConfig;
+use crate::url::{UrlMode, UrlConfig};
 
 use base64::{engine::general_purpose, Engine as _};
 use dotenv::dotenv;
@@ -12,6 +12,28 @@ pub struct BitbucketConfig {
 
 impl UrlConfig for BitbucketConfig {
 
+    fn raw_file_url(&self, project_name: &str, repo_name: &str, file_path: &str) -> String {
+        self.file_url(UrlMode::Raw, project_name, repo_name, file_path, Some("master"))
+    }
+
+    fn browse_file_url(&self, project_name: &str, repo_name: &str, file_path: &str) -> String {
+        self.file_url(UrlMode::Browse, project_name, repo_name, file_path, Some("master"))
+    }
+
+    // Common function for both raw and browse URLs, with branch parameter
+    fn file_url(&self, mode: UrlMode, project_name: &str, repo_name: &str, file_path: &str, branch: Option<&str>) -> String {
+        let branch = branch.unwrap_or("master"); // Default to "master" if not provided
+        let mode_str = match mode {
+            UrlMode::Raw => "raw",
+            UrlMode::Browse => "browse",
+        };
+
+        format!(
+            "{}/projects/{}/repos/{}/{}/{}?at=refs/heads/{}",
+            self.base_url, project_name, repo_name, mode_str, file_path, branch
+        )
+    }
+
     fn projects_url(&self) -> String {
         format!("{}/rest/api/1.0/projects", self.base_url)
     }
@@ -20,11 +42,7 @@ impl UrlConfig for BitbucketConfig {
         format!("{}/rest/api/1.0/projects/{}/repos", self.base_url, project_name)
     }
 
-    fn file_url(&self, project_name: &str, repo_name: &str, file_path: &str) -> String {
-        // format!("{}/projects/{}/repos/{}/browse/{}", self.base_url, project_name, repo_name, file_path)
-        format!("{}/projects/{}/repos/{}/raw/{}?at=refs/heads/master", self.base_url, project_name, repo_name, file_path)
-    }
-
+    // Function for getting headers
     fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>> {
         dotenv().ok(); // Load environment variables
 
@@ -37,11 +55,9 @@ impl UrlConfig for BitbucketConfig {
             "Basic {}",
             general_purpose::STANDARD.encode(format!("{}:{}", username, password))
         );
-        // let user_agent_value = HeaderValue::from_str("bennekrouf")?;
 
         Ok(vec![
             (AUTHORIZATION, HeaderValue::from_str(&auth_value)?),
-            // (USER_AGENT, user_agent_value),
         ])
     }
 }

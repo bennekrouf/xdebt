@@ -2,7 +2,7 @@
 use std::collections::HashMap;
 use std::error::Error;
 use serde_json::{json, Value};
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::models::AppConfig;
 use crate::utils::run_json_get_query::run_json_get_query;
@@ -19,6 +19,7 @@ fn get_dependency_version(
         .and_then(|v| v.as_str())
         .map(|version| version.trim_start_matches(['~', '^']).to_string())
 }
+
 
 pub fn analyze_package_json_content(
     config: &AppConfig,
@@ -39,23 +40,17 @@ pub fn analyze_package_json_content(
 
     let mut versions = HashMap::new();
 
-    // Access the actual package.json content within the "lines" array
-    let lines = package_json.get("lines")
-        .and_then(|l| l.as_array())
-        .ok_or("Invalid format: 'lines' is missing or not an array")?;
-
-    // Collect all text lines into a single string
-    let package_json_str: String = lines.iter()
-        .filter_map(|line| line.get("text").and_then(|t| t.as_str()))
-        .collect();
-
-    // Parse the JSON string into a Value object
-    let package_json_value: Value = serde_json::from_str(&package_json_str)?;
+    // There's no "lines" array, so directly work with the JSON object
+    let package_json_value = package_json;
 
     // Extract dependencies and devDependencies
     let binding = json!({});
     let dependencies = package_json_value.get("dependencies").unwrap_or(&binding);
     let dev_dependencies = package_json_value.get("devDependencies").unwrap_or(&binding);
+
+    // Log found dependencies and devDependencies
+    debug!("Found dependencies: {:?}", dependencies);
+    debug!("Found devDependencies: {:?}", dev_dependencies);
 
     // Loop through each dependency in the dependencies_list
     for dependency in dependencies_list {
@@ -68,12 +63,38 @@ pub fn analyze_package_json_content(
             keywords_to_check.extend(equivalences.clone());
         }
 
+        // Log the keywords that are being checked
+        info!(
+            "Checking for keywords for dependency '{}': {:?}",
+            dependency, keywords_to_check
+        );
+
         // Iterate over each keyword (dependency + equivalences)
         for kw in &keywords_to_check {
+            // Log the search for each keyword in dependencies and devDependencies
+            info!("Looking for keyword '{}' in 'dependencies'", kw);
+            if dependencies.get(kw).is_some() {
+                info!("Found keyword '{}' in 'dependencies'", kw);
+            }
+
+            info!("Looking for keyword '{}' in 'devDependencies'", kw);
+            if dev_dependencies.get(kw).is_some() {
+                info!("Found keyword '{}' in 'devDependencies'", kw);
+            }
+
             // Check in both dependencies and devDependencies
             if let Some(version) = get_dependency_version(dependencies, dev_dependencies, kw) {
+                info!(
+                    "Found version '{}' for keyword '{}' in 'dependencies' or 'devDependencies'",
+                    version, kw
+                );
                 versions.insert(dependency.to_string(), version);  // Use the original dependency name for insertion
                 break; // Stop searching once a version is found
+            } else {
+                info!(
+                    "Keyword '{}' not found in 'dependencies' or 'devDependencies'",
+                    kw
+                );
             }
         }
     }
@@ -83,6 +104,8 @@ pub fn analyze_package_json_content(
         "repository": repo_name,
         "versions": versions,
     });
+
+    info!("Result package json: {}", result);
 
     Ok(result)
 }

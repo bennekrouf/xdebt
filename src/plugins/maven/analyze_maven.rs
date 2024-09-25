@@ -12,8 +12,8 @@ pub fn analyze_maven(
     versions_keywords: &[&str],
     analyses: &mut Vec<Analysis>,
 ) {
-    let pom_url = config.url_config.file_url(project_name, repository_name, "pom.xml");
-    match process_pom(config, repository_name, target_folder, &pom_url, versions_keywords) {
+    let pom_url = config.url_config.browse_file_url(project_name, repository_name, "pom.xml");
+    match process_pom(config, project_name, repository_name, target_folder, &pom_url, versions_keywords) {
         Ok(versions_map) => {
             analyses.extend(versions_map.iter().map(|(dependency_name, value)| Analysis {
                 repository_name: repository_name.to_string(),

@@ -36,7 +36,7 @@ pub fn run_get_request(
                     }
                 }
             } else {
-                error!("Failed to fetch data, status: {}", resp.status());
+                error!("Failed to fetch data in {}, status: {}", url, resp.status());
                 Err(format!("Failed to fetch data, status: {}", resp.status()).into())
             }
         }

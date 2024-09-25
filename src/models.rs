@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use sled::Db;
 use std::collections::HashMap;
 use tracing::Level;
-use crate::url::platform::UrlConfig;
+use crate::url::UrlConfig;
 
 #[derive(Debug, Deserialize)]
 pub struct ConfigFile {
