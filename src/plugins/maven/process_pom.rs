@@ -7,7 +7,7 @@ use std::error::Error;
 use tracing::{info, debug};
 
 use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
-use crate::utils::download_file::download_file;
+use crate::utils::download_xml_file::download_xml_file;
 use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
 use crate::models::AppConfig;
 use crate::plugins::maven::parse_pom_for_modules::parse_pom_for_modules;
@@ -26,7 +26,7 @@ pub fn process_pom(
         info!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         info!("Downloading POM file from '{}'", pom_url);
-        let result = download_file(config, pom_url, target_folder, "pom.xml");
+        let result = download_xml_file(config, pom_url, target_folder, "pom.xml");
 
         if let Err(e) = result {
             if e.to_string().contains("404 Not Found") {
@@ -65,7 +65,7 @@ pub fn process_pom(
             let download_url = format!("{}?raw", module_pom_url);
             debug!("Executing download for URL: {}", download_url);
 
-            download_file(
+            download_xml_file(
                 config,
                 &download_url,
                 module_target_folder.to_str().unwrap(),
@@ -89,29 +89,32 @@ pub fn process_pom(
 
         // Run 'maven effective-pom'
         let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy())?;
-            let effective_pom_path = Path::new(&effective_pom_result);
-            if !effective_pom_path.exists() {
-                return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
-            }
+        let effective_pom_path = Path::new(&effective_pom_result);
 
-            let mut content = String::new();
-            File::open(&effective_pom_path)
-                .and_then(|mut file| file.read_to_string(&mut content))
-                .map_err(|e| format!("Failed to read effective POM file '{}': {}", effective_pom_path.display(), e))?;
+        // Adjust the check for the effective POM path
+        if !effective_pom_path.exists() {
+            return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
+        }
 
-            // Analyze the POM content
-            let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;
-            debug!("analyze_pom_content returns {}", pom_analysis_result);
+        let mut content = String::new();
+        File::open(&effective_pom_path)
+            .and_then(|mut file| file.read_to_string(&mut content))
+            .map_err(|e| format!("Failed to read effective POM file '{}': {}", effective_pom_path.display(), e))?;
 
-            pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
+        // Analyze the POM content
+        let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;
+        debug!("analyze_pom_content returns {}", pom_analysis_result);
 
-            return Ok(pom_versions);
+        pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
+
+        return Ok(pom_versions);
     } else {
         info!(
             "Effective POM file '{}' already exists, skipping generation.",
             effective_pom_file.display()
         );
     }
+
     Ok(pom_versions)
 }
 
