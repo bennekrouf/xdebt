@@ -7,8 +7,14 @@ base_url: https://dsigit.etat-de-vaud.ch/outils/git
 
 force_git_pull: false
 force_maven_effective: false
-trace: TRACE
+trace: INFO
 output_folder: tmp
+enable_maven_analysis: true
+enable_npm_analysis: false
+enable_docker_analysis: false
+enable_dotnet_analysis: false
+enable_php_analysis: false
+enable_jenkins_analysis: false
 
 equivalences:
   spring:

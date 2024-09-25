@@ -16,6 +16,12 @@ pub struct ConfigFile {
     pub trace: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
+    pub enable_maven_analysis: bool,
+    pub enable_npm_analysis: bool,
+    pub enable_docker_analysis: bool,
+    pub enable_dotnet_analysis: bool,
+    pub enable_php_analysis: bool,
+    pub enable_jenkins_analysis: bool,
 }
 
 pub struct AppConfig {
@@ -28,6 +34,12 @@ pub struct AppConfig {
     pub platform: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
+    pub enable_maven_analysis: bool,
+    pub enable_npm_analysis: bool,
+    pub enable_docker_analysis: bool,
+    pub enable_dotnet_analysis: bool,
+    pub enable_php_analysis: bool,
+    pub enable_jenkins_analysis: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

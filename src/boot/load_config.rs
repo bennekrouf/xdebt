@@ -43,5 +43,11 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         force_git_pull: config.force_git_pull,
         force_maven_effective: config.force_maven_effective,
         equivalences: config.equivalences,
+        enable_maven_analysis: config.enable_maven_analysis,
+        enable_npm_analysis: config.enable_npm_analysis,
+        enable_docker_analysis: config.enable_docker_analysis,
+        enable_dotnet_analysis: config.enable_dotnet_analysis,
+        enable_php_analysis: config.enable_php_analysis,
+        enable_jenkins_analysis: config.enable_jenkins_analysis,
     })
 }

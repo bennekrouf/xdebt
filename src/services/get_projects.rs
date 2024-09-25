@@ -1,9 +1,9 @@
 use serde_json::Value;
 use std::error::Error;
-use tracing::{debug, error, info, trace}; // Add tracing macros
+use tracing::info;
 
 use crate::models::AppConfig;
-use crate::utils::run_json_get_query::run_json_get_query; // Import run_json_get_query
+use crate::utils::run_json_get_query::run_json_get_query;
 
 pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, Box<dyn Error>> {
     let url_config = &*config.url_config; // Dereference the Box
