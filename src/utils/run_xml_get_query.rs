@@ -1,19 +1,20 @@
-use serde_json::Value;
+
 use std::error::Error;
 use tracing::{debug, error, info, trace}; // Add tracing macros
+use roxmltree::Document;  // Or quick-xml depending on your preference
 
 use crate::models::AppConfig;
 
-pub fn run_get_query(
+pub fn run_json_get_query_xml(
     config: &AppConfig,
-    paginated_repos_url: &str,
-) -> Result<Value, Box<dyn Error>> {
+    file_url: &str,
+) -> Result<Document<'static>, Box<dyn Error>> {
     let client = &config.client;
     let (auth_name, auth_value) = config.auth_header.clone(); // Extract auth header
     let (user_agent_name, user_agent_value) = config.auth_user_agent.clone();
 
     // Trace the URL we are going to fetch
-    info!("Fetching data from URL: {}", paginated_repos_url);
+    trace!("Fetching data from URL: {}", file_url);
 
     // Trace the headers that will be used in the request
     trace!("Using header: {} = {:?}", auth_name, auth_value);
@@ -25,9 +26,9 @@ pub fn run_get_query(
 
     // Perform the request
     let response = client
-        .get(paginated_repos_url)
+        .get(file_url)
         .header(auth_name, auth_value) // Use the extracted auth header
-        .header("User-Agent", user_agent_value) // Use the extracted user-agent value
+        // .header("User-Agent", user_agent_value) // Use the extracted user-agent value
         .send();
 
     match response {
@@ -43,17 +44,17 @@ pub fn run_get_query(
                         // Trace the body received
                         // debug!("Received body: {}", body);
 
-                        let repos_json: Result<Value, _> = serde_json::from_str(&body);
-                        match repos_json {
-                            Ok(json) => {
-                                // Trace successful JSON parsing
-                                info!("Successfully parsed JSON");
-                                Ok(json)
+                        // Parse the body as XML using roxmltree or any XML parser
+                        match Document::parse(&body) {
+                            Ok(xml_doc) => {
+                                // Trace successful XML parsing
+                                trace!("Successfully parsed XML");
+                                Ok(xml_doc)
                             }
                             Err(e) => {
-                                // error!("Error parsing repos JSON: {}", e);
+                                trace!("Error parsing XML: {}", e);
                                 // error!("Raw body received: {}", body); // Show the problematic body
-                                Err(format!("Error parsing repos JSON: {}", e).into())
+                                Err(format!("Error parsing XML: {}", e).into())
                             }
                         }
                     }
@@ -63,13 +64,14 @@ pub fn run_get_query(
                     }
                 }
             } else {
-                error!("Failed to fetch repos, status: {}", resp.status());
-                Err(format!("Failed to fetch repos, status: {}", resp.status()).into())
+                error!("Failed to fetch file, status: {}", resp.status());
+                Err(format!("Failed to fetch file, status: {}", resp.status()).into())
             }
         }
         Err(e) => {
-            error!("Error fetching repos URL {}: {}", paginated_repos_url, e);
-            Err(format!("Error fetching repos URL {}: {}", paginated_repos_url, e).into())
+            error!("Error fetching file URL {}: {}", file_url, e);
+            Err(format!("Error fetching file URL {}: {}", file_url, e).into())
         }
     }
 }
+

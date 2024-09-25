@@ -5,25 +5,37 @@ use serde_json::{json, Value};
 use tracing::info;
 
 use crate::models::AppConfig;
-use crate::utils::run_get_query::run_get_query;
+use crate::utils::run_json_get_query::run_json_get_query;
+use crate::plugins::npm::check_package_json_exists::check_package_json_exists;
+
+// Function to get the version from dependencies or devDependencies
+fn get_dependency_version(
+    dependencies: &Value,
+    dev_dependencies: &Value,
+    package_name: &str,
+) -> Option<String> {
+    dependencies.get(package_name)
+        .or_else(|| dev_dependencies.get(package_name))
+        .and_then(|v| v.as_str())
+        .map(|version| version.trim_start_matches(['~', '^']).to_string())
+}
 
 pub fn analyze_package_json_content(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-    version_keywords: &[&str],
+    dependencies_list: &[&str],  // List of dependency names
 ) -> Result<Value, Box<dyn Error>> {
-    // Get package.json URL using UrlConfig
-    let package_json_url = &config.url_config.package_json_url(project_name, repo_name);
+    // Check if package.json exists and get the file URL
+    let file_url = match check_package_json_exists(config, project_name, repo_name)? {
+        Some(url) => url,
+        None => return Err("No package.json found in the repository".into()),
+    };
 
-    info!("Fetching package.json from URL: {}", package_json_url);
+    info!("Fetching package.json from URL: {}", file_url);
 
-    // Use run_get_query to fetch package.json content
-    let package_json: Value = run_get_query(config, package_json_url)?;
-
-    // Define equivalences for version_keywords
-    let mut equivalences: HashMap<&str, Vec<&str>> = HashMap::new();
-    equivalences.insert("angular", vec!["@angular/core", "angular"]);
+    // Fetch package.json content using the file URL
+    let package_json: Value = run_json_get_query(config, &file_url)?;
 
     let mut versions = HashMap::new();
 
@@ -40,46 +52,28 @@ pub fn analyze_package_json_content(
     // Parse the JSON string into a Value object
     let package_json_value: Value = serde_json::from_str(&package_json_str)?;
 
-    // Check for versions based on version_keywords
-    for keyword in version_keywords {
-        if let Some(refs) = equivalences.get(keyword) {
-            for &reference in refs {
-                // Check in "dependencies"
-                if let Some(dependencies) = package_json_value.get("dependencies") {
-                    if let Some(deps_obj) = dependencies.as_object() {
-                        if let Some(version) = deps_obj.get(reference).and_then(|v| v.as_str()) {
-                            let cleaned_version = version.trim_start_matches(['~', '^']);
-                            versions.insert(keyword.to_string(), cleaned_version.to_string());
-                        }
-                    }
-                }
-                // Check in "devDependencies"
-                if let Some(dev_dependencies) = package_json_value.get("devDependencies") {
-                    if let Some(dev_deps_obj) = dev_dependencies.as_object() {
-                        if let Some(version) = dev_deps_obj.get(reference).and_then(|v| v.as_str()) {
-                            let cleaned_version = version.trim_start_matches(['~', '^']);
-                            versions.insert(format!("{} in Dev deps", keyword), cleaned_version.to_string());
-                        }
-                    }
-                }
-            }
+    // Extract dependencies and devDependencies
+    let binding = json!({});
+    let dependencies = package_json_value.get("dependencies").unwrap_or(&binding);
+    let dev_dependencies = package_json_value.get("devDependencies").unwrap_or(&binding);
+
+    // Loop through each dependency in the dependencies_list
+    for dependency in dependencies_list {
+        // Start with the dependency itself
+        let mut keywords_to_check = vec![dependency.to_string()];
+
+        // Check if the config has equivalences for this dependency
+        if let Some(equivalences) = config.equivalences.get(*dependency) {
+            // Extend with equivalences if they exist
+            keywords_to_check.extend(equivalences.clone());
         }
 
-        // Check for direct keyword matches in dependencies and devDependencies
-        if let Some(dependencies) = package_json_value.get("dependencies") {
-            if let Some(deps_obj) = dependencies.as_object() {
-                if let Some(version) = deps_obj.get(&keyword.to_string()).and_then(|v| v.as_str()) {
-                    let cleaned_version = version.trim_start_matches(['~', '^']);
-                    versions.insert(keyword.to_string(), cleaned_version.to_string());
-                }
-            }
-        }
-        if let Some(dev_dependencies) = package_json_value.get("devDependencies") {
-            if let Some(dev_deps_obj) = dev_dependencies.as_object() {
-                if let Some(version) = dev_deps_obj.get(&keyword.to_string()).and_then(|v| v.as_str()) {
-                    let cleaned_version = version.trim_start_matches(['~', '^']);
-                    versions.insert(format!("{} in Dev deps", keyword), cleaned_version.to_string());
-                }
+        // Iterate over each keyword (dependency + equivalences)
+        for kw in &keywords_to_check {
+            // Check in both dependencies and devDependencies
+            if let Some(version) = get_dependency_version(dependencies, dev_dependencies, kw) {
+                versions.insert(dependency.to_string(), version);  // Use the original dependency name for insertion
+                break; // Stop searching once a version is found
             }
         }
     }

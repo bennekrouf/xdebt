@@ -5,7 +5,7 @@ use std::path::Path;
 use tracing::trace;
 
 use crate::models::AppConfig;
-use crate::utils::run_get_query::run_get_query;
+use crate::utils::run_json_get_query::run_json_get_query;
 
 pub fn download_file(
     config: &AppConfig,
@@ -28,9 +28,9 @@ pub fn download_file(
     let full_path = target_path.join(file_name);
     trace!("Full file path: {:?}", full_path);
 
-    // Use run_get_query to perform the GET request
+    // Use run_json_get_query to perform the GET request
     trace!("Sending GET request to URL: {}", url);
-    let response_json = run_get_query(config, url)?;
+    let response_json = run_json_get_query(config, url)?;
 
     // Check if the response indicates an error
     if response_json.get("error").is_some() {

@@ -1,18 +1,10 @@
 
-use crate::url::bitbucket::BitbucketConfig;
-use crate::url::github::GithubConfig;
-use crate::url::models::UrlConfig;
+use reqwest::header::{HeaderName, HeaderValue};
+use std::error::Error;
 
-enum Platform {
-    Bitbucket(BitbucketConfig),
-    Github(GithubConfig),
-}
-
-impl Platform {
-    // pub fn get_urls(&self) -> &dyn UrlConfig {
-    //     match self {
-    //         Platform::Bitbucket(config) => config,
-    //         Platform::Github(config) => config,
-    //     }
-    // }
+pub trait UrlConfig: Send + Sync {
+    fn projects_url(&self) -> String;
+    fn repos_url(&self, owner: &str, repo: &str) -> String;
+    fn file_url(&self, owner: &str, repo: &str, file_path: &str) -> String;
+    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>>;
 }

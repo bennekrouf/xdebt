@@ -7,7 +7,7 @@ base_url: https://dsigit.etat-de-vaud.ch/outils/git
 
 force_git_pull: false
 force_maven_effective: false
-trace: info
+trace: TRACE
 output_folder: tmp
 
 equivalences:

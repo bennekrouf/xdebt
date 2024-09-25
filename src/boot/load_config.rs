@@ -1,14 +1,15 @@
 use std::error::Error;
 
 use crate::boot::read_yaml::read_yaml;
-use crate::models::{AppConfig, ConfigFile, UrlConfig};
+use crate::models::{AppConfig, ConfigFile};
 use crate::url::{bitbucket::BitbucketConfig, github::GithubConfig};
 use crate::utils::create_client_with_auth::create_client_with_auth;
+use crate::url::platform::UrlConfig;
 
 pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> {
     let config: ConfigFile = read_yaml(config_file_path)?;
 
-    let (client, auth_header, auth_user_agent) = create_client_with_auth(config.platform.clone())?;
+    let (client, _, _) = create_client_with_auth(config.platform.clone())?;
     // let db = sled::open("roadmap_db")?;
 
     // Match platform and construct the corresponding URL config
@@ -24,6 +25,7 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
     };
 
     let trace_level: tracing::Level = match config.trace.as_str() {
+        "TRACE" => tracing::Level::TRACE,
         "INFO" => tracing::Level::INFO,
         "DEBUG" => tracing::Level::DEBUG,
         "ERROR" => tracing::Level::ERROR,
@@ -33,8 +35,6 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
 
     Ok(AppConfig {
         client,
-        auth_header,
-        auth_user_agent,
         db: None,
         trace_level,
         platform: config.platform,

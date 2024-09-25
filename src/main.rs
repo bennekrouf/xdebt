@@ -1,5 +1,3 @@
-use std::error::Error;
-use tracing_subscriber;
 
 mod boot;
 mod display_menu;
@@ -11,21 +9,24 @@ mod services;
 mod url;
 mod utils;
 
-use boot::load_config::load_config;
-use boot::watch_config_for_reload::watch_config_for_reload;
-use display_menu::display_menu;
-use roadmap::process_yaml_files::process_yaml_files;
+use std::env;
+use std::error::Error;
 use std::sync::{Arc, Mutex};
 use tracing_subscriber::filter::EnvFilter;
+use tracing_subscriber;
+
+use crate::boot::load_config::load_config;
+use crate::boot::watch_config_for_reload::watch_config_for_reload;
+use crate::display_menu::display_menu;
+use crate::roadmap::process_yaml_files::process_yaml_files;
+use crate::services::analyze_specific_repository::analyze_specific_repository;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    // Initial configuration load
     let config_file_path = "configuration.yml";
     let mut config = load_config(config_file_path)?;
 
-    // Ensure the tracing subscriber is initialized only once
+    // Initialize tracing subscriber
     static INIT: std::sync::Once = std::sync::Once::new();
-
     let env_filter = EnvFilter::new(format!(
         "{},sled::pagecache=info,sled::tree=info,reqwest::blocking::wait=info,sled::pagecache::iobuf=info",
         config.trace_level
@@ -41,35 +42,37 @@ fn main() -> Result<(), Box<dyn Error>> {
     let db = sled::open("roadmap_db")?;
     config.db = Some(db);
 
-    // Shared configuration wrapped in Arc and Mutex for thread-safe updates
     let shared_config = Arc::new(Mutex::new(config));
 
     // Start watching the config file for changes
     watch_config_for_reload(Arc::clone(&shared_config))?;
 
-    // Track if YAML files have been processed
+    // Check command-line arguments
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() > 1 {
+        // If an argument is passed (like "gpecs"), trigger specific analysis
+        let repo_name = &args[1];
+        let config = shared_config.lock().unwrap();
+        analyze_specific_repository(&config, Some(repo_name))?;
+        return Ok(());
+    }
+
+    // If no argument is passed, proceed with showing the menu
     let mut yaml_processed = false;
 
     loop {
-        // Use the shared configuration for your logic
         let config = shared_config.lock().unwrap();
         let db = config.db.as_ref().ok_or("Database is not initialized")?;
 
-        // Only process YAML files once
         if !yaml_processed {
             process_yaml_files(db, "roadmap")?;
-            yaml_processed = true; // Set to true after processing
+            yaml_processed = true;
         }
 
-        // Handle menu display and actions
         if let Err(e) = display_menu(&config) {
             tracing::error!("Error in menu execution: {}", e);
         }
-
-        // Optional: Check if configuration has changed and reset yaml_processed if necessary
-        // You can implement a method to check for changes in the config
-        // if config_changed {
-        //     yaml_processed = false; // Reset flag to allow reprocessing
-        // }
     }
 }
+

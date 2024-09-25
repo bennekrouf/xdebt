@@ -13,7 +13,7 @@ use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_g
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
 use crate::services::get_distinct_dependencies::get_distinct_dependencies;
 use crate::models::{AppConfig, Analysis, DependencyVersion};
-use crate::utils::run_get_query::run_get_query;
+use crate::utils::run_json_get_query::run_json_get_query;
 
 pub fn analyze_one_repo<'a>(
     config: &'a AppConfig,
@@ -108,8 +108,8 @@ pub fn analyze_one_repo<'a>(
     if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repository_name_str)? {
         info!("Found Jenkins file at: {}", jenkins_file_url);
 
-        // Use run_get_query to fetch the Jenkins file content
-        let jenkins_file_content = run_get_query(config, &jenkins_file_url)?
+        // Use run_json_get_query to fetch the Jenkins file content
+        let jenkins_file_content = run_json_get_query(config, &jenkins_file_url)?
             .to_string(); // Assuming the content is returned in a way that can be converted to string
 
         // Extract versions for each keyword from the Jenkins file

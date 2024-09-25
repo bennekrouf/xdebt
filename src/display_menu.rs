@@ -28,7 +28,7 @@ pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error>> {
 
     match choice.trim() {
         "1" => {
-            analyze_specific_repository(config)?;
+            analyze_specific_repository(config, None)?;
         }
         "2" => {
             analyze_project_repositories(config)?;

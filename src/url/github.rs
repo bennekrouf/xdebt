@@ -1,25 +1,16 @@
-use crate::models::UrlConfig;
-// use std::env;
+use crate::url::platform::UrlConfig;
+
+use dotenv::dotenv;
+use reqwest::header::{HeaderName, HeaderValue, AUTHORIZATION, USER_AGENT};
+use std::env;
+use std::error::Error;
 
 pub struct GithubConfig {
     pub base_url: String,
     pub user: String,
 }
 
-// impl GithubConfig {
-//     pub fn new() -> Self {
-//         let base_url = env::var("GITHUB_BASE_URL")
-//             .unwrap_or_else(|_| "https://api.github.com".to_string()); // Adjusted to match GitHub API
-//         let user = env::var("GITHUB_USER").unwrap_or_else(|_| String::new()); // Add user environment variable
-//         GithubConfig { base_url, user }
-//     }
-// }
-
 impl UrlConfig for GithubConfig {
-
-    // fn base_url(&self) -> &str {
-    //     &self.base_url
-    // }
 
     fn projects_url(&self) -> String {
         format!("{}/user/repos", self.base_url)
@@ -33,8 +24,19 @@ impl UrlConfig for GithubConfig {
         format!("{}/{}/{}/contents/{}", self.base_url, self.user, repo, file_path)
     }
 
-    fn package_json_url(&self, _owner: &str, repo: &str) -> String {
-        format!("{}/{}/{}/contents/front/package.json", self.base_url, self.user, repo)
+    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>> {
+        dotenv().ok(); // Load environment variables
+
+        let github_token = env::var("GITHUB_TOKEN")
+            .map_err(|e| format!("Missing GITHUB_TOKEN: {}", e))?;
+
+        let auth_value = format!("Bearer {}", github_token);
+        let user_agent_value = HeaderValue::from_str("bennekrouf")?;
+
+        Ok(vec![
+            (AUTHORIZATION, HeaderValue::from_str(&auth_value)?),
+            (USER_AGENT, user_agent_value),
+        ])
     }
 }
 

@@ -3,7 +3,7 @@ use std::error::Error;
 use tracing::{debug, error, info, trace}; // Add tracing macros
 
 use crate::models::AppConfig;
-use crate::utils::run_get_query::run_get_query; // Import run_get_query
+use crate::utils::run_json_get_query::run_json_get_query; // Import run_json_get_query
 
 pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, Box<dyn Error>> {
     let url_config = &*config.url_config; // Dereference the Box
@@ -12,8 +12,8 @@ pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, Box<dyn Error>> {
     let projects_url = url_config.projects_url(); // Fetch the list of projects
     info!("Fetching projects from URL: {}", projects_url);
 
-    // Call run_get_query to perform the GET request
-    let response_json = run_get_query(config, &projects_url)?;
+    // Call run_json_get_query to perform the GET request
+    let response_json = run_json_get_query(config, &projects_url)?;
 
     // Check if the response contains an error
     if response_json.get("error").is_some() {

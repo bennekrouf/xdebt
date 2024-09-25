@@ -5,4 +5,4 @@ pub mod download_file;
 pub mod enrich_versions_with_roadmap;
 pub mod fetch_repositories;
 pub mod remove_null_values;
-pub mod run_get_query;
+pub mod run_json_get_query;

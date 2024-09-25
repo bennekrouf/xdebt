@@ -9,11 +9,19 @@ use crate::models::AppConfig;
 
 pub fn analyze_specific_repository(
     config: &AppConfig,
+    repo_name_arg: Option<&str>, // Accept repository name as an optional argument
 ) -> Result<(), Box<dyn Error>> {
 
-    let repo_name: String = Input::new()
-        .with_prompt("Enter the repository name (e.g., xcad)")
-        .interact()?;
+    // Determine the repository name: use the argument if provided, otherwise prompt the user
+    let repo_name = match repo_name_arg {
+        Some(name) => name.to_string(), // Use the argument
+        None => {
+            // Prompt the user if no argument was provided
+            Input::new()
+                .with_prompt("Enter the repository name (e.g., xcad)")
+                .interact()?
+        }
+    };
 
     let projects = get_projects(config)?;
     for project in projects {

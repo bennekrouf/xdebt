@@ -4,12 +4,13 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use serde_json::{Value, Map};
 use std::error::Error;
-use tracing::{trace, info, debug};
+use tracing::{info, debug};
 
 use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 use crate::utils::download_file::download_file;
 use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
 use crate::models::AppConfig;
+use crate::plugins::maven::parse_pom_for_modules::parse_pom_for_modules;
 
 pub fn process_pom(
     config: &AppConfig,
@@ -112,22 +113,5 @@ pub fn process_pom(
         );
     }
     Ok(pom_versions)
-}
-
-// Function to parse the POM content for modules
-fn parse_pom_for_modules(pom_content: &str) -> Result<Vec<String>, Box<dyn Error>> {
-    trace!("Parsing POM content for modules");
-    let doc = roxmltree::Document::parse(pom_content)
-        .map_err(|e| format!("Failed to parse POM XML: {}", e))?;
-
-    let mut modules = Vec::new();
-    for node in doc.descendants() {
-        if node.tag_name().name() == "module" {
-            if let Some(module_name) = node.text() {
-                modules.push(module_name.to_string());
-            }
-        }
-    }
-    Ok(modules)
 }
 

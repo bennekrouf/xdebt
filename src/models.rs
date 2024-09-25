@@ -1,19 +1,10 @@
 use chrono::NaiveDate;
 use reqwest::blocking::Client;
-use reqwest::header::HeaderName;
-use reqwest::header::HeaderValue;
 use serde::{Deserialize, Serialize};
 use sled::Db;
 use std::collections::HashMap;
 use tracing::Level;
-
-pub trait UrlConfig: Send + Sync {
-    // fn base_url(&self) -> &str;
-    fn projects_url(&self) -> String;
-    fn repos_url(&self, owner: &str, repo: &str) -> String;
-    fn file_url(&self, owner: &str, repo: &str, file_path: &str) -> String;
-    fn package_json_url(&self, owner: &str, repo: &str) -> String;
-}
+use crate::url::platform::UrlConfig;
 
 #[derive(Debug, Deserialize)]
 pub struct ConfigFile {
@@ -29,8 +20,6 @@ pub struct ConfigFile {
 
 pub struct AppConfig {
     pub client: Client,
-    pub auth_header: (HeaderName, HeaderValue),
-    pub auth_user_agent: (HeaderName, HeaderValue),
     pub db: Option<Db>,
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,

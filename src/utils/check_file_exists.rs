@@ -3,7 +3,7 @@ use std::error::Error;
 use tracing::{debug, trace};
 
 use crate::models::AppConfig;
-use crate::utils::run_get_query::run_get_query;
+use crate::utils::run_json_get_query::run_json_get_query;
 
 pub fn check_file_exists(
     config: &AppConfig,
@@ -18,8 +18,8 @@ pub fn check_file_exists(
 
     trace!("Checking for file {} at URL: {}", file_path, file_url);
 
-    // Use the run_get_query helper to perform the request
-    let response_json = run_get_query(config, &file_url)?;
+    // Use the run_json_get_query helper to perform the request
+    let response_json = run_json_get_query(config, &file_url)?;
 
     // Check for existence based on response content
     if response_json.get("error").is_some() {
