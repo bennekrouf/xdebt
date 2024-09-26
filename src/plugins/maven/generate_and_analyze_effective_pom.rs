@@ -12,12 +12,12 @@ use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
 
 pub fn generate_and_analyze_effective_pom(
     config: &AppConfig,
-    target_folder: &str,
+    output_folder: &str,
     versions_keywords: &[&str],
     pom_file_path: &Path,
     repo_name: &str,
 ) -> Result<Map<String, Value>, Box<dyn Error>> {
-    let effective_pom_file = Path::new(target_folder).join("effective_pom.xml");
+    let effective_pom_file = Path::new(output_folder).join("effective_pom.xml");
     let mut pom_versions = Map::new();
 
     if !effective_pom_file.exists() || config.force_maven_effective {

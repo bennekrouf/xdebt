@@ -11,17 +11,17 @@ use crate::models::AppConfig;
 /// Download and read the POM file, returning its content as a string.
 pub fn download_and_read_pom(
     config: &AppConfig,
-    target_folder: &str,
+    output_folder: &str,
     pom_url: &str,
     repo_name: &str,
 ) -> Result<String, Box<dyn Error>> {
-    let pom_file_path: PathBuf = Path::new(target_folder).join("pom.xml");
+    let pom_file_path: PathBuf = Path::new(output_folder).join("pom.xml");
 
     if pom_file_path.exists() && !config.force_git_pull {
         debug!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         debug!("Downloading POM file from '{}'", pom_url);
-        let result = download_xml_file(config, pom_url, target_folder, "pom.xml");
+        let result = download_xml_file(config, pom_url, output_folder, "pom.xml");
 
         if let Err(e) = result {
             if e.to_string().contains("404 Not Found") {

@@ -9,10 +9,10 @@ use std::fs::OpenOptions;
 // use std::io::Write;
 
 pub fn append_json_to_csv(project_name: &str, json_data: &Value) -> Result<(), Box<dyn Error>> {
-    let target_folder = env::var("TARGET_FOLDER").unwrap_or_else(|_| "tmp".to_string()); // Default to "tmp" if not set
+    let output_folder = env::var("OUTPUT_FOLDER").unwrap_or_else(|_| "tmp".to_string()); // Default to "tmp" if not set
 
     // Create or open the CSV file for the project
-    let file_path = format!("{}/{}.csv", &target_folder, project_name);
+    let file_path = format!("{}/{}.csv", &output_folder, project_name);
     let path = Path::new(&file_path);
 
     // Create a persistent Map to use as the default value for versions

@@ -21,7 +21,7 @@ pub fn analyze_one_repo<'a>(
     let repository_name = repository_name_str.to_string();
     let db = config.db.as_ref().expect("Db should be initialized");
 
-    let target_folder = format!("{}/{}/{}", config.output_folder, project_name, repository_name);
+    let output_folder = format!("{}/{}/{}", config.output_folder, project_name, repository_name);
 
     let dependency_names = get_distinct_dependencies(db)?;
     let versions_keywords: Vec<&str> = dependency_names.iter().map(|s| s.as_str()).collect();
@@ -30,7 +30,7 @@ pub fn analyze_one_repo<'a>(
 
     // 1. Maven (POM) Analysis
     if config.enable_maven_analysis {
-        analyze_maven(config, project_name, repository_name_str, &target_folder, &versions_keywords, &mut analyses);
+        analyze_maven(config, project_name, repository_name_str, &output_folder, &versions_keywords, &mut analyses);
     }
 
     // 2. NPM (package.json) Analysis

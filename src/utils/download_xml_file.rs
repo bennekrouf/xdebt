@@ -12,16 +12,16 @@ use crate::models::AppConfig;
 pub fn download_xml_file(
     config: &AppConfig,
     url: &str,
-    target_folder: &str,
+    output_folder: &str,
     file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
     // Ensure the target folder exists
-    debug!("Ensuring target folder '{}' exists.", target_folder);
-    let target_path = Path::new(target_folder);
+    debug!("Ensuring target folder '{}' exists.", output_folder);
+    let target_path = Path::new(output_folder);
     if !target_path.exists() {
-        debug!("Target folder '{}' does not exist. Creating...", target_folder);
-        fs::create_dir_all(target_folder)
-            .map_err(|e| format!("Failed to create directory '{}': {}", target_folder, e))?;
+        debug!("Target folder '{}' does not exist. Creating...", output_folder);
+        fs::create_dir_all(output_folder)
+            .map_err(|e| format!("Failed to create directory '{}': {}", output_folder, e))?;
     }
 
     let full_path = target_path.join(file_name);

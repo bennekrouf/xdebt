@@ -8,7 +8,6 @@ mod roadmap;
 mod services;
 mod url;
 mod utils;
-mod init_tracing;
 
 use std::env;
 use std::error::Error;

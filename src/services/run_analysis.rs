@@ -45,7 +45,7 @@ pub fn run_analysis(
 
             tracing::info!("Json result: {}", &json_data);
             // Append the grouped KPI JSON to the file
-            append_json_to_file(project_name, &json_data)?;
+            append_json_to_file(config, project_name, &json_data)?;
         }
         Err(e) => {
             tracing::trace!("Failed to generate analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);
