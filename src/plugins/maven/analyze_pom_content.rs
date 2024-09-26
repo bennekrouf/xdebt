@@ -14,9 +14,7 @@ pub fn analyze_pom_content(
     version_keywords: &[&str],
 ) -> Result<Value, Box<dyn Error>> {
     // Define precise equivalences for version_keywords
-    let equivalences = config.equivalences.clone(); // : HashMap<&str, Vec<&str>> = HashMap::new();
-    // equivalences.insert("spring", vec!["spring-context", "spring-beans", "spring-framework"]);
-    // No need to include spring-boot in equivalences, let it be handled directly
+    let equivalences = config.equivalences.clone();
 
     // Regex pattern to extract version numbers
     let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
@@ -27,11 +25,6 @@ pub fn analyze_pom_content(
 
     // Parse the XML content
     let doc = Document::parse(&cleaned_content)?;
-
-    // Initialize all version keywords with an empty string
-    // for keyword in version_keywords {
-    //     versions.insert(keyword.to_string(), "".to_string());
-    // }
 
     // Extract versions from dependencies and basic version strings
     for keyword in version_keywords {

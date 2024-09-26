@@ -12,14 +12,14 @@ pub fn analyze_maven(
     versions_keywords: &[&str],
     analyses: &mut Vec<Analysis>,
 ) {
-    let pom_url = config.url_config.browse_file_url(project_name, repository_name, "pom.xml");
+    let pom_url = config.url_config.raw_file_url(project_name, repository_name, "pom.xml");
     match process_pom(config, project_name, repository_name, target_folder, &pom_url, versions_keywords) {
         Ok(versions_map) => {
             analyses.extend(versions_map.iter().map(|(dependency_name, value)| Analysis {
                 repository_name: repository_name.to_string(),
                 dependency_version: DependencyVersion {
                     dependency_name: dependency_name.clone(),
-                    version_number: value.as_str().unwrap_or("").to_string(),
+                    current_version: value.as_str().unwrap_or("").to_string(),
                 },
                 roadmap: None,
             }));

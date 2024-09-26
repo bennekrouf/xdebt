@@ -16,7 +16,7 @@ pub fn check_docker(
             repository_name: repository_name_str.to_string(),
             dependency_version: DependencyVersion {
                 dependency_name: "Docker".to_string(),
-                version_number: "exists".to_string(),
+                current_version: "exists".to_string(),
             },
             roadmap: None,
         });

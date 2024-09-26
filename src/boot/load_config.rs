@@ -5,12 +5,13 @@ use crate::models::{AppConfig, ConfigFile};
 use crate::url::{bitbucket::BitbucketConfig, github::GithubConfig};
 use crate::utils::create_client_with_auth::create_client_with_auth;
 use crate::url::UrlConfig;
+use crate::init_tracing::init_tracing;
 
 pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> {
     let config: ConfigFile = read_yaml(config_file_path)?;
+    let _ = init_tracing(&config.trace_level.to_string())?;
 
     let (client, _, _) = create_client_with_auth(config.platform.clone())?;
-    // let db = sled::open("roadmap_db")?;
 
     // Match platform and construct the corresponding URL config
     let url_config: Box<dyn UrlConfig> = match config.platform.as_str() {
@@ -24,19 +25,21 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         _ => return Err("Unsupported platform".into()),
     };
 
-    let trace_level: tracing::Level = match config.trace.as_str() {
-        "TRACE" => tracing::Level::TRACE,
-        "INFO" => tracing::Level::INFO,
-        "DEBUG" => tracing::Level::DEBUG,
-        "ERROR" => tracing::Level::ERROR,
-        "WARN" => tracing::Level::WARN,
-        _ => tracing::Level::INFO, // default to INFO if not matched
-    };
+    // Convert trace level to uppercase to ensure case-insensitive matching
+    // let trace_level_input = config.trace.to_uppercase();
+    // let trace_level: tracing::Level = match trace_level_input.as_str() {
+    //     "TRACE" => tracing::Level::TRACE,
+    //     "INFO" => tracing::Level::INFO,
+    //     "DEBUG" => tracing::Level::DEBUG,
+    //     "ERROR" => tracing::Level::ERROR,
+    //     "WARN" => tracing::Level::WARN,
+    //     _ => tracing::Level::ERROR, // default if not matched
+    // };
 
     Ok(AppConfig {
         client,
-        db: None,
-        trace_level,
+        db: None, // Initialized later on
+        // trace_level,
         platform: config.platform,
         output_folder: config.output_folder,
         url_config,

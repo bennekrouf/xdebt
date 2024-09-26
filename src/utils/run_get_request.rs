@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{debug, error};
+use tracing::{debug, error, trace};  // Import `trace`
 use crate::models::AppConfig;
 
 pub fn run_get_request(
@@ -9,6 +9,9 @@ pub fn run_get_request(
 ) -> Result<String, Box<dyn Error>> {
     let client = &config.client;
     let headers = config.url_config.get_headers()?;  // Get headers from config
+
+    // Trace the URL being requested
+    trace!("Sending GET request to URL: {}", url);
 
     // Build the GET request
     let mut request = client.get(url);
@@ -36,7 +39,7 @@ pub fn run_get_request(
                     }
                 }
             } else {
-                error!("Failed to fetch data in {}, status: {}", url, resp.status());
+                trace!("Failed to fetch data in {}, status: {}", url, resp.status());
                 Err(format!("Failed to fetch data, status: {}", resp.status()).into())
             }
         }
@@ -46,3 +49,4 @@ pub fn run_get_request(
         }
     }
 }
+

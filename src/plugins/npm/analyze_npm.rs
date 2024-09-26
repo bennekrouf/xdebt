@@ -4,7 +4,7 @@ use serde_json::Value;
 use tracing::info;
 
 use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
-use crate::models::{AppConfig, Analysis, DependencyVersion, Roadmap};
+use crate::models::{AppConfig, Analysis, DependencyVersion};
 
 pub fn analyze_npm(
     config: &AppConfig,
@@ -31,7 +31,7 @@ pub fn analyze_npm(
             // Construct DependencyVersion
             let dependency_version = DependencyVersion {
                 dependency_name: dependency.to_string(),
-                version_number: version_str.to_string(),
+                current_version: version_str.to_string(),
             };
 
             // Create the Analysis object

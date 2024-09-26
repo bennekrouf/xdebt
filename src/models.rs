@@ -3,7 +3,7 @@ use reqwest::blocking::Client;
 use serde::{Deserialize, Serialize};
 use sled::Db;
 use std::collections::HashMap;
-use tracing::Level;
+// use tracing::Level;
 use crate::url::UrlConfig;
 
 #[derive(Debug, Deserialize)]
@@ -13,7 +13,7 @@ pub struct ConfigFile {
     pub user: Option<String>, // Only for GitHub
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
-    pub trace: String,
+    pub trace_level: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
     pub enable_maven_analysis: bool,
@@ -30,7 +30,7 @@ pub struct AppConfig {
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
-    pub trace_level: Level,
+    // pub trace_level: Level,
     pub platform: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
@@ -69,7 +69,7 @@ pub struct RoadmapEntry {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DependencyVersion {
-    pub version_number: String,
+    pub current_version: String,
     pub dependency_name: String,
 }
 
@@ -83,7 +83,7 @@ pub struct Analysis {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KPIResult {
     pub dependency_name: String,
-    pub version_number: String,
+    pub current_version: String,
     pub compliance_status: String,
     pub maintenance_action: String,
 }

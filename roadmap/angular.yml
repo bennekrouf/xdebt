@@ -7,7 +7,25 @@ roadmap_list:
         start_date: "2024-01-01" # Use YYYY-MM-DD format
         end_date: null            # Use null for missing optional field
         extended_end_date: null  # Use null for missing optional field
-        comment: "La version majeure ne doit pas être plus ancienne que 6 mois à la date de livraison par le fournisseur pour les tests de recette finaux"
+        source_name: "Benoit Duhr"
+        source_entity: "ACT-INT"
+        updated_at: "2023-09-08"
+      - version: "1.x"
+        start_date: null # Use YYYY-MM-DD format
+        end_date: 2022-01-01            # Use null for missing optional field
+        comment: "Il est recommandé de faire une migration hybride et non une refonte"
+        source_name: "Benoit Duhr"
+        source_entity: "ACT-INT"
+        updated_at: "2023-09-08"
+      - version: "2.x"
+        start_date: null # Use YYYY-MM-DD format
+        end_date: 2023-01-01            # Use null for missing optional field
+        source_name: "Benoit Duhr"
+        source_entity: "ACT-INT"
+        updated_at: "2023-09-08"
+      - version: "14.x"
+        start_date: null # Use YYYY-MM-DD format
+        end_date: 2024-12-01            # Use null for missing optional field
         source_name: "Benoit Duhr"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"

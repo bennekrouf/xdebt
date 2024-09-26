@@ -27,7 +27,7 @@ pub fn analyze_jenkins(
                     repository_name: repository_name_str.to_string(),
                     dependency_version: DependencyVersion {
                         dependency_name: keyword.to_string(),
-                        version_number: version.to_string(),
+                        current_version: version.to_string(),
                     },
                     roadmap: None,
                 });

@@ -8,12 +8,13 @@ mod roadmap;
 mod services;
 mod url;
 mod utils;
+mod init_tracing;
 
 use std::env;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
-use tracing_subscriber::filter::EnvFilter;
-use tracing_subscriber;
+// use tracing_subscriber::filter::EnvFilter;
+// use tracing_subscriber;
 
 use crate::boot::load_config::load_config;
 use crate::boot::watch_config_for_reload::watch_config_for_reload;
@@ -26,18 +27,18 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut config = load_config(config_file_path)?;
 
     // Initialize tracing subscriber
-    static INIT: std::sync::Once = std::sync::Once::new();
-    let env_filter = EnvFilter::new(format!(
-        "{},sled::pagecache=info,sled::tree=info,reqwest::blocking::wait=info,sled::pagecache::iobuf=info",
-        config.trace_level
-    ));
-
-    INIT.call_once(|| {
-        tracing_subscriber::fmt()
-            .with_max_level(config.trace_level)
-            .with_env_filter(env_filter)
-            .init();
-    });
+    // static INIT: std::sync::Once = std::sync::Once::new();
+    // let env_filter = EnvFilter::new(format!(
+    //     "{},hyper=trace,hyper_util::client::legacy::pool=trace,sled::pagecache=info,sled::tree=info,reqwest::blocking::wait=info,sled::pagecache::iobuf=info",
+    //     config.trace_level
+    // ));
+    //
+    // INIT.call_once(|| {
+    //     tracing_subscriber::fmt()
+    //         .with_max_level(config.trace_level)
+    //         .with_env_filter(env_filter)
+    //         .init();
+    // });
 
     let db = sled::open("roadmap_db")?;
     config.db = Some(db);
