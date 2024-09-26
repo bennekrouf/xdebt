@@ -22,7 +22,7 @@ pub fn run_analysis(
     match analyze_one_repo(config, project_name, repo_name) {
         Ok(analysis_results) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
-            tracing::info!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);
+            tracing::debug!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);
 
             // Compute KPIs based on the analysis results
             let kpi_results: Vec<KPIResult> = analysis_results

@@ -4,6 +4,7 @@ use std::io::Read;
 use std::path::Path;
 use serde_json::{Value, Map};
 use std::error::Error;
+use std::env;
 use tracing::{info, debug};
 
 use crate::models::AppConfig;
@@ -12,25 +13,39 @@ use crate::plugins::maven::utils::analyze_pom_content::analyze_pom_content;
 
 pub fn generate_and_analyze_effective_pom(
     config: &AppConfig,
-    output_folder: &str,
     versions_keywords: &[&str],
     pom_file_path: &Path,
     repo_name: &str,
+    output_folder: &str,
 ) -> Result<Map<String, Value>, Box<dyn Error>> {
+    // Effective POM file path (relative)
     let effective_pom_file = Path::new(output_folder).join("effective_pom.xml");
+
+    // Log the current working directory
+    let current_dir = env::current_dir()?;
+    info!("Current working directory: {}", current_dir.display());
+
+    // Log the absolute path of the effective POM file
+    let absolute_effective_pom_file = current_dir.join(&effective_pom_file);
+    info!("Effective POM file absolute path: {}", absolute_effective_pom_file.display());
+
     let mut pom_versions = Map::new();
 
     if !effective_pom_file.exists() || config.force_maven_effective {
         info!(
-            "Effective POM file '{}' does not exist or force_effective is true, generating effective POM.",
+            "2 - Effective POM file '{}' does not exist or force_effective is true, generating effective POM.",
             effective_pom_file.display()
         );
 
         let effective_pom_result = generate_maven_effective_pom(&pom_file_path.to_string_lossy(), &effective_pom_file.to_string_lossy())?;
         let effective_pom_path = Path::new(&effective_pom_result);
 
+        // Log the absolute path of the effective POM result
+        let absolute_effective_pom_result = current_dir.join(&effective_pom_result);
+        info!("Generated effective POM path: {}", absolute_effective_pom_result.display());
+
         if !effective_pom_path.exists() {
-            return Err(format!("Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
+            return Err(format!("1 - Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
         }
 
         let mut content = String::new();
@@ -47,10 +62,11 @@ pub fn generate_and_analyze_effective_pom(
         return Ok(pom_versions);
     } else {
         info!(
-            "Effective POM file '{}' already exists, skipping generation.",
+            "3 - Effective POM file '{}' already exists, skipping generation.",
             effective_pom_file.display()
         );
     }
 
     Ok(pom_versions)
 }
+

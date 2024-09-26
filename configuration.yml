@@ -6,8 +6,8 @@ base_url: https://dsigit.etat-de-vaud.ch/outils/git
 # user: bennekrouf
 
 force_git_pull: false
-force_maven_effective: false
-trace_level: debug
+force_maven_effective: true
+trace_level: info
 output_folder: tmp
 enable_maven_analysis: true
 enable_npm_analysis: false

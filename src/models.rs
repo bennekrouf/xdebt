@@ -55,10 +55,10 @@ pub struct Roadmap {
     pub entries: Vec<RoadmapEntry>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RoadmapEntry {
     pub version: String,
-    start_date: Option<NaiveDate>,
+    pub start_date: Option<NaiveDate>,
     pub end_date: Option<NaiveDate>,
     extended_end_date: Option<NaiveDate>,
     comment: Option<String>,
