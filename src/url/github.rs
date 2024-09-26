@@ -31,11 +31,6 @@ impl UrlConfig for GithubConfig {
         format!("{}/{}/{}/contents/{}", self.base_url, self.user, repo, file_path)
     }
 
-    // Browse URL for GitHub (if required, but typically it's the same as file content access)
-    fn browse_file_url(&self, _owner: &str, repo: &str, file_path: &str) -> String {
-        format!("{}/{}/{}/contents/{}", self.base_url, self.user, repo, file_path)
-    }
-
     // Method to get necessary headers, including GitHub token and user agent
     fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>> {
         dotenv().ok(); // Load environment variables

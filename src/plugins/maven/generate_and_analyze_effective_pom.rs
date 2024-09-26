@@ -7,8 +7,8 @@ use std::error::Error;
 use tracing::{info, debug};
 
 use crate::models::AppConfig;
-use crate::plugins::maven::run_maven_effective_pom::run_maven_effective_pom;
-use crate::plugins::maven::analyze_pom_content::analyze_pom_content;
+use crate::plugins::maven::utils::generate_maven_effective_pom::generate_maven_effective_pom;
+use crate::plugins::maven::utils::analyze_pom_content::analyze_pom_content;
 
 pub fn generate_and_analyze_effective_pom(
     config: &AppConfig,
@@ -26,7 +26,7 @@ pub fn generate_and_analyze_effective_pom(
             effective_pom_file.display()
         );
 
-        let effective_pom_result = run_maven_effective_pom(&pom_file_path.to_string_lossy())?;
+        let effective_pom_result = generate_maven_effective_pom(&pom_file_path.to_string_lossy(), &effective_pom_file.to_string_lossy())?;
         let effective_pom_path = Path::new(&effective_pom_result);
 
         if !effective_pom_path.exists() {

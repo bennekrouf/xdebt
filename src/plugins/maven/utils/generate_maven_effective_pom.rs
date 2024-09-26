@@ -5,9 +5,9 @@ use std::process::Command;
 use std::fs;
 use tracing::{info, trace, error};
 
-pub fn run_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Error>> {
-    let output_file = format!("effective_pom.xml");
-    let output_option = format!("-Doutput={}", output_file);
+pub fn generate_maven_effective_pom(pom_file: &str, effective_pom_file: &str) -> Result<String, Box<dyn Error>> {
+    // let output_file = format!("effective_pom.xml");
+    let output_option = format!("-Doutput={}", effective_pom_file);
     let pom_file = format!("{}", &pom_file);
 
     // Trace the working directory and POM details
@@ -45,10 +45,10 @@ pub fn run_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Error>>
         })?;
 
     if output.status.success() {
-        info!("Effective POM generated successfully at '{}'", &output_file);
+        info!("Effective POM generated successfully at '{}'", &effective_pom_file);
         trace!("Maven stdout: {}", String::from_utf8_lossy(&output.stdout));
         trace!("Maven stderr: {}", String::from_utf8_lossy(&output.stderr));
-        Ok(output_file) // Return the output file name
+        Ok(effective_pom_file.to_string()) // Return the output file name
     } else {
         let status_code = output.status.code().unwrap_or(-1);
         let stderr = String::from_utf8_lossy(&output.stderr);

@@ -16,16 +16,11 @@ impl UrlConfig for BitbucketConfig {
         self.file_url(UrlMode::Raw, project_name, repo_name, file_path, Some("master"))
     }
 
-    fn browse_file_url(&self, project_name: &str, repo_name: &str, file_path: &str) -> String {
-        self.file_url(UrlMode::Browse, project_name, repo_name, file_path, Some("master"))
-    }
-
     // Common function for both raw and browse URLs, with branch parameter
     fn file_url(&self, mode: UrlMode, project_name: &str, repo_name: &str, file_path: &str, branch: Option<&str>) -> String {
         let branch = branch.unwrap_or("master"); // Default to "master" if not provided
         let mode_str = match mode {
             UrlMode::Raw => "raw",
-            UrlMode::Browse => "browse",
         };
 
         format!(

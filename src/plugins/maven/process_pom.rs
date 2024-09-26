@@ -6,7 +6,7 @@ use tracing::{info, debug};
 
 use crate::utils::download_xml_file::download_xml_file;
 use crate::models::AppConfig;
-use crate::plugins::maven::parse_pom_for_modules::parse_pom_for_modules;
+use crate::plugins::maven::utils::parse_pom_for_modules::parse_pom_for_modules;
 use crate::plugins::maven::generate_and_analyze_effective_pom::generate_and_analyze_effective_pom;
 use crate::plugins::maven::download_and_read_pom::download_and_read_pom;
 
