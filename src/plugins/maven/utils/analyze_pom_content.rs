@@ -15,7 +15,7 @@ pub fn analyze_pom_content(
     version_keywords: &[&str],
 ) -> Result<Value, Box<dyn Error>> {
     let equivalences = config.equivalences.clone();
-    info!("Analyzing POM content for app: '{}'", app_name);
+    info!("Analyzing POM content for app: '{}' and keywords : {:?}", app_name, version_keywords);
 
     let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
     info!("Initialized version extraction regex");
