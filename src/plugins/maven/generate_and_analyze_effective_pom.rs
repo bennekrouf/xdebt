@@ -38,28 +38,28 @@ pub fn generate_and_analyze_effective_pom(
         );
 
         let _ = generate_maven_effective_pom(&pom_file_path.to_string_lossy())?;
+        
         if !absolute_effective_pom_file.exists() {
             return Err(format!("1 - Effective POM file '{}' does not exist.", absolute_effective_pom_file.display()).into());
         }
-
-        let mut content = String::new();
-        File::open(&absolute_effective_pom_file)
-            .and_then(|mut file| file.read_to_string(&mut content))
-            .map_err(|e| format!("Failed to read effective POM file '{}': {}", absolute_effective_pom_file.display(), e))?;
-
-        // Analyze the POM content
-        let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;
-        debug!("analyze_pom_content returns {}", pom_analysis_result);
-
-        pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
-
-        return Ok(pom_versions);
     } else {
         info!(
             "3 - Effective POM file '{}' already exists, skipping generation.",
             effective_pom_file.display()
         );
     }
+
+    // Read the effective POM file content
+    let mut content = String::new();
+    File::open(&absolute_effective_pom_file)
+        .and_then(|mut file| file.read_to_string(&mut content))
+        .map_err(|e| format!("Failed to read effective POM file '{}': {}", absolute_effective_pom_file.display(), e))?;
+
+    // Analyze the POM content
+    let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;
+    debug!("analyze_pom_content returns {}", pom_analysis_result);
+
+    pom_versions.extend(pom_analysis_result.get("versions").and_then(Value::as_object).unwrap_or(&Map::new()).clone());
 
     Ok(pom_versions)
 }

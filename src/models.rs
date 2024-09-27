@@ -81,9 +81,16 @@ pub struct Analysis {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub enum KPIStatus {
+    Compliant(String),           // Compliant with reason
+    NonCompliant(String),        // Non-compliant with reason
+    UpgradeNeeded(String),       // Upgrade needed with reason
+    NoActionNeeded(String),      // No action needed with reason
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct KPIResult {
     pub dependency_name: String,
     pub current_version: String,
-    pub compliance_status: String,
-    pub maintenance_action: String,
+    pub kpi_status: KPIStatus,
 }
