@@ -37,21 +37,15 @@ pub fn generate_and_analyze_effective_pom(
             effective_pom_file.display()
         );
 
-        let effective_pom_result = generate_maven_effective_pom(&pom_file_path.to_string_lossy(), &effective_pom_file.to_string_lossy())?;
-        let effective_pom_path = Path::new(&effective_pom_result);
-
-        // Log the absolute path of the effective POM result
-        let absolute_effective_pom_result = current_dir.join(&effective_pom_result);
-        info!("Generated effective POM path: {}", absolute_effective_pom_result.display());
-
-        if !effective_pom_path.exists() {
-            return Err(format!("1 - Effective POM file '{}' does not exist.", effective_pom_path.display()).into());
+        let _ = generate_maven_effective_pom(&pom_file_path.to_string_lossy())?;
+        if !absolute_effective_pom_file.exists() {
+            return Err(format!("1 - Effective POM file '{}' does not exist.", absolute_effective_pom_file.display()).into());
         }
 
         let mut content = String::new();
-        File::open(&effective_pom_path)
+        File::open(&absolute_effective_pom_file)
             .and_then(|mut file| file.read_to_string(&mut content))
-            .map_err(|e| format!("Failed to read effective POM file '{}': {}", effective_pom_path.display(), e))?;
+            .map_err(|e| format!("Failed to read effective POM file '{}': {}", absolute_effective_pom_file.display(), e))?;
 
         // Analyze the POM content
         let pom_analysis_result = analyze_pom_content(config, repo_name, &content, versions_keywords)?;

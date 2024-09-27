@@ -14,6 +14,7 @@ pub fn append_json_to_file<'a>(
     json_data: &Value) -> Result<(), Box<dyn Error>> {
     // Get the target folder from the environment, default to "tmp" if not set
     let output_folder = &config.output_folder;
+    let project_name = project_name.to_lowercase();
 
     // Ensure the target folder exists
     if !Path::new(&output_folder).exists() {

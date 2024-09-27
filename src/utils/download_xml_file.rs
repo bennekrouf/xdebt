@@ -15,9 +15,10 @@ pub fn download_xml_file(
     output_folder: &str,
     file_name: &str,
 ) -> Result<String, Box<dyn Error>> {
+    let output_folder = &output_folder.to_lowercase();
     // Ensure the target folder exists
     debug!("Ensuring target folder '{}' exists.", output_folder);
-    let target_path = Path::new(output_folder);
+    let target_path = Path::new(&output_folder);
     if !target_path.exists() {
         debug!("Target folder '{}' does not exist. Creating...", output_folder);
         fs::create_dir_all(output_folder)

@@ -22,6 +22,7 @@ pub fn analyze_one_repo<'a>(
     let db = config.db.as_ref().expect("Db should be initialized");
 
     let output_folder = format!("{}/{}/{}", config.output_folder, project_name, repository_name);
+    let output_folder = output_folder.to_lowercase();
 
     let dependency_names = get_distinct_dependencies(db)?;
     let versions_keywords: Vec<&str> = dependency_names.iter().map(|s| s.as_str()).collect();

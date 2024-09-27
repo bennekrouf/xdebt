@@ -5,8 +5,8 @@ use std::process::Command;
 use std::fs;
 use tracing::{info, trace, error};
 
-pub fn generate_maven_effective_pom(pom_file: &str, effective_pom_file: &str) -> Result<String, Box<dyn Error>> {
-    // let output_file = format!("effective_pom.xml");
+pub fn generate_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Error>> {
+    let effective_pom_file = format!("effective_pom.xml");
     let output_option = format!("-Doutput={}", effective_pom_file);
     let pom_file = format!("{}", &pom_file);
 

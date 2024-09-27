@@ -28,7 +28,7 @@ pub fn analyze_pom_content(
     let doc = Document::parse(&cleaned_content)?;
     info!("XML document parsed successfully");
 
-    'keyword_loop: for keyword in version_keywords {
+    for keyword in version_keywords {
         info!("Analyzing keyword: '{}'", keyword);
 
         // Check for dependencies
@@ -49,7 +49,6 @@ pub fn analyze_pom_content(
                                 let version = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");
                                 versions.insert(keyword.to_string(), version.to_string());
                                 info!("Found version '{}' for keyword '{}'", version, keyword);
-                                break 'keyword_loop; // Break out of both loops
                             }
                         }
                     }
@@ -71,7 +70,6 @@ pub fn analyze_pom_content(
                             let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
                             versions.insert(keyword.to_string(), cleaned_version.to_string());
                             info!("Found version '{}' for artifactId '{}'", cleaned_version, artifact_id_text.unwrap());
-                            break 'keyword_loop; // Break after the first occurrence
                         }
                     }
                 }
@@ -86,7 +84,6 @@ pub fn analyze_pom_content(
                 let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
                 versions.insert(keyword.to_string(), cleaned_version.to_string());
                 info!("Found version '{}' for keyword '{}'", cleaned_version, keyword);
-                break 'keyword_loop; // Break after the first occurrence
             }
         }
     }
