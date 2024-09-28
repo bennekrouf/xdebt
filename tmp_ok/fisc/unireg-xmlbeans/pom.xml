@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Unireg-XmlBeans -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.unireg</groupId>
+	<artifactId>unireg-xmlbeans-base</artifactId>
+	<packaging>pom</packaging>
+	<!-- BEGIN_LVERSION -->
+	<version>1.65-SNAPSHOT</version>
+	<!-- END_LVERSION -->
+
+	<name>UniregCTB - XmlBeans - Base</name>
+	<description>UniregCTB - Projet de base pour la génération des beans Xml</description>
+
+	<modules>
+		<module>interfaces</module>
+		<module>beans</module>
+	</modules>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.snapshots</id>
+			<name>Nexus snaphots</name>
+			<url>${nexus.url.snapshots}</url>
+			<!-- évite d'ajouter un timestamp à chaque déploiement : nécessaire pour avoir les sources synchrones avec un jar snapshot -->
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/unireg-xmlbeans</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-xmlbeans.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-xmlbeans.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	
+	<properties>
+		<!-- Application settings -->
+		<copyright.year>2021</copyright.year>
+		<amp.genericCore>true</amp.genericCore>
+		<amp.fullSource>false</amp.fullSource>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.resources.sourceEncoding>UTF-8</project.resources.sourceEncoding>
+		<surefire.argline>-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Duser.variant=US</surefire.argline>
+	</properties>
+	
+</project>
+

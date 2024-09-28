@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.justice.egdc</groupId>
+        <artifactId>egdc-parent</artifactId>
+        <version>24.2.5</version>
+    </parent>
+
+    <artifactId>egdc-batch-adapter</artifactId>
+
+    <packaging>jar</packaging>
+
+    <name>${project-name.prefix}${project.artifactId}</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>egdc-application-batch</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.justice.shared</groupId>
+            <artifactId>shared-batch-adapter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.justice.egdc</groupId>
+            <artifactId>egdc-esb-adapter-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.justice.egdc</groupId>
+            <artifactId>egdc-application-common</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

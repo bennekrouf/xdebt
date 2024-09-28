@@ -1,0 +1,133 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.institutions.siel</groupId>
+    <artifactId>blv-akomantoso</artifactId>
+    <packaging>jar</packaging>
+    <version>10.0.0-SNAPSHOT</version>
+    <name>blv-akomantoso</name>
+    <description>This is a java class representation of the Akoma Ntoso XML schema.
+        Akoma Ntoso is an emerging legal document standard for representing legislative and judicial documents in XML
+        format.
+        See both http://www.akomtantoso.org and http://code.google.com/p/akomantoso.
+        This library is generated using JAXB on the Akoma Ntoso 3.0 schema.
+    </description>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>3.0.2</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dgnsi</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus releases</name>
+                    <url>${nexus.url.stable}</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus snaphots</name>
+                    <url>${nexus.url.snapshots}</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>elca</id>
+            <activation>
+                <property>
+                    <name>repo.institutions.release.url</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>repo-institutions-release</id>
+                    <url>${repo.institutions.release.url}</url>
+                    <uniqueVersion>true</uniqueVersion>
+                </repository>
+                <snapshotRepository>
+                    <id>repo-institutions-snapshot</id>
+                    <url>${repo.institutions.snapshot.url}</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/instit/blv-akomantoso.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
+</project>

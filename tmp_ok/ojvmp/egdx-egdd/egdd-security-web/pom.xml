@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.justice.egdd</groupId>
+        <artifactId>egdd-parent</artifactId>
+        <version>24.2.3</version>
+    </parent>
+
+    <artifactId>egdd-security-web</artifactId>
+    <name>${project-name.prefix}${project.artifactId}</name>
+
+    <description>TODO set module description</description>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>ch.vd.justice.shared</groupId>
+            <artifactId>shared-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.justice.egdd</groupId>
+            <artifactId>egdd-domain</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <!-- parameter metadata is required when generating code interacting with security checkers -->
+        <pluginManagement>
+          <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgument>-parameters</compilerArgument>
+                    <testCompilerArgument>-parameters</testCompilerArgument>
+                </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+    </build>
+</project>

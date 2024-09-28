@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- POM for jacoco report aggregation -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>fidor-jacoco-report</artifactId>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>ch.vd.fidor</groupId>
+        <artifactId>fidor-parent</artifactId>
+        <!-- BEGIN_LVERSION -->
+        <version>24R2.3.4-SNAPSHOT</version>
+        <!-- END_LVERSION -->
+    </parent>
+
+    <name>Fidor - Jacoco report</name>
+    <description>Fidor, Le référentiel fiscal de l'Etat de Vaud - Jacoco report</description>
+
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <dependencies>
+                <!-- Inclure ici tous les modules ayant des tests pour le goal de report-aggregate de JaCoCo -->
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>fidor-core</artifactId>
+                    <version>${project.parent.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>fidor-business</artifactId>
+                    <version>${project.parent.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>fidor-business-it</artifactId>
+                    <version>${project.parent.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>fidor-web</artifactId>
+                    <version>${project.parent.version}</version>
+                    <type>war</type>
+                </dependency>
+                <dependency>
+                    <groupId>${project.parent.groupId}</groupId>
+                    <artifactId>fidor-web-it</artifactId>
+                    <version>${project.parent.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <dataFileIncludes>**/*.exec</dataFileIncludes>
+                                    <outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
+                                    <append>true</append>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

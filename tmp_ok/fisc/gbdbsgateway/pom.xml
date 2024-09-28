@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.notariat.plus</groupId>
+    <artifactId>gbdbsgateway</artifactId>
+    <version>1.1.12-SNAPSHOT</version>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/bdbsgateway.git</connection>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/fisc/gbdbsgateway.git</developerConnection>
+        <url>https://dsigit.etat-de-vaud.ch/outils/git/projects/FISC/repos/gbdbsgateway/browse/</url>
+        <tag>24R1.0.0</tag>
+    </scm>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <config.location>./config</config.location>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gbdbs-gateway-server.version>24.10.0</gbdbs-gateway-server.version>
+        <devex.deployEnv>IN</devex.deployEnv>
+        <devex.configTag>master</devex.configTag>
+        <devex.deployTarget>Batch</devex.deployTarget>
+        <devex.deployUnit>gbdbsgateway</devex.deployUnit>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <devex-maven-plugin-version>1.0.19</devex-maven-plugin-version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.capitastra</groupId>
+            <artifactId>gbdbs-gateway-server</artifactId>
+            <version>${gbdbs-gateway-server.version}</version>
+            <type>jar</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Extract Keycloak</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>tar.gz</includeTypes>
+                            <includeArtifactIds>keycloak</includeArtifactIds>
+                            <outputDirectory>dep/</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.3.0</version>
+
+                <executions>
+                    <execution>
+                        <id>assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${project.name}-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <!-- pour l'utilisation du plugin devex : les varaible d'environnement doivent être setter : déjà effectué sur jenkins
+                        DEVEX_URL=http://outils-devex-ws.etat-de-vaud.ch/outils/devex
+                        DEVEX_USERNAME=< IUP>
+                        DEVEX_PASSWORD=<pwd ADACV>
+                    -->
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin-version}</version>
+                        <configuration>
+                            <configTag>${devex.configTag}</configTag>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release-tao-is</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>deploy.interne</id>
+            <properties>
+                <devex.deployUnit>gbdbsgatewayinterne</devex.deployUnit>
+            </properties>
+        </profile>
+        <profile>
+            <id>deploy.externe</id>
+            <properties>
+                <devex.deployUnit>gbdbsgateway</devex.deployUnit>
+            </properties>
+        </profile>
+        <!-- Déploiment de la release dans devex -->
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <!-- pour l'utilisation du plugin devex : les varaible d'environnement doivent être setter : déjà effectué sur jenkins
+                        DEVEX_URL=http://outils-devex-ws.etat-de-vaud.ch/outils/devex
+                        DEVEX_USERNAME=< IUP>
+                        DEVEX_PASSWORD=<pwd ADACV>
+                    -->
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin-version}</version>
+                        <configuration>
+                            <configTag>${devex.configTag}</configTag>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                            <environment>${devex.deployEnv}</environment>
+                            <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy-gbdbsgateway</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

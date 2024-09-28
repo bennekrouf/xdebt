@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.cyber.ojvmp</groupId>
+    <artifactId>prestejurisprudence</artifactId>
+    <version>24.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>prestejurisprudence</name>
+
+    <parent>
+        <groupId>ch.vd.cyber.parent</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>13.6.0-SNAPSHOT</version>
+        <relativePath />
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ojvmp/prestejurisprudence.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.cyber</groupId>
+            <artifactId>starter-prestation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.8</version>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>ch.vd.cybersdk</groupId>
+            <artifactId>prestations-be</artifactId>
+            <version>${prestations-be.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--  API CLIENT GENERATION  -->
+            <!--            TODO LHE : get api.yaml from nexus once available-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-dependency-plugin</artifactId>-->
+            <!--                <version>3.6.1</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>generate-sources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>unpack</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <artifactItems>-->
+            <!--                                <artifactItem>-->
+            <!--                                    <groupId>ch.vd.justice.ejpdsearch</groupId>-->
+            <!--                                    <artifactId>ejpd-search-api</artifactId>-->
+            <!--                                    <version>1.0.0-SNAPSHOT</version>-->
+            <!--                                    <type>jar</type>-->
+            <!--                                    <overWrite>true</overWrite>-->
+            <!--                                    <outputDirectory>${project.basedir}/src/main/resources/swagger</outputDirectory>-->
+            <!--                                    <includes>api.yaml</includes>-->
+            <!--                                </artifactItem>-->
+            <!--                            </artifactItems>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+            <plugin>
+                <groupId>io.swagger.codegen.v3</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>${swagger-codegen-maven-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate ejpd</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/swagger/ejpd.yaml</inputSpec>
+                            <language>java</language>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <modelPackage>egdx.client.model</modelPackage>
+                            <modelNamePrefix>EGDX</modelNamePrefix>
+                            <apiPackage>egdx.client.api</apiPackage>
+                            <invokerPackage>egdx.client.invoker</invokerPackage>
+                            <typeMappings>
+                                <typeMapping>File=org.springframework.core.io.Resource</typeMapping>
+                            </typeMappings>
+                            <configOptions>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}-client</artifactId>
+                                <artifactVersion>${project.version}</artifactVersion>
+                                <library>resttemplate</library>
+                                <dateLibrary>java8</dateLibrary>
+                                <licenseName>Apache 2.0</licenseName>
+                                <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+                                <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate egdws</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/swagger/egdws.yaml</inputSpec>
+                            <language>java</language>
+                            <generateApiTests>false</generateApiTests>
+                            <generateApiDocumentation>false</generateApiDocumentation>
+                            <generateModelTests>false</generateModelTests>
+                            <modelPackage>egdws.client.model</modelPackage>
+                            <modelNamePrefix>EGDWS</modelNamePrefix>
+                            <apiPackage>egdws.client.api</apiPackage>
+                            <invokerPackage>egdws.client.invoker</invokerPackage>
+                            <typeMappings>
+                                <typeMapping>File=org.springframework.core.io.Resource</typeMapping>
+                            </typeMappings>
+                            <configOptions>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>${project.artifactId}-client</artifactId>
+                                <artifactVersion>${project.version}</artifactVersion>
+                                <library>resttemplate</library>
+                                <dateLibrary>java8</dateLibrary>
+                                <licenseName>Apache 2.0</licenseName>
+                                <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+                                <notNullJacksonAnnotation>true</notNullJacksonAnnotation>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <properties>
+        <swagger-codegen-maven-plugin-version>3.0.52</swagger-codegen-maven-plugin-version>
+
+        <devex.configTag>master</devex.configTag>
+        <devex.deployTarget>EmbeddedRHEL8</devex.deployTarget>
+    </properties>
+
+</project>

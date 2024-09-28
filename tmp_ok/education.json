@@ -1,0 +1,107 @@
+{
+  "debt": [
+    {
+      "current_version": "2.0.0",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.12.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    }
+  ],
+  "repository_name": "inexta"
+}
+{
+  "debt": [
+    {
+      "current_version": "16.1.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "metedu-ng"
+}
+{
+  "debt": [
+    {
+      "current_version": "16.1.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "metedu-ng-icons"
+}
+{
+  "debt": [
+    {
+      "current_version": "16.2.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "metedu-ng-showcase"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.24",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "14.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "metedu-proxy"
+}
+{
+  "debt": [
+    {
+      "current_version": "15.2.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "metedu-ui"
+}

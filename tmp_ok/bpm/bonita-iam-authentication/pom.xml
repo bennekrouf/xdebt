@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.bpm</groupId>
+    <artifactId>iam-authentication</artifactId>
+    <version>2.6.1-SNAPSHOT</version>
+
+    <properties>
+        <bonita.version>7.15.0</bonita.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.bonitasoft.engine</groupId>
+            <artifactId>bonita-common-sp</artifactId>
+            <version>${bonita.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.bonitasoft.engine</groupId>
+            <artifactId>bonita-server-sp</artifactId>
+            <version>${bonita.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bonitasoft.console</groupId>
+            <artifactId>console-server</artifactId>
+            <version>${bonita.version}</version>
+        </dependency>
+
+
+        <!--dependency>
+            <groupId>org.bonitasoft.console</groupId>
+            <artifactId>console-common-sp</artifactId>
+            <version>${bonita.version}</version>
+        </dependency-->
+
+        <dependency>
+            <groupId>org.bonitasoft.console</groupId>
+            <artifactId>console-common</artifactId>
+            <version>${bonita.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <goals>deploy</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <pushChanges>true</pushChanges>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/bpm/bonita-iam-authentication</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>DSI Releases</id>
+            <name>Release repository</name>
+            <url>http://nexus.etat-de-vaud.ch/repository/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://nexus.etat-de-vaud.ch/repository/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

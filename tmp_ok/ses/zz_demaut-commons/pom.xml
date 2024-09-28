@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.sante.demaut</groupId>
+    <artifactId>demaut-commons</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.0.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+
+        <!-- DSI -->
+        <prestations-be.version>4.17.0</prestations-be.version>
+
+        <!-- versions -->
+        <httpclient.version>4.5.5</httpclient.version>
+        <cxf-codegen-plugin.version>3.2.3</cxf-codegen-plugin.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- DSI -->
+        <dependency>
+            <groupId>ch.vd.cybersdk</groupId>
+            <artifactId>prestations-be</artifactId>
+            <version>${prestations-be.version}</version>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>${cxf-codegen-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated/cxf</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/wsdl/MedRegSucheWebService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/MedRegSucheWebService.wsdl</wsdlLocation>
+                                    <serviceName>SucheWebService</serviceName>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>${basedir}/src/main/resources/wsdl/NaregService.wsdl</wsdl>
+                                    <!-- @see http://stackoverflow.com/a/9875701/144012 why we need this -->
+                                    <wsdlLocation>classpath:wsdl/NaregService.wsdl</wsdlLocation>
+                                    <serviceName>NaregService</serviceName>
+                                    <bindingFiles>
+                                        <bindingFile>${basedir}/src/main/resources/wsdl/nareg_binding.xml</bindingFile>
+                                    </bindingFiles>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <scm>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/ses/repos/demaut-commons/browse</url>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/demaut-commons.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/demaut-commons.git</developerConnection>
+        <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>DSAS-repo</id>
+            <name>DSAS-repo</name>
+            <url>${nexus.url}/dsas-releases</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>DSAS-snapshots</id>
+            <name>DSAS-snapshots</name>
+            <url>${nexus.url}/dsas-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+    
+</project>

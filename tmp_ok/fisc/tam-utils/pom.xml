@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.fiscalite.tam.logger</groupId>
+    <artifactId>tam-utils</artifactId>
+    <version>1.0.11-SNAPSHOT</version>
+    <description>Librairie utilitaire pour le TAM fiscal</description>
+    <packaging>pom</packaging>
+
+    <scm>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tam-utils/browse</url>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tam-utils.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tam-utils.git</developerConnection>
+        <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+
+    <ciManagement>
+        <system>Jenkins CI</system>
+        <url>https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/job/tam-utils/</url>
+    </ciManagement>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://issuetracker.etat-de-vaud.ch/outils/jira/secure/Dashboard.jspa</url>
+    </issueManagement>
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <!-- global -->
+        <jdk.version>1.8</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- plugin -->
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+
+        <!-- Librairies -->
+        <logback.version>1.2.3</logback.version>
+        <slf4j.version>1.6.6</slf4j.version>
+        <junit.version>5.2.0</junit.version>
+        <junit-platform-launcher.version>1.2.0</junit-platform-launcher.version>
+    </properties>
+
+    <modules>
+        <module>commons</module>
+        <module>logback</module>
+        <module>slf4j</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.21.0</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${junit-platform-launcher.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <source>${jdk.version}</source>
+                        <target>${jdk.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit-platform-launcher.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+
+</project>

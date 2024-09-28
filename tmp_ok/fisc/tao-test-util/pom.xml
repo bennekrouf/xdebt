@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>ch.vd.dfin.tao</groupId>
+		<artifactId>tao-parent</artifactId>
+		<version>2.0.0</version>
+	</parent>
+
+	<groupId>ch.vd.dfin.tao</groupId>
+	<artifactId>tao-test-util</artifactId>
+	<version>1.2-SNAPSHOT</version>
+	<name>TAO Test Util - Classes utilitaires de test</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+		</dependency>
+	</dependencies>
+
+	<scm>
+      <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-test-util.git</connection>
+      <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-test-util.git</developerConnection>
+      <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tao-test-util</url>
+      <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+</project>

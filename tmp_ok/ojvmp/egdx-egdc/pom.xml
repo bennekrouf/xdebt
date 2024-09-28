@@ -1,0 +1,395 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.justice.shared</groupId>
+        <artifactId>shared-maven</artifactId>
+        <version>24.2.1</version>
+        <!-- lookup parent from repository -->
+        <relativePath />
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/ojvmp/egdx-egdc</developerConnection>
+        <tag>24.2.5</tag>
+    </scm>
+
+    <groupId>ch.vd.justice.egdc</groupId>
+    <artifactId>egdc-parent</artifactId>
+    <version>24.2.5</version>
+    <packaging>pom</packaging>
+
+    <name>${project-name.prefix}${project.artifactId}</name>
+    <description>The parent pom for egdc</description>
+
+    <modules>
+        <module>egdc-application-web</module>
+        <module>egdc-application-batch</module>
+        <module>egdc-batches</module>
+        <module>egdc-batch-adapter</module>
+        <!-- frontend should be declared before boot-backend to have it build before (by default maven follows the module declaration order if there are no other dependencies/constraints).
+        Ideally, it should be declared as "compile-only" dependency, but this is not a Maven scope.
+        Another option would be to declare is as runtime dependency in boot-backend and exclude it from assembly/packaging -->
+        <module>egdc-frontend</module>
+        <module>egdc-boot-backend</module>
+        <module>egdc-domain</module>
+        <module>egdc-frontend-adapter</module>
+        <module>egdc-moteur-fusion-adapter</module>
+        <module>egdc-persistence</module>
+        <module>egdc-rcpers-adapter</module>
+        <module>egdc-siti-adapter</module>
+        <module>egdc-esb-adapter</module>
+        <module>egdc-security-web</module>
+        <module>egdc-security-batch</module>
+        <module>egdc-application-common</module>
+        <module>egdc-assembly</module>
+        <module>egdc-generator</module>
+
+        <!-- this is the module to run jacoco report-aggregate locally. the egdc-report
+            simply contains a pom.xml file which depends on all project modules Jacoco
+            report-aggregate mojo needs dependencies not aggregator pom. -->
+        <!--<module>egdc-report</module> -->
+    </modules>
+
+    <properties>
+        <!-- see https://www.eclemma.org/jacoco/trunk/doc/prepare-agent-mojo.html -->
+        <argLine>-Dfile.encoding=UTF-8</argLine>
+        <!-- TODO move to shared-parent pom + increase shared version -->
+        <apache.cxf.version>3.3.5</apache.cxf.version>
+        <maven.failsafe.reuseForks>true</maven.failsafe.reuseForks>
+        <t6kt-maven-plugin.version>1.0.4</t6kt-maven-plugin.version>
+        <!-- tesserakt maven plugin configuration -->
+        <t6kt-maven-plugin.application>${project.artifactId}</t6kt-maven-plugin.application>
+        <t6kt-maven-plugin.application>egdx</t6kt-maven-plugin.application>
+        <t6kt-maven-plugin.deployUnit>egdc</t6kt-maven-plugin.deployUnit>
+        <t6kt-maven-plugin.applicationVersion>${project.version}</t6kt-maven-plugin.applicationVersion>
+        <tesserakt-maven-plugin.url>https://esgate.etat-de-vaud.ch/tesserakt-pr</tesserakt-maven-plugin.url>
+        <release.goals>clean verify</release.goals>
+        <release.profiles>not</release.profiles>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Own modules -->
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-application-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-application-batch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-boot-backend</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-domain</artifactId>
+                <classifier>tests</classifier>
+                <scope>test</scope>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-frontend-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-security-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-security-batch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-moteur-fusion-adapter-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-moteur-fusion-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-batches</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-batch-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-rcpers-adapter-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-rcpers-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-siti-adapter-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.justice.egdc</groupId>
+                <artifactId>egdc-siti-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-esb-adapter-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-esb-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-esb-publisher-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-esb-rmp-export-adapter-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- TODO move CXF deps to shared-parent pom + increase shared version -->
+            <!-- CXF -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-client</artifactId>
+                <version>${apache.cxf.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-application-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>egdc-application-common</artifactId>
+                <classifier>tests</classifier>
+                <type>test-jar</type>
+                <scope>test</scope>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apiguardian</groupId>
+            <artifactId>apiguardian-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-logger-api</artifactId>
+            <!-- to get around bug https://github.com/junit-team/junit5/issues/1367 -->
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <!-- TODO move pluginManagement to shared-parent pom + increase shared version -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-wadl2java-plugin</artifactId>
+                    <version>${apache.cxf.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <configuration>
+                        <goals>${release.goals}</goals>
+                        <releaseProfiles>${release.profiles}</releaseProfiles>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                        <localCheckout>true</localCheckout>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <checkModificationExcludes>
+                            <checkModificationExclude>egdc-frontend/src/**</checkModificationExclude>
+                            <checkModificationExclude>
+                                egdc-frontend/src/app/affaire/affaire-header-tab/affaire-header-tab.component.html
+                            </checkModificationExclude>
+                            <checkModificationExclude>egdc-frontend/src/index.html</checkModificationExclude>
+                        </checkModificationExcludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>ch.vd.devsupport</groupId>
+                    <artifactId>tesserakt-maven-plugin</artifactId>
+                    <version>${t6kt-maven-plugin.version}</version>
+                    <configuration>
+                        <username>${T6KT_USERNAME}</username>
+                        <password>${T6KT_PASSWORD}</password>
+                        <application>${t6kt-maven-plugin.application}</application>
+                        <deployUnit>${t6kt-maven-plugin.deployUnit}</deployUnit>
+                        <applicationVersion>${t6kt-maven-plugin.applicationVersion}</applicationVersion>
+                        <chartVersion>${t6kt-maven-plugin.chartVersion}</chartVersion>
+                        <configurationVersion>${t6kt-maven-plugin.configurationVersion}</configurationVersion>
+                        <environment>${t6kt-maven-plugin.environment}</environment>
+                        <url>${tesserakt-maven-plugin.url}</url>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+	    </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-devtools</artifactId>
+                        <optional>true</optional>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>t6kt</id>
+            <!-- redefinition des modules pour t6kt pour exclure le générator des builds tesseract -->
+            <modules>
+                <module>egdc-application-web</module>
+                <module>egdc-application-batch</module>
+                <module>egdc-batches</module>
+                <module>egdc-batch-adapter</module>
+                <module>egdc-frontend</module>
+                <module>egdc-boot-backend</module>
+                <module>egdc-domain</module>
+                <module>egdc-frontend-adapter</module>
+                <module>egdc-moteur-fusion-adapter</module>
+                <module>egdc-persistence</module>
+                <module>egdc-rcpers-adapter</module>
+                <module>egdc-siti-adapter</module>
+                <module>egdc-esb-adapter</module>
+                <module>egdc-security-web</module>
+                <module>egdc-security-batch</module>
+                <module>egdc-application-common</module>
+                <module>egdc-assembly</module>
+            </modules>
+
+        </profile>
+    </profiles>
+</project>

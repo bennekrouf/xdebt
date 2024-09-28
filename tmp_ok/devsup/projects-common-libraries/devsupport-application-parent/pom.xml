@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>devsupport-application-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>DEVSUPPORT - Parent for applications using common libraries</name>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/devsup/projects-common-libraries</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <parent>
+        <groupId>ch.vd.devsupport</groupId>
+        <artifactId>vd-application-parent</artifactId>
+        <!-- please keep in sync with devsupport-library-dependencies/pom.xml -->
+        <version>2.3.4</version>
+        <relativePath />
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>vd-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>devsupport-spring-application-starter</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-actuator-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-authentication-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-batch-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-data-faker</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-liquibase-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rest-utils</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rest-bitbucket</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rest-refsec</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rest-tower</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rights-provider-refsec</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rights-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-spring-utils</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-utils</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-validation-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <!-- keepass -->
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-keepass-properties-api</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-keepass-properties-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- testing libraries -->
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-authentication-starter-test</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-rights-starter-test</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>devsupport-liquibase-starter</artifactId>
+                <version>4.0.0-SNAPSHOT</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+</project>

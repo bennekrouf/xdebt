@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Shared-TiPi -->
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>shared-tipi-engine</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>ch.vd.shared</groupId>
+		<artifactId>shared-tipi-base</artifactId>
+		<!-- BEGIN_LVERSION -->
+		<version>1.0.2-SNAPSHOT</version>
+		<!-- END_LVERSION -->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<name>Shared - TiPi Engine</name>
+	<description>DSI - Shared TiPi</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<!--					FIXME (or not): force test execution order here for tipi-engine-->
+					<includes>
+						<include>**/TipiTestSuite.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>false</filtering>
+			</testResource>
+		</testResources>
+	</build>
+
+</project>

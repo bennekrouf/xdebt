@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+        <groupId>ch.vd.bpm</groupId>
+        <version>10.1.1-vd-01-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>bonita-embedded</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <bonita.version>10.1.1</bonita.version>
+        <bonita.update.version>10.1.0</bonita.update.version>
+        <bonita.zip.version>2024.2-u1</bonita.zip.version>
+        <!--tomcat.version>8.5.34</tomcat.version-->
+        <bonita.update.name>bonita-update-tool-sp-3.5.0</bonita.update.name>
+        <bonita.update.zip>${bonita.release.dir}/${bonita.update.name}.zip</bonita.update.zip>
+        <!--bonita.deploy.zip>${bonita.release.dir}/BonitaSubscription-${bonita.version}-deploy.zip</bonita.deploy.zip-->
+        <bonita.tomcat.zip>${bonita.release.dir}/BonitaSubscription-${bonita.zip.version}.zip</bonita.tomcat.zip>
+    </properties>
+
+    <dependencies>
+    <dependency>
+        <groupId>com.oracle.ojdbc</groupId>
+        <artifactId>ojdbc8</artifactId>
+        <version>19.3.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-client</artifactId>
+        <version>5.18.3</version>
+    </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>5.18.3</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>javax.jms-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.bpm.tool</groupId>
+            <artifactId>bonita-deployment-tools</artifactId>
+            <version>2.6.0-SNAPSHOT</version>
+            <classifier>runtime</classifier>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/bonita-update</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="unzipping setup" />
+                                <unzip src="${bonita.tomcat.zip}" dest="${project.build.directory}" />
+                                <unzip src="${bonita.update.zip}" dest="${project.build.directory}" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <descriptor>src/assembly/assembly.xml</descriptor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-archive</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <goals>clean deploy</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <pushChanges>true</pushChanges>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>zcisve</id>
+            <activation>
+                <property>
+                    <name>user.name</name>
+                    <value>zcisve</value>
+                </property>
+            </activation>
+            <properties>
+                <bonita.release.dir>/dev/bonita/work</bonita.release.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>xsirvl</id>
+            <activation>
+                <property>
+                    <name>user.name</name>
+                    <value>xsirvl</value>
+                </property>
+            </activation>
+            <properties>
+                <bonita.release.dir>/home/xsirvl/work/bonita-release</bonita.release.dir>
+            </properties>
+        </profile>
+    </profiles>
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id> <!-- doit matcher l'id du server dans settings.xml -->
+            <name>Nexus DGSNI</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGSNI</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/bpm/bonita-embedded</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+</project>

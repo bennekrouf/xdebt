@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal</groupId>
+        <artifactId>dossier-fiscal</artifactId>
+        <version>25R1.A.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-echange-entrant</artifactId>
+    <name>dossier-fiscal-echange-entrant</name>
+    <description>Couche gérant les échanges entrants</description>
+
+    <dependencies>
+
+        <!-- Project -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-business</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.dfin.tao.dossier-fiscal.clients</groupId>
+            <artifactId>dossier-fiscal-clients</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.coverage.exclusions>**/model/**/*.*,**/config/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

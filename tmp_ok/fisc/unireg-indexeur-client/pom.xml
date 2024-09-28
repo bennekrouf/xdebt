@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.registre</groupId>
+	<artifactId>unireg-indexeur-client</artifactId>
+	<version>1.0.2-SNAPSHOT</version>
+	<description>Librairie façade pour l'interrogation de l'indexeur</description>
+
+	<properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<encoding>UTF-8</encoding>
+
+		<slf4j.version>1.7.36</slf4j.version>
+		<log4j.version>2.17.2</log4j.version>
+
+		<solr.version>8.11.1</solr.version>
+
+		<shared-service-tracing.version>2.2.0</shared-service-tracing.version>
+
+		<junit.version>4.13.2</junit.version>
+		<opencsv.version>2.3</opencsv.version>
+		<mockito.version>4.4.0</mockito.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>${solr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-core</artifactId>
+			<version>${solr.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.vd.shared</groupId>
+			<artifactId>shared-service-tracing</artifactId>
+			<version>${shared-service-tracing.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>${opencsv.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>${encoding}</encoding>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<configuration>
+					<encoding>${encoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.snapshots</id>
+			<name>Nexus snaphots</name>
+			<url>${nexus.url.snapshots}</url>
+			<!-- évite d'ajouter un timestamp à chaque déploiement : nécessaire pour avoir les sources synchrones avec un jar snapshot -->
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/unireg-indexeur-client</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-indexeur-client.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-indexeur-client.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+</project>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- POM d'aggrégation de tous les modules du projet Cyberfact.
+         Ceci n'est pas le POM parent des modules subordonnés,
+         mais seulement un groupement de tous les modules.
+         Les définitions communes à tous les modules se trouvent dans le POM efacture-base.
+
+         Un build complet du projet Cyberfact peut être exécuté par la commande 'mvn install' dans le répertoire de ce pom.xml.
+
+         ** efacture-base    : module parent, contenant uniquement des définitions de propriétés, de plugins et de dépendances communes à tous les modules
+
+         ** efacture-modules : aggrégation de tous les modules contenant du code (java, XSD, WSDL, ...) et qui produiront des binaires (jar, war)
+    -->
+
+    <parent>
+        <artifactId>efacture-base</artifactId>
+        <groupId>ch.vd.cyber.efacture</groupId>
+        <!-- BEGIN_LVERSION -->
+        <version>4.8.18-SNAPSHOT</version>
+        <!-- END_LVERSION -->
+        <relativePath>efacture-base</relativePath>
+    </parent>
+
+    <artifactId>efacture-aggregator</artifactId>
+
+    <name>efacture-aggregator</name>
+    <description>Groupement de tous les modules Maven de l'application Cyberfact pour l'émission de e-Factures par le socle de la cyberadministration de l'Etat de Vaud</description>
+    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>efacture-base</module>
+        <module>efacture-ws-common</module>
+        <module>efacture-modules</module>
+    </modules>
+
+    <scm>
+        <url>https://dsigit.etat-de-vaud.ch/outils/git/projects/FISC/repos/efacture/browse</url>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/efacture.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/efacture.git</developerConnection>
+        <tag>4.8.13</tag>
+    </scm>
+
+</project>
+

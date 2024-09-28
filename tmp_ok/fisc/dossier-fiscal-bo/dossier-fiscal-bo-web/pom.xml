@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- ###### PARENT ###### -->
+
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal.bo</groupId>
+        <artifactId>dossier-fiscal-bo-app</artifactId>
+        <version>24R2.C.5-SNAPSHOT</version>
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dossier-fiscal-bo-web</artifactId>
+    <packaging>war</packaging>
+    <name>dossier-fiscal-bo-web</name>
+    <description>Application Dossier Fiscal BO : Spring-boot, Hibernate, shared-iam</description>
+
+    <!-- ###### PROPERTIES ###### -->
+
+    <properties>
+        <!-- permet de fixer la version d'active mq -->
+        <activemq.version>5.11.0.redhat-620133</activemq.version>
+        <!-- Start Class -->
+        <start-class>ch.vd.dfin.dossierfiscal.bo.web.config.DossierFiscalSpringBootApplication</start-class>
+        <spring-boot-devmode>false</spring-boot-devmode>
+
+        <!-- Paramètres JVM -->
+        <jvm.mem.params>-Xmx1024</jvm.mem.params>
+
+        <!-- Parametres de testing -->
+        <surefire.useFile>false</surefire.useFile>
+        <failsafe.useFile>false</failsafe.useFile>
+
+        <skipGulpTask>false</skipGulpTask>
+    </properties>
+
+    <!-- ###### BUILD ###### -->
+
+    <build>
+
+        <!-- Filtre des ressources du classpath Maven (filtre par défaut Maven) -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </testResource>
+            <testResource>
+                <directory>appDir/messages</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <!-- on déclare un jar avec un classifier pour qu'il puisse être importé par le module "dossier-fiscal-bo-test-automatise" -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>test-auto</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- The Spring Boot Maven Plugin provides Spring Boot support in Maven, allowing you to package executable jar or war archives and run an application “in-place” -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <addResources>${spring-boot-devmode}</addResources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assembly-release</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.11</source>
+                    <target>1.11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <!-- ###### PROFILES ###### -->
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/config/*Config.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/config/**/*Config.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/logs/*.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/logs/**/*.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/model/ui/*.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/bo/web/model/ui/**/*.class</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.coverage.exclusions>**/model/**/*.*,**/config/**/*.*,**/aop/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- ###### DEPENDENCIES ###### -->
+
+    <dependencies>
+
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+            <!-- excluded from manifest classpath, and excluded from WEB-INF/lib -->
+        </dependency>
+
+        <!-- Project -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-bo-business</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Permet de s'assurer que les fichiers SQL ont été générés dans la target de "dossier-fiscal-bo-db"
+          avant la construction de l'assembly des fichiers SQL -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-bo-db</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- TAO-CORE -->
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core-common</groupId>
+            <artifactId>tao-core-web</artifactId>
+        </dependency>
+
+        <!-- shared vd.ch -->
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iam</artifactId>
+        </dependency>
+
+        <!-- Others -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-1.2-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+
+        <!-- Provided (for embedded war support) -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ow2.asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- Servlet / JSP -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+            <version>1.9.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Nécessaire pour l'appel des services distants depuis exchange -->
+        <dependency>
+            <groupId>weblogic</groupId>
+            <artifactId>wlthint3client</artifactId>
+        </dependency>
+
+        <!-- Logging / datasource -->
+        <dependency>
+            <groupId>com.googlecode.log4jdbc</groupId>
+            <artifactId>log4jdbc</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-bo-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <scope>runtime</scope>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

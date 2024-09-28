@@ -1,0 +1,64 @@
+{
+  "debt": [
+    {
+      "current_version": "1.8",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "poceboursedocs"
+}
+{
+  "debt": [
+    {
+      "current_version": "17.3.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "prestations-ng"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "skeleton"
+}

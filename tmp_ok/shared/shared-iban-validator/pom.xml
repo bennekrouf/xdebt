@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.shared</groupId>
+    <artifactId>shared-iban-validator</artifactId>
+
+    <version>1.0.1-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/shared/shared-iban-validator</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+	
+	<name>shared-iban-validator</name>
+    <description>Librairie pour la validation des IBAN</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <iban.validator.version>1.14.0</iban.validator.version>
+        <junit.version>4.13.2</junit.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>nl.garvelink.oss</groupId>
+            <artifactId>iban</artifactId>
+            <version>${iban.validator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+	
+	<distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

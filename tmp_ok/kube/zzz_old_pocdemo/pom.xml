@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.kube</groupId>
+    <artifactId>pocdemo</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>pocdemo</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+        <relativePath />
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/tools/openshift-pocdemo</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <profiles>
+        <profile>
+            <!-- NOTests -->
+            <id>not</id>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>xfile.va</id>
+            <properties>
+                <xfile.url>http://outils-xweb-ws.etat-de-vaud.ch/outils/xweb/api</xfile.url>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Pas de build du front -->
+            <id>nof</id>
+            <properties>
+                <build.nofront>true</build.nofront>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- Override the executable names for Windows -->
+                <npm.executable>npm.cmd</npm.executable>
+                <yarn.executable>yarn</yarn.executable>
+                <ng.executable>ng.cmd</ng.executable>
+            </properties>
+        </profile>
+        <profile>
+            <id>xfile</id>
+            <properties>
+                <assembly.env>CEI</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                            <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>cei.aew.web</groupId>
+                        <artifactId>cei-maven-plugin</artifactId>
+                        <version>${cei-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <webresourceurl>${xfile.url}</webresourceurl>
+                            <filetoupload>target/${assembly.finalName}.tar.gz</filetoupload>
+                            <!-- TO BE CHANGED -->
+                            <from>${xfile.group}</from>
+                            <to>WEB</to>
+                            <warprojectonly>true</warprojectonly>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>pingpong1</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                            <warProjectOnly>true</warProjectOnly>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.docker</id>
+            <properties>
+                <devex.deployTarget>Docker</devex.deployTarget>
+            </properties>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>pingpong1</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                            <warProjectOnly>true</warProjectOnly>
+                            <environment>IN</environment>
+                            <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iam</artifactId>
+            <version>${shared-iam.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.pee</groupId>
+            <artifactId>pee-shared-base</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <goals>${release.goals}</goals>
+                    <releaseProfiles>${release.profiles}</releaseProfiles>
+                    <updateDependencies>false</updateDependencies>
+                    <pushChanges>true</pushChanges>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <arguments>-Dmaven.javadoc.skip=true</arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>version.txt</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>false</filtering>
+            </testResource>
+        </testResources>
+    </build>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <skipTests>false</skipTests>
+        <build.nofront>false</build.nofront>
+
+        <assembly.env>TBD</assembly.env>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+
+        <xfile.url>http://outils-xweb-ws.etat-de-vaud.ch/outils/xweb/api</xfile.url>
+        <xfile.group>dsi_pee</xfile.group>
+
+        <npm.executable>npm</npm.executable>
+        <yarn.executable>yarn</yarn.executable>
+        <ng.executable>ng</ng.executable>
+
+        <shared-hibernate-umldiag.version>3.0.4</shared-hibernate-umldiag.version>
+        <pee-shared-base.version>5.0.0</pee-shared-base.version>
+        <pee-shared-testing.version>5.0.0</pee-shared-testing.version>
+        <shared-iam.version>7.0.0</shared-iam.version>
+
+        <oracle.version>12.1.0.2.0</oracle.version>
+        <swagger.version>2.5.0</swagger.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+
+        <!-- plugins maven -->
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+        <maven-jar-plugin.version>2.5</maven-jar-plugin.version>
+        <maven-source-plugin.version>2.4</maven-source-plugin.version>
+        <maven-release-plugin.version>2.5.1</maven-release-plugin.version>
+        <buildnumber-maven-plugin.version>1.3</buildnumber-maven-plugin.version>
+        <exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>
+        <maven-jaxb2-plugin.version>0.14.0</maven-jaxb2-plugin.version>
+        <jaxb2-value-constructor.version>3.0</jaxb2-value-constructor.version>
+        <xjc-non-null-getter.version>2.0.0</xjc-non-null-getter.version>
+        <cei-maven-plugin.version>1.1.0</cei-maven-plugin.version>
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+
+        <devex.deployTarget>Tomcat_RHEL7</devex.deployTarget>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <release.profiles>not,xfile,devex.release,devex.in</release.profiles>
+        <!-- Les goals assembly:single et cei:upload sont deja pris par xfile -->
+        <release.goals>clean install</release.goals>
+
+        <devex.configTag>master</devex.configTag>
+    </properties>
+
+</project>

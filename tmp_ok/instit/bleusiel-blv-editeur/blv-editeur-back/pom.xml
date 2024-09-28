@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>blve-back</artifactId>
+	
+	<name>prj_ev-bleusiel BLV Editeur back</name>
+	<description>BLV Editeur backend</description>
+	<version>9.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<parent>
+		<groupId>ch.vd.institutions.siel</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>9.0.0</version>
+		<relativePath />
+	</parent>
+	
+	<modules>
+		<module>blve-web</module>
+		<module>blve-application</module>
+		<module>blve-coresiel-infrastructure</module>
+		<module>blve-blva-infrastructure</module>
+		<module>blve-infrastructure</module>
+		<module>blve-domain</module>
+	</modules>
+	
+	<properties>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<shared.version>9.0.0</shared.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		
+		<spring-boot.version>1.5.13.RELEASE</spring-boot.version>
+
+		<sonar.projectKey>prj-ev-bleusiel:blv-editeur-back</sonar.projectKey>
+		<sonar.moduleKey>${artifactId}</sonar.moduleKey>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<!-- Import dependency management from Spring Boot -->
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Edgware.SR3</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- BLV Editeur modules -->
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-domain</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-infrastructure</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-blva-infrastructure</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-coresiel-infrastructure</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.vd.institutions.siel</groupId>
+				<artifactId>blve-web</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+		</dependencies>
+	</dependencyManagement>
+</project>

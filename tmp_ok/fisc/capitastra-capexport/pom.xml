@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.vd.fiscalite.capitastra</groupId>
+	<artifactId>capexportweb</artifactId>
+	<name>capexportweb</name>
+	<description>capexportweb ext</description>
+	<version>23.03.14</version>
+
+	<scm>
+		<developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/fiscalite/capitastra-capexport.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	<distributionManagement>
+		<repository>
+			<id>nexus-dgnsi-server</id>
+			<name>Nexus DGNSI</name>
+			<url>${nexus.url}/app-${application.repository}-stable</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus-dgnsi-server</id>
+			<name>Nexus DGNSI</name>
+			<url>${nexus.url}/app-${application.repository}-snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<properties>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<config.location>./config</config.location>
+		<devex-maven-plugin.version>1.1.1</devex-maven-plugin.version>
+		<cei-maven-plugin.version>1.1.0</cei-maven-plugin.version>
+		<maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+		<devex-maven-plugin.configTag>23.03.14</devex-maven-plugin.configTag>
+		<assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+		<release.goals>clean install</release.goals>
+		<warprojectonly>false</warprojectonly>
+		<devex.profiles>devex.release,devex.in</devex.profiles>
+		<release.profiles>not,xfile,ch-int,${devex.profiles}</release.profiles>
+		<devex-maven-plugin.releaseVersion>${project.version}</devex-maven-plugin.releaseVersion>
+		<devex-maven-plugin.deployUnit>${project.name}</devex-maven-plugin.deployUnit>
+		<maven-release-plugin.version>3.0.0-M4</maven-release-plugin.version>
+		<devex-maven-plugin.deployTarget>Tomcat9RHEL8</devex-maven-plugin.deployTarget>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven-release-plugin.version}</version>
+				<configuration>
+					<goals>${release.goals}</goals>
+					<releaseProfiles>${release.profiles}</releaseProfiles>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<arguments>-Dmaven.javadoc.skip=true</arguments>
+					<pushChanges>true</pushChanges>
+					<localCheckout>true</localCheckout>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+				<plugin>
+					<groupId>ch.vd.devex</groupId>
+					<artifactId>devex-maven-plugin</artifactId>
+					<version>${devex-maven-plugin.version}</version>
+					<configuration>
+						<configTag>${devex-maven-plugin.configTag}</configTag>
+						<releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+						<deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+						<deployTarget>Tomcat9RHEL8</deployTarget>
+						<warProjectOnly>${warprojectonly}</warProjectOnly>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+
+				<executions>
+					<execution>
+						<id>assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly.xml</descriptor>
+							</descriptors>
+							<finalName>${project.name}-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<tarLongFileMode>posix</tarLongFileMode>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>not</id><!-- NOTests -->
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>devex.release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<configuration>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>ch.vd.devex</groupId>
+						<artifactId>devex-maven-plugin</artifactId>
+						<configuration>
+							<configTag>${devex-maven-plugin.configTag}</configTag>
+							<releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+							<deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+							<deployTarget>${devex-maven-plugin.deployTarget}</deployTarget>
+						</configuration>
+						<executions>
+							<execution>
+								<id>create release</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>create-release</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>devex.IN</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>ch.vd.devex</groupId>
+						<artifactId>devex-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy IN</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+								<configuration>
+									<environment>IN</environment>
+									<configTag>${devex-maven-plugin.configTag}</configTag>
+									<releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+									<deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+									<deployTarget>${devex-maven-plugin.deployTarget}</deployTarget>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>devex.I2</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>ch.vd.devex</groupId>
+						<artifactId>devex-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy I2</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+								<configuration>
+									<environment>I2</environment>
+									<configTag>${devex-maven-plugin.configTag}</configTag>
+									<releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+									<deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+									<deployTarget>${devex-maven-plugin.deployTarget}</deployTarget>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

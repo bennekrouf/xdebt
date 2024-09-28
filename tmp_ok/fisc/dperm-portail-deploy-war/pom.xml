@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<name>dperm-portail-deploy-war</name>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.vd.fiscalite</groupId>
+	<artifactId>dperm-portail-deploy-war</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/dperm-portail-deploy-war/browse</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-portail-deploy-war.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-portail-deploy-war.git</developerConnection>
+		<tag>${project.artifactId}-${project.version}</tag>
+	</scm>
+
+	<ciManagement>
+		<system>Jenkins CI</system>
+		<url>https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/job/dperm-portail-deploy-war/</url>
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<id>p3wany</id>
+			<name>Francois Achache</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<toDownload.groupId></toDownload.groupId><!-- A DEFINIR -->
+		<toDownload.artifactId></toDownload.artifactId><!-- A DEFINIR -->
+		<toDownload.version></toDownload.version><!-- A DEFINIR -->
+		<!-- CONFIGURATION ENVIRONNEMENT IN PAR DEFAULT, A SURCHARGER LE CAS ECHEANT -->
+		<dry.run>true</dry.run><!-- Ne lance pas les action sur le serveur distant -->
+		<task.target>help</task.target><!-- Quel tache veut on lancer  tomcat.stop/tomcat.start/tomcat.deploy-->
+
+		<server.host>slv5349d</server.host><!-- host de serveur ou l'on veut deployer -->
+		<server.ctx>dpermservicesIN</server.ctx><!-- Ceci sert pour le repertoire de base du domaine -->
+
+		<server.sshusername>dsi_jenkins</server.sshusername>
+		<server.sudocmd>sudo -u dsi_dperm</server.sudocmd>
+
+		<server.tmp.dir>/var/tmp/fiscalite</server.tmp.dir><!-- repertoire de transfert temporaire -->
+		<server.domain.dir>/ccv/opt/dsi_dperm/${server.ctx}</server.domain.dir><!-- repertoire du domaine -->
+
+		<server.app.dir>${server.domain.dir}/app</server.app.dir><!-- repertoire contenant les applications -->
+		<server.applications.dir>${server.domain.dir}/applications</server.applications.dir><!-- repertoire contenant les liens symboliques, c'est appDir -->
+		<server.command.sh>${server.domain.dir}/tomcatctl.sh</server.command.sh><!-- shell du tomcat -->
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>deployment</id>
+			<name>Internal Releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>deployment</id>
+			<name>Internal Snapshots</name>
+			<url>${nexus.url.snapshots}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>deploy-on-server</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<property name="toDownload_artifactId" value="${toDownload.artifactId}"/>
+								<property name="toDownload_version" value="${toDownload.version}"/>
+								<property name="dry_run" value="${dry.run}"/>
+								<ant antfile="build.xml">
+									<target name="${task.target}"></target>
+								</ant>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-jsch</artifactId>
+						<version>1.9.4</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant</artifactId>
+						<version>1.9.4</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>LOCAL</id>
+			<activation>
+				<file>
+					<exists>/app/dev-fiscalite.key</exists>
+				</file>
+			</activation>
+			<properties>
+				<local.keyfile>/app/dev-fiscalite.key</local.keyfile>
+				<local.keyfile.passphrase>P66Fh9h2Pv5e8R3jzfT#2*!9vZx39b</local.keyfile.passphrase>
+				<local.knownhosts>/app/known_hosts</local.knownhosts>
+			</properties>
+		</profile>
+		<profile>
+			<id>JENKINS</id>
+			<activation>
+				<file>
+					<exists>/ccv/opt/tao_slave1/.ssh/dev-fiscalite.key</exists>
+				</file>
+			</activation>
+			<properties>
+				<local.keyfile>/ccv/opt/tao_slave1/.ssh/dev-fiscalite.key</local.keyfile>
+				<local.keyfile.passphrase>P66Fh9h2Pv5e8R3jzfT#2*!9vZx39b</local.keyfile.passphrase>
+				<local.knownhosts>/ccv/opt/tao_slave1/.ssh/known_hosts</local.knownhosts>
+			</properties>
+		</profile>
+		<profile>
+			<id>ARTIFACT</id>
+			<activation>
+				<property>
+					<name>toDownload.artifactId</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${toDownload.groupId}</groupId>
+									<artifactId>${toDownload.artifactId}</artifactId>
+									<version>${toDownload.version}</version>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}/download</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.12</version>
+						<executions>
+							<!-- BUILD VARIABLE POUR RECUPERER LA BONNE BRANCHE CONTENANT LA CONFIG -->
+							<execution>
+								<id>extract-majortag</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>regex-property</goal>
+								</goals>
+								<configuration>
+									<name>config.git.branch</name>
+									<value>${toDownload.version}</value>
+									<regex>^([0-9]+R[0-9]+).*</regex>
+									<replacement>$1</replacement>
+									<failIfNoMatch>true</failIfNoMatch>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>			
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.5.0</version>
+						<executions>
+							<!-- RECUPERATION DE LA CONFIG SUR GIT -->
+							<execution>
+								<id>get-conf-from-git</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>git</executable>
+									<arguments>
+										<argument>archive</argument>
+										<argument>--remote=ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-env-confs.git</argument>
+										<argument>--format=zip</argument>
+										<argument>${config.git.branch}</argument>
+										<argument>${server.ctx}/${toDownload.artifactId}</argument>
+										<argument>-o</argument>
+										<argument>${project.build.directory}/${toDownload.artifactId}.zip</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+							<!-- COPIE DES FICHIERS DE CONFIGURATIONS -->
+							<execution>
+								<id>unzip-conf</id>
+								<phase>package</phase>
+								<configuration>
+									<executable>unzip</executable>
+									<arguments>
+										<argument>-j</argument>
+										<argument>-u</argument>
+										<argument>-o</argument>
+										<argument>${project.build.directory}/${toDownload.artifactId}.zip</argument>
+										<argument>-d</argument>
+										<argument>${project.build.directory}/${toDownload.artifactId}</argument>
+									</arguments>
+								</configuration>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.3</version>
+						<executions>
+							<execution>
+								<id>replace-const</id>
+								<phase>package</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+								<configuration>
+									<includes>
+										<include>${project.build.directory}/${toDownload.artifactId}/*.xml</include>
+										<include>${project.build.directory}/${toDownload.artifactId}/**/*.properties</include>
+									</includes>
+									<replacements>
+										<!-- web.properties -->
+										<replacement>
+											<token>%SITE_PATH%</token>
+											<value>${server.applications.dir}/${toDownload.artifactId}-ihm/static</value>
+										</replacement>
+										<!-- logback.xml -->
+										<replacement>
+											<token>%APP_NAME%</token>
+											<value>${toDownload.artifactId}</value>
+										</replacement>
+										<replacement>
+											<token>%APPENDER%</token>
+											<value>FILE</value>
+										</replacement>
+										<replacement>
+											<token>%DOMAINPATH%</token>
+											<value>${server.domain.dir}</value>
+										</replacement>
+									</replacements>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>		
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

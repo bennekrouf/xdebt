@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>shared-parent</artifactId>
+        <groupId>ch.vd.justice.shared</groupId>
+        <version>24.2.3</version>
+    </parent>
+
+    <artifactId>shared-esb-adapter</artifactId>
+    <packaging>jar</packaging>
+    <name>${project-name.prefix}${project.artifactId}</name>
+    <description>Shared esb configuration module</description>
+
+    <properties>
+        <esb-client.version>5.4.1</esb-client.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-validation</artifactId>
+            <version>${esb-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client</artifactId>
+            <version>${esb-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client-test</artifactId>
+            <version>${esb-client.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>shared-spring</artifactId>
+            <version>${shared.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>shared-persistence</artifactId>
+            <version>${shared.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.ses.reglis</groupId>
+    <artifactId>regliselasticsearch</artifactId>
+    <version>1.0.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>SES - Reglis - ElasticSearch</name>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/reglis-elasticsearch.git
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+
+    <distributionManagement>
+        <repository>
+            <id>DSAS-repo</id>
+            <name>DSAS-repo</name>
+            <url>${nexus.url}/dsas-releases</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>DSAS-snapshots</id>
+            <name>DSAS-snapshots</name>
+            <url>${nexus.url}/dsas-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>xfile.va</id>
+            <properties>
+                <xfile.url>http://exploitation-va.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+            </properties>
+        </profile>
+        <profile>
+            <!-- pour le déploiement en IN -->
+            <id>env.in</id>
+            <properties>
+                <assembly.env>IN</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Pour faire la livraison au CEI dans xFile -->
+            <id>env.cei</id>
+            <properties>
+                <assembly.env>xfile</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>cei.aew.web</groupId>
+                        <artifactId>cei-maven-plugin</artifactId>
+                        <version>${cei-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>upload-delivery-cei</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                                <configuration>
+                                    <webresourceurl>${xfile.url}</webresourceurl>
+                                    <filetoupload>target/${assembly.finalName}.tar.gz</filetoupload>
+                                    <from>dsi_reglis</from>
+                                    <to>WEB</to>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.elasticsearch</groupId>
+                                    <artifactId>elasticsearch</artifactId>
+                                    <version>${elasticsearch.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>target/dependencies</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.readonlyrest</groupId>
+                                    <artifactId>readonlyrest</artifactId>
+                                    <version>${readonlyrest.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>target/dependencies/${readonlyrest.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <!-- dependency solr -->
+        <elasticsearch.version>6.3.0</elasticsearch.version>
+        <elasticsearch-dir>elasticsearch-${elasticsearch.version}</elasticsearch-dir>
+
+        <readonlyrest.version>1.16.22_es6.3.0</readonlyrest.version>
+        <readonlyrest.dir>readonlyrest</readonlyrest.dir>
+
+        <!-- build properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <xfile.url>http://exploitation.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+        <assembly.env>TBD</assembly.env>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+
+        <!-- maven plugins -->
+        <cei-maven-plugin.version>1.0.3</cei-maven-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+    </properties>
+
+
+
+
+</project>
+        
+   
+    

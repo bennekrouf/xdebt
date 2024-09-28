@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.sante.cyber</groupId>
+	<artifactId>demaut</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+	<name>demaut</name>
+	<description>Application Demaut</description>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.0.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+    <scm>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/ses/repos/demaut/browse</url>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/demaut.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/demaut.git</developerConnection>
+        <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+
+    <profiles>
+        <profile>
+            <!-- pour le déploiement en IN -->
+            <id>env.in</id>
+            <properties>
+                <assembly.env>IN</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Pour faire la livraison au CEI dans xFile -->
+            <id>env.cei</id>
+            <properties>
+                <assembly.env>CEI</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>cei.aew.web</groupId>
+                        <artifactId>cei-maven-plugin</artifactId>
+                        <version>${cei-maven-plugin.version}</version>
+                        <configuration>
+                            <webresourceurl>${xfile.url}</webresourceurl>
+                            <filetoupload>target/${assembly.finalName}.tar.gz</filetoupload>
+                            <from>dsi_demaut</from>
+                            <to>WEB</to>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <goals>clean install assembly:single cei.aew.web:cei-maven-plugin:upload</goals>
+                    <releaseProfiles>not,env.cei</releaseProfiles>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <arguments>-Dmaven.javadoc.skip=true</arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <!-- On ne veut pas que le release plugin envoie le résultat dans Nexus mais dans xFile -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>version.txt</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>oracle.jdbc</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>${driver.oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+		<!-- DSI -->
+        <!-- demaut commons -->
+        <dependency>
+            <groupId>ch.vd.sante.demaut</groupId>
+            <artifactId>demaut-commons</artifactId>
+            <version>${demaut-commons.version}</version>
+        </dependency>
+
+		<!-- api client esb -->
+		<dependency>
+			<groupId>ch.vd.technical.esb</groupId>
+			<artifactId>esb-client</artifactId>
+			<version>${esbclient.version}</version>
+		</dependency>
+
+		<!-- api validation xml, obligatoire pour l'envoi de messages -->
+		<dependency>
+			<groupId>ch.vd.technical.esb</groupId>
+			<artifactId>esb-validation</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+
+		<!-- test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- pas en scope test tant que pas de BDD <scope>test</scope> -->
+        </dependency>
+	</dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.M9</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <xfile.url>http://exploitation.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+        <assembly.env>CEI</assembly.env>
+
+        <!-- librairies -->
+        <driver.oracle.version>12.1.0.2.0</driver.oracle.version>
+
+        <!-- DSI -->
+        <demaut-commons.version>1.0.0-SNAPSHOT</demaut-commons.version>
+        <esbclient.version>4.2</esbclient.version>
+
+        <!-- maven plugins -->
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+        <cei-maven-plugin.version>1.0.1</cei-maven-plugin.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>DSAS-repo</id>
+            <name>DSAS-repo</name>
+            <url>${nexus.url}/dsas-releases</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>DSAS-snapshots</id>
+            <name>DSAS-snapshots</name>
+            <url>${nexus.url}/dsas-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

@@ -1,0 +1,31 @@
+{
+  "debt": [
+    {
+      "current_version": "1.6",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "4.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "Z_dsi-webapp-template"
+}
+{
+  "debt": [
+    {
+      "current_version": "8.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "Z_usabilis-angular"
+}

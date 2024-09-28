@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.shared</groupId>
+    <artifactId>shared-ips-client</artifactId>
+    <version>3.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Shared - IPS Client</name>
+    <description>Client IPS partagé pour les projets Java</description>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/shared/ips-client</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-jersey</artifactId>
+            <version>${shared.jersey.version}</version>
+        </dependency>
+
+        <dependency>
+			<groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>17.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-xml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb</groupId>
+            <artifactId>jaxb-plugins-runtime</artifactId>
+            <version>${jaxb-plugins.version}</version>
+        </dependency>
+
+        <!-- Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <!-- log4j2 implementaion -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Bridge slf4j pour log4j2 -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <goals>clean deploy</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <arguments>-Dmaven.javadoc.skip=true</arguments>
+                    <pushChanges>true</pushChanges>
+                    <localCheckout>true</localCheckout>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>${jaxb2-maven-plugin.version}</version>
+                <configuration>
+                    <clearOutputDir>false</clearOutputDir>
+                    <catalog>src/main/resources/catalog.xml</catalog>
+                    <extension>true</extension>
+                    <arguments>
+                        <argument>-Xvalue-constructor</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>evd0013.v1</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>ch.vd.shared.ipsclient.evd0013.v1</packageName>
+                            <sources>
+                                <source>src/main/resources/v1/eVD-0013-1-0.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/bindings.xml</xjbSource>
+                            </xjbSources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>eCH-0010-5-0.xsd</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>ch.vd.shared.ipsclient.ech0010.v5</packageName>
+                            <sources>
+                                <source>src/main/resources/v1/eCH-0010-5-0.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/bindings.xml</xjbSource>
+                            </xjbSources>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${jaxb-xjc.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb</groupId>
+                        <artifactId>jaxb-plugins</artifactId>
+                        <version>${jaxb-plugins.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <annotations.version>23.0.0</annotations.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <ehcache.version>2.10.9.2</ehcache.version>
+        <jaxb-xjc.version>3.0.2</jaxb-xjc.version>
+        <junit.version>4.13.2</junit.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <spring.version>5.3.14</spring.version>
+        <shared.jersey.version>2.0.1</shared.jersey.version>
+        <slf4j.version>1.7.31</slf4j.version>
+        <jakarta.ws.rs-api.version>3.1.0</jakarta.ws.rs-api.version>
+        <jaxb-plugins.version>3.0.1</jaxb-plugins.version>
+        <jakarta-xml.version>3.0.1</jakarta-xml.version>
+        <jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
+        <jaxb-xjc.version>3.0.0</jaxb-xjc.version>
+        <jaxb.version>3.0.0</jaxb.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+
+        <!-- Application settings -->
+        <amp.genericCore>true</amp.genericCore>
+        <amp.fullSource>false</amp.fullSource>
+    </properties>
+
+</project>

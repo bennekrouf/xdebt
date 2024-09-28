@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PARENT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.mireo.bo</groupId>
+        <artifactId>mireo-bo</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <artifactId>mireo-bo-interfaces</artifactId>
+    <name>MIREO-BO (interfaces)</name>
+    <packaging>pom</packaging>
+
+    <!-- =======================================================================
+    = PROPERTIES
+    ======================================================================== -->
+    <properties>
+        <!-- START - PROJECT DEPENDENCIES VERSION -->
+        <!-- END   - PROJECT DEPENDENCIES VERSION -->
+
+        <!-- START - SUPER POM TOGGLE -->
+        <super.deploy.enabled>false</super.deploy.enabled>
+        <super.pitest.enabled>false</super.pitest.enabled>
+        <super.owasp.enabled>false</super.owasp.enabled>
+        <maven-checkstyle-plugin.enabled>false</maven-checkstyle-plugin.enabled>
+        <!-- END   - SUPER POM TOGGLE -->
+
+        <!-- START - OTHER -->
+        <!-- END   - OTHER -->
+    </properties>
+
+    <!-- =======================================================================
+    = MODULES
+    ======================================================================== -->
+    <modules>
+        <module>mireo-bo-interface</module>
+        <module>mireo-bo-interface-api</module>
+    </modules>
+
+    <!-- =======================================================================
+    = DEPENDENCY MANAGEMENT
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = DEPENDENCIES
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = PROFILES
+    ======================================================================== -->
+</project>

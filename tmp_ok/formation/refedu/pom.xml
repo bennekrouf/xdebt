@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =================================================================== -->
+    <!-- PROJECT -->
+    <!-- =================================================================== -->
+    <groupId>ch.vd.formation.relev</groupId>
+    <artifactId>relevBase</artifactId>
+    <version>3.11.0-SNAPSHOT</version>
+    <name>relev</name>
+    <packaging>pom</packaging>
+    <description>Releve - Referentiel des eleves. Pom utilisé pour le déploiement</description>
+    <url>http://www.vd.ch</url>
+
+    <!-- =================================================================== -->
+    <!-- SCM / ISSUE MANAGEMENT-->
+    <!-- =================================================================== -->
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/formation/refedu.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/formation/refedu.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issuetracker.etat-de-vaud.ch/outils/issuetracker/projects/RELEV/summary</url>
+    </issueManagement>
+
+    <!-- =================================================================== -->
+    <!-- MODULES -->
+    <!-- =================================================================== -->
+    <modules>
+        <module>refedu_api</module>
+        <module>refedu_commons_test</module>
+        <module>refeduUtils</module>
+        <module>relevDomain</module>
+        <module>relevService</module>
+        <module>relevWeb</module>
+        <module>packaging</module>
+    </modules>
+
+    <!-- =================================================================== -->
+    <!-- PROPERTIES -->
+    <!-- =================================================================== -->
+    <properties>
+        <project.final.name>relev</project.final.name>
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.resources.sourceEncoding>${project.build.sourceEncoding}</project.resources.sourceEncoding>
+        <java-compiler-source.version>11</java-compiler-source.version>
+        <java-compiler-target.version>11</java-compiler-target.version>
+
+
+        <devex-maven-plugin.deployTarget>Tomcat9RHEL8</devex-maven-plugin.deployTarget>
+        <devex-maven-plugin.configTag>3.10-2</devex-maven-plugin.configTag>
+
+        <devex.profiles>devex.release,devex.in</devex.profiles>
+        <release.goals>clean install</release.goals>
+        <release.profiles>not,xfile,${devex.profiles}</release.profiles>
+
+        <skip-basic-test>false</skip-basic-test>
+        <!-- Désactive les tests GUI -->
+        <skip-web-integration-test>false</skip-web-integration-test>
+
+        <ch-vd-appDir>/opt/appDir</ch-vd-appDir>
+        <ch-vd-appDir-test>${project.basedir}/src/test/resources</ch-vd-appDir-test>
+
+        <!-- =================== Noms des modules Maven ================ -->
+        <refeduUtils.module.name>refeduUtils</refeduUtils.module.name>
+        <relevDomain.module.name>relevDomain</relevDomain.module.name>
+        <relevService.module.name>relevService</relevService.module.name>
+        <relevWeb.module.name>relevWeb</relevWeb.module.name>
+        <packaging.module.name>packaging</packaging.module.name>
+
+        <!-- ================= Propertères du projet =================== -->
+        <activemq.version>5.16.5</activemq.version>
+        <ant-jsch-version>1.7.1</ant-jsch-version>
+        <async-http-client.version>1.7.8</async-http-client.version>
+        <atomikos.version>6.0.0M1</atomikos.version>
+        <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
+        <cei-maven-plugin.version>1.1.0</cei-maven-plugin.version>
+        <cglib-nodep.version>2.2.2</cglib-nodep.version>
+        <ch.qos.logback.version>1.4.5</ch.qos.logback.version>
+        <com.fasterxml.jackson.version>2.9.0</com.fasterxml.jackson.version>
+        <com.github.springtestdbunit.version>1.3.0</com.github.springtestdbunit.version>
+        <com.github.spullara.mustache.java.version>0.9.10</com.github.spullara.mustache.java.version>
+        <com.sun.xml.bind.jaxb-core.version>2.3.0</com.sun.xml.bind.jaxb-core.version>
+        <com.sun.xml.bind.version>2.3.1</com.sun.xml.bind.version>
+        <commons-dbcp2.version>2.6.0</commons-dbcp2.version>
+        <commons-io.version>2.4</commons-io.version>
+        <commons-lang.version>3.12.0</commons-lang.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-validator.version>1.4.1</commons-validator.version>
+        <commons-validator.version>1.4.1</commons-validator.version>
+        <de.codecentric.jbehave.version>1.1.0</de.codecentric.jbehave.version>
+        <dozer.version>5.5.1</dozer.version>
+        <esb-client.version>5.7.6</esb-client.version>
+        <googlecode.webutilities.version>0.0.8</googlecode.webutilities.version>
+        <h2.version>1.4.185</h2.version>
+        <hibernate-envers.version>4.3.11.Final</hibernate-envers.version>
+        <hibernate-jmx-version>3.5.5-Final</hibernate-jmx-version>
+        <hibernate-search.version>5.3.0.Final</hibernate-search.version>
+        <hsqldb.version>2.3.2</hsqldb.version>
+        <htmlunit.version>2.8</htmlunit.version>
+        <io.inugami.version>2.1.0</io.inugami.version>
+        <io.inugami.version>2.1.0</io.inugami.version>
+        <io.spring.platform.version>1.1.4.RELEASE</io.spring.platform.version>
+        <javamelody.version>1.78.0</javamelody.version>
+        <javax.el.version>3.0.1-b06</javax.el.version>
+        <javax.jms.version>2.0</javax.jms.version>
+        <javax.xml.bind.jaxb-api.version>2.3.1</javax.xml.bind.jaxb-api.version>
+        <jaxb2-version>0.6.4</jaxb2-version>
+        <jbehave.version>4.0.5</jbehave.version>
+        <jsp-api-version>2.2.1</jsp-api-version>
+        <jstl-version>1.2</jstl-version>
+        <junit.version>4.12</junit.version>
+        <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
+        <lombok.version>1.18.26</lombok.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <maven-assembly-plugin.version>2.5.5</maven-assembly-plugin.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+        <maven-jaxb-plugin.version>1.1.1</maven-jaxb-plugin.version>
+        <maven-jaxb2-plugin-version>0.8.2</maven-jaxb2-plugin-version>
+        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <mockito-core.version>1.10.8</mockito-core.version>
+        <mockrunner.version>0.3.1</mockrunner.version>
+        <ojdbc10.version>19.11.0.0</ojdbc10.version>
+        <org.apache.commons.org.apache.commons.version>2.6.0</org.apache.commons.org.apache.commons.version>
+        <org.apache.james.version>0.6.1</org.apache.james.version>
+        <org.apache.maven.plugins.maven-release-plugin.version>2.5.2</org.apache.maven.plugins.maven-release-plugin.version>
+        <org.apache.poi.version>3.16</org.apache.poi.version>
+        <org.apache.poi.version>3.16</org.apache.poi.version>
+        <org.aspectj.version>1.8.10</org.aspectj.version>
+        <org.assertj.version>3.24.2</org.assertj.version>
+        <org.dbunit.version>2.5.2</org.dbunit.version>
+        <org.hibernate.javax.persistence.version>1.0.2.Final</org.hibernate.javax.persistence.version>
+        <org.slf4j.version>1.7.25</org.slf4j.version>
+        <org.sonarsource.scanner.maven.sonar-maven-plugin.version>3.2</org.sonarsource.scanner.maven.sonar-maven-plugin.version>
+        <org.yaml.version>1.21</org.yaml.version>
+        <pee-shared-base.version>5.0.2</pee-shared-base.version>
+        <pee-shared-testing.version>5.0.8</pee-shared-testing.version>
+        <platform-bom.version>2.0.8.RELEASE</platform-bom.version>
+        <refedu-shared-xsd-version>2.3.4</refedu-shared-xsd-version>
+        <servlet-api-version>4.0.1</servlet-api-version>
+        <shared-embedded-tomcat.version>6.0.0</shared-embedded-tomcat.version>
+        <shared-iam.version>7.0.0</shared-iam.version>
+        <shared-webservices.version>1.0.0</shared-webservices.version>
+        <sitemesh-version>2.4.2</sitemesh-version>
+        <solr-commons-csv.version>3.5.0</solr-commons-csv.version>
+        <solr-commons-csv.version>3.5.0</solr-commons-csv.version>
+        <spring-data-commons.version>1.11.6.RELEASE</spring-data-commons.version>
+        <spring-data-jpa.version>1.9.6.RELEASE</spring-data-jpa.version>
+        <org.springframework.spring-test.version>4.2.8.RELEASE</org.springframework.spring-test.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
+        <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
+        <swagger.version>2.7.0</swagger.version>
+        <tomcat.version>9.0.35</tomcat.version>
+        <xerces.version>2.9.1</xerces.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+    </properties>
+
+
+    <!-- =================================================================== -->
+    <!-- Gestion des dependances -->
+    <!-- =================================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <!-- Dependances projet -->
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <dependency>
+                <groupId>ch.vd.formation.relev</groupId>
+                <artifactId>refedu-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.formation.relev</groupId>
+                <artifactId>refedu-commons-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.formation.relev</groupId>
+                <artifactId>relevDomain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.formation.relev</groupId>
+                <artifactId>relevService</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <!-- ETAT DE VAUD -->
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-webservices</artifactId>
+                <version>${shared-webservices.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.formation</groupId>
+                <artifactId>refedu-shared-xsd</artifactId>
+                <version>${refedu-shared-xsd-version}</version>
+            </dependency>
+            <!-- ESB -->
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-client</artifactId>
+                <version>${esb-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-validation</artifactId>
+                <version>${esb-client.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-pool</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+
+            <!-- Securite -->
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-iam</artifactId>
+                <version>${shared-iam.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.pee</groupId>
+                <artifactId>pee-shared-testing</artifactId>
+                <version>${pee-shared-testing.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.pee</groupId>
+                <artifactId>pee-shared-base</artifactId>
+                <version>${pee-shared-base.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-client-test</artifactId>
+                <version>${esb-client.version}</version>
+            </dependency>
+
+
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <!-- AUTRES -->
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib-nodep</artifactId>
+                <version>${cglib-nodep.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jdbc</artifactId>
+                <version>${atomikos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jms</artifactId>
+                <version>${atomikos.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.atomikos</groupId>
+                <artifactId>transactions-jta</artifactId>
+                <version>${atomikos.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-parameter-names</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.webutilities</groupId>
+                <artifactId>webutilities</artifactId>
+                <version>${googlecode.webutilities.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>rhino</groupId>
+                        <artifactId>js</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc10</artifactId>
+                <version>${ojdbc10.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${com.sun.xml.bind.jaxb-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${com.sun.xml.bind.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>${commons-validator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.spring.platform</groupId>
+                <artifactId>platform-bom</artifactId>
+                <version>${platform-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>${javax.el.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${javax.jms.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api</artifactId>
+                <version>${jsp-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <scope>runtime</scope>
+                <version>${jstl-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${javax.xml.bind.jaxb-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bull.javamelody</groupId>
+                <artifactId>javamelody-core</artifactId>
+                <version>${javamelody.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${dozer.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>opensymphony</groupId>
+                <artifactId>sitemesh</artifactId>
+                <version>${sitemesh-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${commons-dbcp2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${org.apache.poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${org.apache.poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-commons-csv</artifactId>
+                <version>${solr-commons-csv.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-commons-csv</artifactId>
+                <version>${solr-commons-csv.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>${org.hibernate.javax.persistence.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-envers</artifactId>
+                <version>${hibernate-envers.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-jmx</artifactId>
+                <version>${hibernate-jmx-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-search</artifactId>
+                <version>${hibernate-search.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-commons</artifactId>
+                <version>${spring-data-commons.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${spring-data-jpa.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${org.springframework.spring-test.version}</version>
+            </dependency>
+
+
+
+
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>${xml-apis.version}</version>
+            </dependency>
+
+
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <!-- TEST -->
+            <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-embedded-tomcat</artifactId>
+                <version>${shared-embedded-tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.springtestdbunit</groupId>
+                <artifactId>spring-test-dbunit</artifactId>
+                <version>${com.github.springtestdbunit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.spullara.mustache.java</groupId>
+                <artifactId>compiler</artifactId>
+                <version>${com.github.spullara.mustache.java.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mockrunner</groupId>
+                <artifactId>mockrunner</artifactId>
+                <version>${mockrunner.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>jbehave-junit-runner</artifactId>
+                <version>${de.codecentric.jbehave.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_api</artifactId>
+                <version>${io.inugami.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_commons_test</artifactId>
+                <version>${io.inugami.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.arquillian.core</groupId>
+                        <artifactId>arquillian-core-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.arquillian.core</groupId>
+                        <artifactId>arquillian-junit-container</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                        <artifactId>shrinkwrap-resolver-spi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                        <artifactId>org.jboss.shrinkwrap.resolver</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.arquillian.container</groupId>
+                        <artifactId>arquillian-tomcat-embedded-8</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-jasper</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-logging-juli</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jdt.core.compiler</groupId>
+                        <artifactId>ecj</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.el</groupId>
+                        <artifactId>el-ri</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>de.odysseus.juel</groupId>
+                        <artifactId>juel-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.weld.servlet</groupId>
+                        <artifactId>weld-servlet-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>unit-jupiter</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.assertj</groupId>
+                        <artifactId>assertj-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>${htmlunit.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>xml-apis</artifactId>
+                        <groupId>xml-apis</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-coyote</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-dbcp</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-el-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jsp-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-servlet-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-util</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${org.assertj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>${org.dbunit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jbehave</groupId>
+                <artifactId>jbehave-core</artifactId>
+                <version>${jbehave.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jbehave</groupId>
+                <artifactId>jbehave-spring</artifactId>
+                <version>${jbehave.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${org.yaml.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+    <!-- ==================== -->
+    <!-- Dependences communes -->
+    <!-- ==================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.james</groupId>
+            <artifactId>apache-mime4j</artifactId>
+            <version>${org.apache.james.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${org.aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruct.version}</version>
+        </dependency>
+
+        <!-- ================ TEST ===================== -->
+        <dependency>
+            <groupId>org.jbehave</groupId>
+            <artifactId>jbehave-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jbehave</groupId>
+            <artifactId>jbehave-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/applicationContext*.xml</include>
+                    <include>**/spring-*.xml</include>
+                    <include>**/messages*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/log4j.xml</exclude>
+                </excludes>
+                <filtering>true</filtering>
+            </resource>
+
+            <resource>
+                <directory>src/test/resources</directory>
+                <targetPath>../../target/test-classes</targetPath>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/applicationContext*.xml</include>
+                    <include>**/spring-*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <targetPath>../../target/test-classes</targetPath>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                    <exclude>log4j.xml</exclude>
+                    <exclude>**/applicationContext*.xml</exclude>
+                    <exclude>**/spring-*.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+
+        <testResources>
+            <testResource>
+                <directory>src/test_it/resources</directory>
+            </testResource>
+        </testResources>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${org.apache.maven.plugins.maven-release-plugin.version}</version>
+                    <configuration>
+                        <arguments>-Dmaven.javadoc.skip=true</arguments>
+                        <goals>${release.goals}</goals>
+                        <pushChanges>true</pushChanges>
+                        <releaseProfiles>${release.profiles}</releaseProfiles>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                    </configuration>
+                </plugin>
+
+                <!-- Sonar -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${org.sonarsource.scanner.maven.sonar-maven-plugin.version}</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <compilerArgument>-Xlint:all</compilerArgument>
+                        <encoding>${project.encoding}</encoding>
+                        <fork>true</fork>
+                        <optimize>true</optimize>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>false</showWarnings>
+                        <source>${java-compiler-source.version}</source>
+                        <target>${java-compiler-target.version}</target>
+
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok-mapstruct-binding.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.encoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.encoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sql-maven-plugin</artifactId>
+                    <version>${sql-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-source-as-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test_it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java-compiler-source.version}</source>
+                    <target>${java-compiler-source.version}</target>
+                    <encoding>${project.encoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.encoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+
+                <executions>
+                    <!--Test en mode normal -->
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <skip>${skip-basic-test}</skip>
+                            <disableXmlReport>true</disableXmlReport>
+                            <excludes>
+                                <exclude>**/*Story.java</exclude>
+                                <exclude>**/*StoryIntegration.java</exclude>
+                                <exclude>**/*TestIntegration.java</exclude>
+                                <exclude>**/*TestOracle.java</exclude>
+                                <exclude>**/*TestSuiteIntegrationOracle.java</exclude>
+                                <exclude>**/*ExpediteurEventsRecusServiceTest.java</exclude>
+                                <exclude>**/*ChaineIntegrationServiceVTOTest.java</exclude>
+                                <exclude>**/*NomenclatureServiceTest.java</exclude>
+                                <exclude>**/*ContratServiceTest.java</exclude>
+                                <exclude>**/*EventRepositoryTest.java</exclude>
+                                <exclude>**/*ExpiditeurEventRecusServicePourMonnardJulienTest.java</exclude>
+                                <exclude>**/*EleveServiceTest.java</exclude>
+                                <exclude>**/*EleveRepositoryTest.java</exclude>
+                                <exclude>**/*EnseignantRepositoryTest.java</exclude>
+                                <exclude>**/*GestionnaireIntegrationEventServiceTest.java</exclude>
+                                <exclude>**/*GestionIDDeReferenceDeRelevServiceImplTest</exclude>
+                                <exclude>**/*GestionnaireIntegrationEventServicePourUIDTest</exclude>
+                                <exclude>**/*ExpediteurESBMessageCompatibleEventLogServiceTest</exclude>
+                                <exclude>**/*GestionnairePublicationServiceImplTest</exclude>
+
+                                <exclude>**/ch/vd/formation/refedu/refeduweb/webservice/rest/**</exclude>
+
+                            </excludes>
+                            <failIfNoTests>false</failIfNoTests>
+                            <!--<argLine>-Dfile.encoding=UTF-8 -Xms1048m -Xmx1408m -XX:MaxPermSize=256m</argLine>-->
+                            <argLine>-Dfile.encoding=UTF-8 -Xms512m -Xmx1024m</argLine>
+
+                            <!--
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.basedir}/../relevDomainXSD/src/main/ressources/**</additionalClasspathElement>
+                            </additionalClasspathElements>
+                            -->
+
+                        </configuration>
+                    </execution>
+
+                    <!--Test en ForkMode Always (chaque test dans un context separe) -->
+                    <execution>
+                        <id>forkmode-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skip-basic-test}</skip>
+                            <forkMode>once</forkMode>
+                            <includes>
+                                <include>**/*ExpediteurEventsRecusServiceTest.java</include>
+                                <include>**/*ChaineIntegrationServiceVTOTest.java</include>
+                                <include>**/*NomenclatureServiceTest.java</include>
+                                <include>**/*ContratServiceTest.java</include>
+                                <include>**/*EventRepositoryTest.java</include>
+                                <include>**/*ExpiditeurEventRecusServicePourMonnardJulienTest.java</include>
+                                <include>**/*EleveServiceTest.java</include>
+                                <include>**/*EleveRepositoryTest.java</include>
+                                <include>**/*EnseignantRepositoryTest.java</include>
+                                <include>**/*GestionnaireIntegrationEventServiceTest.java</include>
+                                <include>**/*GestionIDDeReferenceDeRelevServiceImplTest</include>
+                                <include>**/*ExpediteurESBMessageCompatibleEventLogServiceTest</include>
+                                <include>**/*GestionnaireIntegrationEventServicePourUIDTest</include>
+                                <include>**/*GestionnairePublicationServiceImplTest</include>
+                            </includes>
+                            <argLine>-Dfile.encoding=UTF-8 -Xms512m -Xmx1024m</argLine>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+            <plugin>
+                <groupId>org.jvnet.maven.incrementalbuild</groupId>
+                <artifactId>incremental-build-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>incremental-build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>not</id>
+            <properties>
+                <skipTests>true</skipTests>
+                <skip-basic-test>true</skip-basic-test>
+                <skip-web-integration-test>true</skip-web-integration-test>
+            </properties>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>DSI Snapshots</id>
+            <name>RefEdu-snapshots</name>
+            <url>${nexus.url.snapshots}</url>
+        </snapshotRepository>
+        <repository>
+            <id>DSI Snapshots</id>
+            <name>RefEdu-releases</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>releases</id>
+            <name>Releases de l'Etat de Vaud</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <name>Snapshots de l'Etat de Vaud</name>
+            <url>${nexus.url.snapshots}</url>
+        </repository>
+    </repositories>
+
+</project>

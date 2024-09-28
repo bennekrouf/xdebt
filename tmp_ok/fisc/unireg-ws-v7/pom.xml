@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Unireg-XmlBeans -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.unireg</groupId>
+	<artifactId>unireg-ws-v7</artifactId>
+	<packaging>jar</packaging>
+	<version>7.28-SNAPSHOT</version>
+
+	<name>Unireg - WS v7</name>
+	<description>Unireg - classes Java pour le web-service v7 de Unireg</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>unireg-jaxb2-party</artifactId>
+			<groupId>ch.vd.unireg</groupId>
+			<version>${unireg.jaxb2.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>unireg-jaxb2-events</artifactId>
+			<groupId>ch.vd.unireg</groupId>
+			<version>${unireg.jaxb2.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>unireg-jaxb2-infra</artifactId>
+			<groupId>ch.vd.unireg</groupId>
+			<version>${unireg.jaxb2.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<release>11</release>
+					<showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<excludes>
+						<!-- on exclut les répertoires des beans qui correspondent aux XSDs des projets unireg-jaxb-*, car ils ont déjà été compilés dans ces derniers -->
+
+						<!-- unireg-jaxb2-ech -->
+						<exclude>ch/ech/**</exclude>
+						<!-- unireg-jaxb2-common -->
+						<exclude>ch/vd/unireg/xml/common/v2/**</exclude>
+						<exclude>ch/vd/unireg/xml/exception/v1/**</exclude>
+						<!-- unireg-jaxb2-party -->
+						<exclude>ch/vd/unireg/xml/party/**</exclude>
+						<!-- unireg-jaxb2-events -->
+						<exclude>ch/vd/unireg/xml/event/**</exclude>
+						<!-- unireg-jaxb2-infra -->
+						<exclude>ch/vd/unireg/xml/infra/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.14.0</version>
+				<configuration>
+					<schemaDirectory>src/main/resources</schemaDirectory>
+					<strict>false</strict>
+					<catalog>src/main/resources/catalog.xml</catalog>
+					<schemaIncludes>
+						<include>main.xsd</include>
+					</schemaIncludes>
+					<bindingDirectory>src/main/resources</bindingDirectory>
+					<bindingIncludes>
+						<include>bindings.xml</include>
+					</bindingIncludes>
+					<args>
+						<arg>-extension</arg>
+						<arg>-Xpretty-classname</arg>
+						<arg>-Xunireg-ws</arg>
+						<arg>-Xnamespace-prefix</arg>
+						<arg>-Xts</arg>
+						<arg>-Xts:style:ch.vd.unireg.UniregToStringStyle.STYLE</arg>
+						<arg>-Xvalue-constructor</arg>
+						<arg>-Xinheritance</arg>
+					</args>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-namespace-prefix</artifactId>
+						<version>1.3</version>
+					</dependency>
+					<dependency>
+						<groupId>ch.vd.shared.xjc.plugins</groupId>
+						<artifactId>jaxb2-pretty-classname</artifactId>
+						<version>1.4.0</version>
+					</dependency>
+					<dependency>
+						<groupId>ch.vd.unireg</groupId>
+						<artifactId>jaxb2-unireg-ws-plugin</artifactId>
+						<version>2.0.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.cxf.xjcplugins</groupId>
+						<artifactId>cxf-xjc-ts</artifactId>
+						<version>3.3.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-value-constructor</artifactId>
+						<version>3.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>0.12.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>UniregService-${project.version}</finalName>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>UniregService.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.snapshots</id>
+			<name>Nexus snaphots</name>
+			<url>${nexus.url.snapshots}</url>
+			<!-- évite d'ajouter un timestamp à chaque déploiement : nécessaire pour avoir les sources synchrones avec un jar snapshot -->
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/unireg-ws-v7</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-ws-v7.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-ws-v7.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Application settings -->
+		<copyright.year>2021</copyright.year>
+		<amp.genericCore>true</amp.genericCore>
+		<amp.fullSource>false</amp.fullSource>
+		<junit.version>4.12</junit.version>
+		<unireg.jaxb2.version>7.4</unireg.jaxb2.version>
+	</properties>
+	
+</project>
+

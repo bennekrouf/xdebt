@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.justice.egdx.infrastructure</groupId>
+	<artifactId>infrastructure-parent</artifactId>
+	<version>1.10.0</version>
+	<packaging>pom</packaging>
+
+	<name>${project-name.prefix}${project.artifactId}</name>
+	<description>Parent POM for Infrastructure</description>
+
+	<parent>
+		<groupId>ch.vd.justice.shared</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>4.7.0-SNAPSHOT</version>
+		<!-- lookup parent from repository -->
+		<relativePath />
+	</parent>
+
+	<properties>
+		<!-- To allow smooth integration in ELCA environments -->
+		<project-name.prefix></project-name.prefix>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>2021.0.6</spring-cloud.version>
+		<dependency-check-maven.skip>true</dependency-check-maven.skip>
+	</properties>
+
+	<modules>
+		<module>springbootadmin</module>
+		<module>eureka</module>
+	</modules>
+
+	<dependencies>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-starter-server</artifactId>
+				<version>2.7.10</version>
+			</dependency>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-server-ui</artifactId>
+				<version>2.7.10</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>2.0.0</version>
+					<configuration>
+                        <licenseMergesUrl>file:license/license-merges.txt</licenseMergesUrl>
+						<failOnMissing>true</failOnMissing>
+						<!-- <useMissingFile>true</useMissingFile> -->
+                        <overrideUrl>file:license/override-THIRD-PARTY.properties</overrideUrl>
+						<fileTemplate>license/third-party-file.ftl</fileTemplate>
+						<outputDirectory>license</outputDirectory>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>ELCA</id>
+			<properties>
+				<!-- To allow smooth integration in ELCA environments -->
+				<project-name.prefix>prj_ev-gddgdc -&#032;</project-name.prefix>
+			</properties>
+		</profile>
+	</profiles>
+
+
+</project>

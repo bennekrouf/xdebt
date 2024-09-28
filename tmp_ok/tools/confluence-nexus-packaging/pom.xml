@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.gdc</groupId>
+    <artifactId>confluence</artifactId>
+    <version>8.5.12-3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Confluence Wiki</name>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/tools/confluence-nexus-packaging.git
+        </developerConnection>
+        <tag>8.5.12-1</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>confluence</artifactId>
+            <version>${confluence.version}</version>
+            <type>tar.gz</type>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>assembly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${maven-dependency-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${maven-dependency-plugin.outputDirectory}</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>false</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>${maven-antrun-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <target>
+                                        <echo message="Unzipping Confluence ..." />
+                                        <exec executable="/bin/tar">
+                                            <arg value="-xzf" />
+                                            <arg value="target/${confluence.dependency.filename}.tar.gz" />
+                                            <arg value="-C" />
+                                            <arg value="target" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- After creating the assembly, we only keep the .tar.gz, otherwise, the deploy goal will upload both the jar and the assembly -->
+                    <!-- Using deploy:deploy-file is not convenient, because we cannot cleanly choose the repository type, ie SNAPSHOT vs STABLE to which we want to upload -->
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>${maven-clean-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <!-- we can't override this id -->
+                                <id>default-clean</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.build.directory}</directory>
+                                            <excludes>
+                                                <exclude>${project.artifactId}-${project.version}.tar.gz</exclude>
+                                            </excludes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                    <configuration>
+                        <goals>${release.goals}</goals>
+                        <releaseProfiles>assembly</releaseProfiles>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                        <arguments>-Dmaven.javadoc.skip=true</arguments>
+                        <pushChanges>true</pushChanges>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <properties>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+
+        <confluence.version>8.5.12</confluence.version>
+        <confluence.dependency.filename>confluence-${confluence.version}</confluence.dependency.filename>
+        <maven-dependency-plugin.outputDirectory>${project.build.directory}</maven-dependency-plugin.outputDirectory>
+
+        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+        <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <maven-dependency-plugin.version>3.0.0</maven-dependency-plugin.version>
+        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+
+        <release.goals>clean deploy</release.goals>
+    </properties>
+
+</project>

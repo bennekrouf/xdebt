@@ -1,0 +1,978 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- ###### PARENT TAO - PARENT ###### -->
+    <parent>
+        <groupId>ch.vd.fiscalite</groupId>
+        <artifactId>tao-boot-parent</artifactId>
+        <version>4.0.10</version>
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.dfin.tao.pom</groupId>
+    <artifactId>tao-pom</artifactId>
+    <packaging>pom</packaging>
+    <version>1.2.10-SNAPSHOT</version>
+    <name>tao-pom</name>
+
+    <!-- ###### SCM : Source Control Management ###### -->
+    <!-- définition de l'url de connection au serveur GIT pour le projet -->
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-pom.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-pom.git</developerConnection>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tao-pom</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- ###### PROPERTIES ###### -->
+    <properties>
+        <!-- shared DSI -->
+        <shared-base.version>3.2.0</shared-base.version>
+        <shared-testing.version>5.2.0-SNAPSHOT</shared-testing.version>
+
+        <!-- shared Fiscalite -->
+        <shared-iam.version>8.0.2</shared-iam.version>
+        <tao-test-util.version>1.1.1</tao-test-util.version>
+        <tao-test-automatise.version>4.3.4</tao-test-automatise.version>
+        <tao-pp-external-services.version>42.1.16</tao-pp-external-services.version>
+
+        <!-- Overriding spring boot config -->
+        <!-- Version de la librairie ojdbc10 (migration Exadata) -->
+        <oracle-database.version>19.11.0.0</oracle-database.version>
+        <spring-framework.version>5.2.22.RELEASE</spring-framework.version>
+        <lombok.version>1.18.24</lombok.version> <!-- 2022 -->
+
+        <!-- Librairies tierces -->
+        <!-- Faire le ménage sont-elles toutes utiles ? -->
+        <!-- org.ehcache 8(v3) dans spring -->
+        <ehcache-core.version>2.6.11</ehcache-core.version>
+        <!-- Force l'upgrade d'atomikos (corrige un certain nombre de bugs) -->
+        <!-- PM-1639 : Utiliser Atomikos 4.x commerciale -->
+        <atomikos.version>5.0.108</atomikos.version>
+        <!--Attention la version devrait être alignée a celle d'exchange-->
+        <lib.jersey.version>2.13</lib.jersey.version>
+
+        <velocity.version>1.7</velocity.version> <!-- 2010, dernière version -->
+        <mybatis.version>3.4.6</mybatis.version> <!-- 2018 -->
+        <mybatis-spring.version>1.3.3</mybatis-spring.version> <!-- 2019 -->
+        <spring-modules-jakarta-commons.version>0.8</spring-modules-jakarta-commons.version> <!-- 2007, dernière version -->
+        <!-- 4.0.1 dans spring boot -->
+        <javax.servlet-api.version>3.0.1</javax.servlet-api.version> <!-- 2011 -->
+        <jms.version>1.1</jms.version> <!-- 2005, dernière version -->
+        <!-- dhcp2 dans spring boot -->
+        <commons-dbcp.version>1.4</commons-dbcp.version> <!-- 2010, dernière version -->
+        <mail.version>1.4.7</mail.version> <!-- 2013, dernière version 1.5.0-b01 2013 également-->
+        <commons-fileupload.version>1.3.3</commons-fileupload.version> <!-- 2017 -->
+        <commons-math3.version>3.6.1</commons-math3.version> <!-- 2016, dernière version -->
+        <commons-csv.version>1.4</commons-csv.version> <!-- 2016 -->
+        <javax-ejb.version>2.1</javax-ejb.version> <!-- 2006, dernière version -->
+        <commons-digester.version>2.1</commons-digester.version> <!-- 2010, dernière version -->
+        <reflections.version>0.9.12</reflections.version> <!-- 2020 -->
+        <diffutils.version>1.3.0</diffutils.version> <!-- 2013, dernière version -->
+        <javassist.version>3.26.0-GA</javassist.version> <!-- 2019 -->
+        <objenesis.version>2.6</objenesis.version>  <!-- 2017 -->
+        <pdfbox.version>2.0.26</pdfbox.version>  <!-- 2022 -->
+        <poi.version>3.12</poi.version> <!-- 2015 -->
+        <commons-collections.version>3.2.2</commons-collections.version> <!-- 2015, dernière version -->
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>  <!-- 2019, dernière version -->
+        <guava.version>19.0</guava.version> <!-- 2015 -->
+        <wlthint3client.version>12.1.3</wlthint3client.version> <!-- non ref sur mvnrepository.com -->
+        <oro.version>2.0.8</oro.version> <!-- 2005, dernière version -->
+        <commons-logging.version>1.1.3</commons-logging.version> <!-- 2013, dernière version 1.2.x 2014-->
+        <commons-vfs.version>1.0</commons-vfs.version>  <!-- 2006, dernière version -->
+        <commons-io.version>1.4</commons-io.version> <!-- 2008 -->
+        <xercesImpl.version>2.11.0</xercesImpl.version> <!-- 2013 -->
+        <robust-it-cloning.version>1.9.12</robust-it-cloning.version> <!-- 2019 -->
+        <log4jdbc.version>1.2</log4jdbc.version> <!-- 2013, dernière version -->
+        <janino.version>2.7.8</janino.version> <!-- 2015 -->
+        <log4j-core.version>2.17.2</log4j-core.version> <!-- 2020 -->
+        <commons-configuration.version>1.10</commons-configuration.version>  <!-- 2013, dernière version -->
+        <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version> <!-- 2018, dernière version -->
+
+        <!-- Maintenir cette version en accord avec Spring boot -->
+        <!-- TEST -->
+        <powermock-api-mockito2.version>2.0.9</powermock-api-mockito2.version>  <!-- 2020 -->
+        <fest-assert.version>1.4</fest-assert.version> <!-- 2011, dernière version -->
+        <assertj-core.version>3.2.0</assertj-core.version> <!-- 2015 -->
+        <dbunit.version>2.5.4</dbunit.version> <!-- 2017 -->
+        <spring-test-dbunit.version>1.2.1</spring-test-dbunit.version> <!-- 2015 -->
+        <easymock.version>2.4</easymock.version> <!-- 2008 -->
+        <!-- version 2 utilisé dans spring boot -->
+        <xmlunit.version>1.2</xmlunit.version> <!-- 2008 -->
+        <unitils-core.version>3.4.6</unitils-core.version> <!-- 2017, dernière version -->
+
+        <!-- REPORT -->
+        <jacoco-maven-plugin.ut-dest-file>${project.build.directory}/coverage-reports/jacoco-ut.exec
+        </jacoco-maven-plugin.ut-dest-file>
+        <jacoco-maven-plugin.it-dest-file>${project.build.directory}/coverage-reports/jacoco-it.exec
+        </jacoco-maven-plugin.it-dest-file>
+
+        <!-- Plugin -->
+        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version> <!-- 2017 -->
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version> <!-- 2015 -->
+        <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version> <!-- 2015 -->
+        <l10n-maven-plugin.version>1.8</l10n-maven-plugin.version> <!-- 2015, dernière version -->
+        <maven-jaxb2-plugin.version>0.14.0</maven-jaxb2-plugin.version> <!-- 2015 -->
+
+        <release.add.profiles />
+        <release.skipTests />
+
+    </properties>
+
+    <!-- ###### DEPENDENCY MANAGEMENT ###### -->
+    <!-- Permet de définir les dépendances hors core, hors exchange-->
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- shared DSI -->
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-iam</artifactId>
+                <version>${shared-iam.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.registre</groupId>
+                <artifactId>shared-base</artifactId>
+                <version>${shared-base.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.dfin.tao.tao-pp</groupId>
+                <artifactId>tao-pp-external-services</artifactId>
+                <classifier>client</classifier>
+                <version>${tao-pp-external-services.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao</groupId>
+                <artifactId>tao-test-util</artifactId>
+                <version>${tao-test-util.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao</groupId>
+                <artifactId>tao-test-automatise</artifactId>
+                <version>${tao-test-automatise.version}</version>
+            </dependency>
+
+            <!-- Spring-boot -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-rest</artifactId>
+                <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.google.name.findbugs</groupId>
+                        <artifactId>jsr305</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-batch</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jersey</artifactId>
+                <version>${spring-boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.glassfish.jersey.core</groupId>
+                        <artifactId>jersey-common</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.jersey.core</groupId>
+                        <artifactId>jersey-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2.external</groupId>
+                        <artifactId>javax.inject</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2</groupId>
+                        <artifactId>hk2-locator</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2</groupId>
+                        <artifactId>hk2-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.hk2</groupId>
+                        <artifactId>hk2-utils</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws.rs-api.version}</version>
+            </dependency>
+
+
+            <!-- Velocity -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <!-- MyBatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+
+            <!-- Jersey -->
+            <dependency>
+                <groupId>org.springmodules</groupId>
+                <artifactId>spring-modules-jakarta-commons</artifactId>
+                <version>${spring-modules-jakarta-commons.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-lang</groupId>
+                        <artifactId>commons-lang</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-beanutils</groupId>
+                        <artifactId>commons-beanutils-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-support</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-webmvc</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xerces</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!--  using jersey-multipart for multipart file upload dependency on @FormInputParam that is required -->
+            <dependency>
+                <groupId>org.glassfish.jersey.media</groupId>
+                <artifactId>jersey-media-multipart</artifactId>
+                <version>${lib.jersey.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.bundles</groupId>
+                <artifactId>jaxrs-ri</artifactId>
+                <version>${lib.jersey.version}</version>
+            </dependency>
+
+            <!-- Servlet / JSP -->
+            <dependency>
+                <groupId>net.sourceforge.nekohtml</groupId>
+                <artifactId>nekohtml</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>jms</artifactId>
+                <version>${jms.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.spec.javax.transaction</groupId>
+                        <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>${commons-dbcp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${mail.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.freemarker</groupId>
+                <artifactId>freemarker</artifactId>
+                <version>${freemarker.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons-fileupload.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${commons-math3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${commons-csv.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.ejb</groupId>
+                <artifactId>ejb</artifactId>
+                <version>${javax-ejb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-digester</groupId>
+                <artifactId>commons-digester</artifactId>
+                <version>${commons-digester.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.googlecode.java-diff-utils</groupId>
+                <artifactId>diffutils</artifactId>
+                <version>${diffutils.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>objenesis</artifactId>
+                <groupId>org.objenesis</groupId>
+                <version>${objenesis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Validation PDF-->
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+
+            <!-- Third Party -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache-core</artifactId>
+                <version>${ehcache-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>oracle.jdbc</groupId>
+                <artifactId>ojdbc7</artifactId>
+                <version>${oracle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>weblogic</groupId>
+                <artifactId>wlthint3client</artifactId>
+                <version>${wlthint3client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>oro</groupId>
+                <artifactId>oro</artifactId>
+                <version>${oro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>avalon-framework</groupId>
+                        <artifactId>avalon-framework</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>logkit</groupId>
+                        <artifactId>logkit</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>junit</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-vfs</groupId>
+                <artifactId>commons-vfs</artifactId>
+                <version>${commons-vfs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xercesImpl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.com.robust-it</groupId>
+                <artifactId>cloning</artifactId>
+                <version>${robust-it-cloning.version}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>com.googlecode.log4jdbc</groupId>
+                <artifactId>log4jdbc</artifactId>
+                <version>${log4jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.janino</groupId>
+                <artifactId>janino</artifactId>
+                <version>${janino.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j-core.version}</version>
+            </dependency>
+
+            <!-- tests -->
+            <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert</artifactId>
+                <version>${fest-assert.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>${powermock-api-mockito2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-core</artifactId>
+                <version>${powermock-api-mockito2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock-api-mockito2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>${dbunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.springtestdbunit</groupId>
+                <artifactId>spring-test-dbunit</artifactId>
+                <version>${spring-test-dbunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-testing</artifactId>
+                <version>${shared-testing.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>${easymock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymockclassextension</artifactId>
+                <version>${easymock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>${xmlunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.unitils</groupId>
+                <artifactId>unitils-core</artifactId>
+                <version>${unitils-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-lang</groupId>
+                        <artifactId>commons-lang</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ###### BUILD ###### -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+
+        <!-- This plugin is used to release a project with Maven, saving a lot of repetitive, manual work. Releasing a project is made in two steps: prepare and perform -->
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <arguments>-Dmaven.javadoc.skip=true ${arguments}</arguments>
+          </configuration>
+        </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <!-- Ne pas filtrer les ressources binaires -->
+                    <configuration>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <nonFilteredFileExtensions>
+                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>swf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>bz2</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>gz</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>acp</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>bin</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>odt</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                        </nonFilteredFileExtensions>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>${properties-maven-plugin.version}</version>
+                </plugin>
+
+                <!-- This mojo is designed to get a unique build number for each time you build your project -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>buildnumber-maven-plugin</artifactId>
+                    <version>1.4</version>
+                    <executions>
+                        <execution>
+                            <id>formattedTimestamp-exec</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                            <configuration>
+                                <buildNumberPropertyName>formatedTimestamp</buildNumberPropertyName>
+                                <format>{0,date,dd.MM.yyyy HH:mm:ss}</format>
+                                <items>
+                                    <item>timestamp</item>
+                                </items>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>zipnameTimestamp-exec</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                            <configuration>
+                                <buildNumberPropertyName>zipnameTimestamp</buildNumberPropertyName>
+                                <format>{0,date,yyyyMMdd-HHmmss}</format>
+                                <items>
+                                    <item>timestamp</item>
+                                </items>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>buildNumber-exec</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>create</goal>
+                            </goals>
+                            <configuration>
+                                <shortRevisionLength>8</shortRevisionLength>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifestEntries>
+                                <Implementation-Build>${buildNumber}</Implementation-Build>
+                                <Implementation-Timestamp>${timestamp}</Implementation-Timestamp>
+                                <Implementation-FormatedTimestamp>${formatedTimestamp}</Implementation-FormatedTimestamp>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifestEntries>
+                                <Implementation-Build>${buildNumber}</Implementation-Build>
+                                <Implementation-Timestamp>${timestamp}</Implementation-Timestamp>
+                                <Implementation-FormatedTimestamp>${formatedTimestamp}</Implementation-FormatedTimestamp>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.googlecode.l10n-maven-plugin</groupId>
+                    <artifactId>l10n-maven-plugin</artifactId>
+                    <version>${l10n-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <version>${maven-jaxb2-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <property>
+                    <name>sonarEnabled</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <sonar.host.url>http://slv3479d:54985/outils/sonar-fisc/</sonar.host.url>
+                <sonar.forceAnalysis>true</sonar.forceAnalysis>
+                <sonar.jacoco.reportMissing.force.zero>true</sonar.jacoco.reportMissing.force.zero>
+                <sonar.javascript.forceZeroCoverage>true</sonar.javascript.forceZeroCoverage>
+                <sonar.junit.reportPath>target/surefire-reports</sonar.junit.reportPath>
+                <sonar.surefire.reportsPath>target/surefire-reports</sonar.surefire.reportsPath>
+                <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+                <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+                <sonar.jacoco.reportPath>${jacoco-maven-plugin.ut-dest-file}</sonar.jacoco.reportPath>
+                <sonar.jacoco.itReportPath>${jacoco-maven-plugin.it-dest-file}</sonar.jacoco.itReportPath>
+                <sonar.jdbc.driver>oracle.jdbc.driver.OracleDriver</sonar.jdbc.driver>
+                <sonar.build-stability.url>
+                    Jenkins:https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/job/tao-xxx-build-master
+                </sonar.build-stability.url>
+                <sonar.build-stability.username.secured>jenkins.fiscalite</sonar.build-stability.username.secured>
+                <sonar.build-stability.password.secured>jenkins</sonar.build-stability.password.secured>
+                <sonar.build-stability.use_jsecuritycheck>true</sonar.build-stability.use_jsecuritycheck>
+                <sonar.build-stability.days>10</sonar.build-stability.days>
+                <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>checkPropertiesI10n</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <inherited>true</inherited>
+                        <groupId>com.googlecode.l10n-maven-plugin</groupId>
+                        <artifactId>l10n-maven-plugin</artifactId>
+                        <configuration>
+                            <ignoreFailure>false</ignoreFailure>
+                            <customPatterns />
+                            <excludedKeys />
+                            <reportsDir>${project.build.directory}/l10n-reports</reportsDir>
+                            <formatter>messageFormat</formatter>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>validate-messages-resources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>validate</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyDir>${basedir}/src/main/resources/messages</propertyDir>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <!-- Sets the VM argument line used when unit tests are run. -->
+                                <argLine>${surefireArgLine}</argLine>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <artifactId>maven-failsafe-plugin</artifactId>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <!-- Sets the VM argument line used when integration tests are run. -->
+                                <argLine>${failsafeArgLine}</argLine>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.8.5</version>
+                            <inherited>true</inherited>
+                            <executions>
+                                <!--
+                                    Prepares the property pointing to the JaCoCo runtime agent which
+                                    is passed as VM argument when Maven the Surefire plugin is executed.
+                                -->
+                                <execution>
+                                    <id>pre-unit-test</id>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
+                                    <configuration>
+                                        <!-- Sets the path to the file which contains the execution data. -->
+                                        <destFile>${jacoco-maven-plugin.ut-dest-file}</destFile>
+                                        <!--
+                                            Sets the name of the property containing the settings
+                                            for JaCoCo runtime agent.
+                                        -->
+                                        <propertyName>surefireArgLine</propertyName>
+                                        <excludes>
+                                            <exclude>**/*Exception.class</exclude>
+                                            <exclude>**/*Test.class</exclude>
+                                            <exclude>**/*Config.class</exclude>
+                                            <exclude>**/*Constantes.class</exclude>
+                                        </excludes>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>pre-integration-test</id>
+                                    <phase>pre-integration-test</phase>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
+                                    <configuration>
+                                        <!-- Sets the path to the file which contains the execution data. -->
+                                        <destFile>${jacoco-maven-plugin.it-dest-file}</destFile>
+                                        <!--
+                                            Sets the name of the property containing the settings
+                                            for JaCoCo runtime agent.
+                                        -->
+                                        <propertyName>failsafeArgLine</propertyName>
+                                        <excludes>
+                                            <exclude>**/*Exception.class</exclude>
+                                            <exclude>**/*Test.class</exclude>
+                                            <exclude>**/*Config.class</exclude>
+                                            <exclude>**/*Constantes.class</exclude>
+                                        </excludes>
+                                    </configuration>
+                                </execution>
+                                <!--
+                                    Ensures that the name coverage report for unit tests is created after
+                                    unit tests have been run.
+                                -->
+                                <execution>
+                                    <id>post-unit-test</id>
+                                    <phase>test</phase>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals>
+                                    <configuration>
+                                        <!-- Sets the path to the file which contains the execution data. -->
+                                        <dataFile>${jacoco-maven-plugin.ut-dest-file}</dataFile>
+                                        <!-- Sets the output directory for the name coverage report. -->
+                                        <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>post-integration-test</id>
+                                    <phase>post-integration-test</phase>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals>
+                                    <configuration>
+                                        <!-- Sets the path to the file which contains the execution data. -->
+                                        <dataFile>${jacoco-maven-plugin.it-dest-file}</dataFile>
+                                        <!-- Sets the output directory for the name coverage report. -->
+                                        <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <!-- Il faut compiler en mode debug pour avoir toutes les infos sur les numéros de ligne dans les rapports JaCoCo -->
+                        <plugin>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <inherited>true</inherited>
+                            <configuration>
+                                <debug>true</debug>
+                                <debuglevel>lines,vars,source</debuglevel>
+                                <compilerArgs>
+                                    <arg>-parameters</arg>
+                                </compilerArgs>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

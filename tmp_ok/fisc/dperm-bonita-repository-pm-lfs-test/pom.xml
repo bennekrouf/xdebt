@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+ 
+	<groupId>ch.vd.fiscalite.dperm.bpm</groupId>
+	<artifactId>bonita-repository</artifactId>
+	<version>22.3.3.2-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<nexus.url>http://nexus.etat-de-vaud.ch/repository</nexus.url>
+		<nexus.url.releases>${nexus.url}/releases</nexus.url.releases>
+		<nexus.url.snapshots>${nexus.url}/snapshots</nexus.url.snapshots>
+
+		<bonita.repository>.</bonita.repository>
+		<process.definitions>
+			DPerm-Identification
+			DPerm-ControleAssujetissement
+			DPerm-RICANT-Traitement
+			DPerm-TO-DI-Traitement
+			DPerm-LTN-Acquisition
+		</process.definitions>
+	</properties>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<descriptors>
+						<descriptor>assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+				  <execution>
+					<id>create-archive</id>
+					<phase>package</phase>
+					<goals>
+					  <goal>single</goal>
+					</goals>
+				  </execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<goals>clean deploy</goals>
+					<preparationGoals>clean bonita:remove-snapshots scm:checkin -Dmessage="process version release" -Dincludes="diagrams/*"</preparationGoals>
+					<completionGoals>bonita:increment-version-snapshot scm:checkin -Dmessage="process version next snapshot" -Dincludes="diagrams/*"</completionGoals>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>vd.ch.socle.bpm</groupId>
+				<artifactId>bonita-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<id>remove-snapshots</id>
+						<phase>none</phase>
+						<goals><goal>remove-snapshots</goal></goals>
+						<configuration>
+							<bonitaRepository>.</bonitaRepository>
+						</configuration>
+					</execution>
+					<execution>
+						<id>increment-version-snapshot</id>
+						<phase>none</phase>
+						<goals>
+							<goal>increment-version-snapshot</goal></goals>
+						<configuration>
+							<bonitaRepository>.</bonitaRepository>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<scm>
+		<connection>scm:svn:https://svn.etat-de-vaud.ch/SVN_ACI/dperm/trunk/040_Realisation/Developpement/dperm-bonita/repo-bonita6/dperm-current-PM/trunk</connection>
+		<developerConnection>scm:svn:https://svn.etat-de-vaud.ch/SVN_ACI/dperm/trunk/040_Realisation/Developpement/dperm-bonita/repo-bonita6/dperm-current-PM/trunk</developerConnection>
+	</scm>
+	
+	<distributionManagement>
+        <repository>
+                <id>DSI Releases</id>
+				<name>Release repository</name>
+                <url>${nexus.url.releases}</url>
+        </repository>
+        <snapshotRepository>
+                <id>DSI Snapshots</id>
+				<name>Snaphots repository</name>
+                <url>${nexus.url.snapshots}</url>
+                <!-- évite d'ajouter un timestamp à chaque déploiement : nécessaire pour avoir les sources synchrones avec un jar snapshot -->
+                <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+	</distributionManagement>
+
+</project>

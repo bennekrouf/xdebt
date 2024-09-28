@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.education</groupId>
+    <artifactId>metedu-shared-xsd</artifactId>
+    <version>1.0.9-SNAPSHOT</version>
+
+    <name>MET-EDU (xsd)</name>
+
+    <packaging>jar</packaging>
+
+    <scm>
+        <developerConnection>${scm.connexion}</developerConnection>
+        <url>${scm.connexion}</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <normes-xsd.version>1.1.24</normes-xsd.version>
+        <normes-xsd.directory>${project.build.directory}/classes/xsd/normes</normes-xsd.directory>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+
+        <release.goals>clean deploy</release.goals>
+        <release.profiles>not</release.profiles>
+        <release.pushChanges>true</release.pushChanges>
+
+        <scm.connexion>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/education/metedu-shared-xsd.git</scm.connexion>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.vd.shared</groupId>
+                                    <artifactId>normes-xsd</artifactId>
+                                    <version>${normes-xsd.version}</version>
+                                    <type>tar.gz</type>
+                                    <fileMappers>
+                                        <org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                                            <pattern>^\Qnormes-xsd-${normes-xsd.version}/htdocs/xmlns/\E</pattern>
+                                            <replacement>./</replacement>
+                                        </org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${normes-xsd.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <goals>${release.goals}</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <pushChanges>${release.pushChanges}</pushChanges>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

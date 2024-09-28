@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>ch.vd.bpm.bonitatemplate</groupId>
+        <artifactId>bonitatemplate-release</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bonitatemplate-bpm</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <bos.home>${project.parent.build.directory}/BonitaBPMSubscription-${bonita.version.build}</bos.home>
+        <bonita.home>${project.parent.build.directory}/bonita-home</bonita.home>
+        <bonita.client>${project.parent.build.directory}/bonita-client</bonita.client>
+        <bonita-repository>${project.parent.build.directory}/repo</bonita-repository>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.bpm.bonitatemplate</groupId>
+            <artifactId>bonitatemplate-workspace</artifactId>
+            <version>${project.workspace.version}</version>
+            <classifier>project</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly-bonitaBuilder.xml</descriptor>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>cei.aew.web</groupId>
+                <artifactId>cei-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <webresourceurl>http://outils-xweb-ws.etat-de-vaud.ch/outils/xweb/api</webresourceurl>
+                    <filetoupload>${project.build.directory}/${project.build.finalName}-bin.zip</filetoupload>
+                    <from>xsirvl</from>
+                    <to>NCK</to>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

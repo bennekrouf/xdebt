@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>shared-parent</artifactId>
+    <groupId>ch.vd.justice.shared</groupId>
+    <version>24.2.3</version>
+  </parent>
+
+  <artifactId>shared-angular</artifactId>
+  <name>${project-name.prefix}${project.artifactId}</name>
+  <properties>
+    <npm.publish.phase>deploy</npm.publish.phase>
+    <!--if you want to run only install use profile dev-->
+    <npm.install.command>ci</npm.install.command>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <executions>
+            <!--                      <execution>-->
+            <!--                        <id>display-npm-config</id>-->
+            <!--                        <phase>prepare-package</phase>-->
+            <!--                        <configuration>-->
+            <!--                          <workingDirectory>${maven.multiModuleProjectDirectory}/shared-angular</workingDirectory>-->
+            <!--                          <executable>npm</executable>-->
+            <!--                          <arguments>-->
+            <!--                            <argument>config</argument>-->
+            <!--                            <argument>list</argument>-->
+            <!--                          </arguments>-->
+            <!--                        </configuration>-->
+            <!--                        <goals>-->
+            <!--                          <goal>exec</goal>-->
+            <!--                        </goals>-->
+            <!--                      </execution>-->
+            <execution>
+              <id>exec-npm-install</id>
+              <phase>prepare-package</phase>
+              <configuration>
+                <workingDirectory>${maven.multiModuleProjectDirectory}/shared-angular</workingDirectory>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>${npm.install.command}</argument>
+                </arguments>
+              </configuration>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>exec-npm-build</id>
+              <phase>prepare-package</phase>
+              <configuration>
+                <workingDirectory>${maven.multiModuleProjectDirectory}/shared-angular</workingDirectory>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>run</argument>
+                  <argument>build</argument>
+                </arguments>
+              </configuration>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+            <!-- Note: le remplacement du path static est fait dans les projets *-frontend -->
+            <execution>
+              <id>exec-npm-publish</id>
+              <phase>${npm.publish.phase}</phase>
+              <configuration>
+                <workingDirectory>${maven.multiModuleProjectDirectory}/shared-angular
+                </workingDirectory>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>--loglevel</argument>
+                  <argument>verbose</argument>
+                  <argument>publish</argument>
+                  <argument>dist</argument>
+                </arguments>
+              </configuration>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>dist</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <!-- disable plugins enabled by default lifecycle -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-resources</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>default-testResources</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-install</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-deploy</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <properties>
+        <npm.publish.phase>none</npm.publish.phase>
+        <npm.install.command>install</npm.install.command>
+      </properties>
+    </profile>
+    <profile>
+      <id>dgnsi</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>exec-npm-publish</id>
+                <!-- override the configuration arguments -->
+                <configuration>
+                  <!-- doc for DGNSI integrators:
+                  if using a correct configuration, specifiying "registry" on the command line is not necessary.
+                  However, npm must be run in the root node directory, and not in dist folder -->
+                  <!--                  <workingDirectory>${maven.multiModuleProjectDirectory}/shared-angular</workingDirectory>-->
+                  <!--                  <executable>npm</executable>-->
+                  <arguments>
+                    <argument>--registry</argument>
+                    <argument>https://artifacts.etat-de-vaud.ch/repository/npm-vd/</argument>
+                    <argument>publish</argument>
+                    <argument>dist</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

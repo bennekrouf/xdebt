@@ -1,0 +1,1088 @@
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.12.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "11.2.3",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "alc"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.1.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "annoncedefibrillateur"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.22",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "13.3.11",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "annoncezar"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "apgm"
+}
+{
+  "debt": [
+    {
+      "current_version": "7.2.15",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "autoexercerpcc"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.30",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.1.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "bocovid"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.1.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "cas-de-rigueur"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "commandecarnetadressefo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.30",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.1.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "contactcovid"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.19",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "16.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "dcish"
+}
+{
+  "debt": [
+    {
+      "current_version": "2.0.0",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "21",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "6.1.6",
+      "dependency_name": "spring-framework",
+      "status": {
+        "NonCompliant": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "demaut"
+}
+{
+  "debt": [
+    {
+      "current_version": "15.1.5",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "demautfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.12.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "11.2.7",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "depot-plaques"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.2",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.30",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "1.5.8",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "divess"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.12",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "duplicatasanfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.19",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "8",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.20",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "7.2.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "fastap"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.12",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "fsi"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.19",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.8.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "1.5.8",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "gpecs"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.12",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "lade-spei"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.2.10",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "mid"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.2.10",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "parlonscashbo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "15.2.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "pc-familles"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.11",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "portailmis"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.15",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "1.8",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "portautfoap"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.15.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "12.2.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "preste7721"
+}
+{
+  "debt": [
+    {
+      "current_version": "2.0.0",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "21",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "6.1.6",
+      "dependency_name": "spring-framework",
+      "status": {
+        "NonCompliant": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "18.0.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "refsante"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.12.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "11.2.3",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "rendezvousovamfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "12.2.16",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "rht"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.3.31",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "17.3.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "sanchad"
+}
+{
+  "debt": [
+    {
+      "current_version": "15.1.4",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "san-permis-eleve"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.15.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "12.1.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "sirademandelicencefo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.15.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "11.2.13",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "siradispenseexamenfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.19",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "1.8",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.1.7.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "8.1.2",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "siraparticulierfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.0.19",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "1.8",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.1.7.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "8.1.1",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "siraparticulierfo-backup"
+}
+{
+  "debt": [
+    {
+      "current_version": "1.1.1",
+      "dependency_name": "devex-maven-plugin",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 2.0.0 (latest version)"
+      }
+    },
+    {
+      "current_version": "11",
+      "dependency_name": "java",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 21 (latest version)"
+      }
+    },
+    {
+      "current_version": "5.2.15.RELEASE",
+      "dependency_name": "spring-framework",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 5.x (latest version)"
+      }
+    },
+    {
+      "current_version": "12.1.0",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "sirapreaviscommunalfo"
+}
+{
+  "debt": [
+    {
+      "current_version": "17.3.12",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "siraregistrelicencefo"
+}
+{
+  "debt": [
+    {
+      "current_version": "17.3.12",
+      "dependency_name": "angular",
+      "status": {
+        "UpgradeNeeded": "Upgrade needed to version 18 (latest version)"
+      }
+    }
+  ],
+  "repository_name": "sisbo"
+}

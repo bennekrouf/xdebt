@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Unireg-XmlBeans -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>unireg-xmlbeans</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>ch.vd.unireg</groupId>
+		<artifactId>unireg-xmlbeans-base</artifactId>
+		<!-- BEGIN_LVERSION -->
+		<version>1.65-SNAPSHOT</version>
+		<!-- END_LVERSION -->
+	</parent>
+	
+	<name>UniregCTB - XmlBeans</name>
+	<description>UniregCTB - Contient les beans Xml générés à partir des Xsd</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>unireg-xmlbeans-interfaces</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+	</dependencies>
+
+	<!-- Build plugins and sources -->
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<release>11</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<argLine>${surefire.argline}</argLine>
+				</configuration>
+			</plugin>
+
+			<!-- Generate XMLBeans schema objects -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<version>2.3.3</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+					</execution>
+				</executions>
+				<inherited>true</inherited>
+				<configuration>
+					<schemaDirectory>src/main/resources/xsd</schemaDirectory>
+					<javaSource>11</javaSource>
+					<sourceGenerationDirectory>${project.build.directory}/generated</sourceGenerationDirectory>
+					<xmlConfigs>
+						<xmlConfig implementation="java.io.File">src/main/resources/xsdConfig</xmlConfig>
+					</xmlConfigs>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+		<!-- Build resources -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}/target/generated-resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</testResource>
+		</testResources>
+	</build>
+	
+</project>
+

@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!-- =================================================================== -->
+    <!-- PARENT -->
+    <!-- =================================================================== -->
+    <parent>
+        <groupId>ch.vd.formation.relev</groupId>
+        <artifactId>relevBase</artifactId>
+        <version>3.11.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- =================================================================== -->
+    <!-- PROJECT -->
+    <!-- =================================================================== -->
+    <artifactId>relevWeb</artifactId>
+    <packaging>war</packaging>
+    <name>relevWeb</name>
+    <description>Releve Web - Referentiel des eleves. Contient la presentation.</description>
+
+    <!-- =================================================================== -->
+    <!-- PROPERTIES -->
+    <!-- =================================================================== -->
+    <properties>
+        <maven.build.timestamp.format>dd.MM.yyyy_HH:mm</maven.build.timestamp.format>
+        <project.build.date>${maven.build.timestamp}</project.build.date>
+    </properties>
+
+    <!-- =================================================================== -->
+    <!-- DEPENDENCIES -->
+    <!-- =================================================================== -->
+    <dependencies>
+
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <!-- ETAT DE VAUD -->
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <dependency>
+            <groupId>ch.vd.formation.relev</groupId>
+            <artifactId>refedu-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.formation.relev</groupId>
+            <artifactId>relevDomain</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.formation.relev</groupId>
+            <artifactId>relevService</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.formation</groupId>
+            <artifactId>refedu-shared-xsd</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-webservices</artifactId>
+        </dependency>
+
+
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <!-- OTHERS -->
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.webutilities</groupId>
+            <artifactId>webutilities</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc10</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>sitemesh</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <!-- TEST -->
+        <!-- ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <dependency>
+            <groupId>ch.vd.formation.relev</groupId>
+            <artifactId>refedu-commons-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-embedded-tomcat</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>1.17.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-external</artifactId>
+            <version>1.17.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-coyote</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-el-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper-el</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jasper</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jsp-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-util</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- =================================================================== -->
+    <!-- BUILD -->
+    <!-- =================================================================== -->
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>web-test</id>
+
+                        <configuration>
+                            <encoding>${project.encoding}</encoding>
+                            <skipTests>${skip-web-integration-test}</skipTests>
+                            <includes>
+                                <!--<include>**/ch/vd/formation/refedu/refeduweb/webservice/rest/**</include>-->
+                                <include>ch.vd.formation.refedu.refeduweb.it/**/*TestGui.java</include>
+                            </includes>
+                        </configuration>
+
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+
+                    <archive>
+                        <manifestEntries>
+                            <Manifest-Version>${project.version}</Manifest-Version>
+                            <Application-Version>${project.version}</Application-Version>
+                            <Archiver-Version>Plexus Archiver</Archiver-Version>
+                            <Created-By>Apache Maven</Created-By>
+                            <Built-By>${user.name}</Built-By>
+                            <Build-Jdk>${java-compiler-target.version}</Build-Jdk>
+                        </manifestEntries>
+                    </archive>
+                    <!--<warSourceExcludes>META-INF/*.xml</warSourceExcludes> -->
+                </configuration>
+            </plugin>
+
+        </plugins>
+        <finalName>${project.final.name}</finalName>
+    </build>
+
+</project>

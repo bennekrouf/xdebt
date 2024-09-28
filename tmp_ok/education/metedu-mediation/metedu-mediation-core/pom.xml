@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.education.metedu.mediation</groupId>
+        <artifactId>metedu-mediation</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>metedu-mediation-core</artifactId>
+    <name>MET-EDU Mediation (core)</name>
+
+    <properties>
+        <super.deploy.enabled>false</super.deploy.enabled>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.metedu.commons</groupId>
+            <artifactId>metedu-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.metedu.mediation</groupId>
+            <artifactId>metedu-mediation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.metedu.mediation</groupId>
+            <artifactId>metedu-mediation-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_api</artifactId>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_commons_test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

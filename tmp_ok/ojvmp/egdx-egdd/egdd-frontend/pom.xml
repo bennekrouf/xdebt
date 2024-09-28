@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.vd.justice.egdd</groupId>
+        <artifactId>egdd-parent</artifactId>
+        <version>24.2.3</version>
+    </parent>
+
+    <artifactId>egdd-frontend</artifactId>
+    <name>${project-name.prefix}${project.artifactId}</name>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!--
+          Paths to executables used to build/package the frontend.
+          The paths are by default empty assuming that the executables are available on system path.
+          You can override those setting in your settings.xml or in dedicated profiles.
+          Note: custom npm scripts could be used instead if more maintainable.
+         -->
+        <bash.exec>bash</bash.exec>
+        <find.exec>find</find.exec>
+        <grep.exec>grep</grep.exec>
+        <sed.exec>sed</sed.exec>
+        <xargs.exec>xargs</xargs.exec>
+
+        <!--if you want to run only install use profile dev-->
+        <npm.install.command>ci</npm.install.command>
+        <bash.version>4</bash.version>
+
+        <!-- using CDATA to prevent newline insertion by code formatting -->
+        <assets.fix.src>
+            <![CDATA[${find.exec} src -name '*.html' | ${xargs.exec} ${grep.exec} -l assets/ | ${xargs.exec} -n 1 -r -t ${sed.exec} -r -i "s#([\"'])assets/#\\1static/assets/#g"]]></assets.fix.src>
+        <assets.fix.shared-angular>
+            <![CDATA[${find.exec} node_modules/@egdx/shared-angular -name '*.js*' | ${xargs.exec} ${grep.exec} -l assets/ | ${xargs.exec} -n 1 -r -t ${sed.exec} -r -i "s#([\"'])(\\.\\./)*assets/#\\1static/assets/#g"]]></assets.fix.shared-angular>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>dist</directory>
+                        </fileset>
+                        <fileset>
+                            <!-- Ensuring that working copy state is clean (before applying raw fixes of resources) -->
+                            <directory>node_modules/@egdx/shared-angular</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <!-- Fixing resource path not handled by angular CLI -->
+                        <!-- Warning: this step modifies the local sources. Those changes should not be committed ! -->
+                        <id>fix assets locations in src</id>
+                        <!-- To check if the modification was successful, use:
+                          grep -rE -o '.{0,20}assets/.{0,20}' *-frontend/src
+                        -->
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <workingDirectory>${maven.multiModuleProjectDirectory}/egdd-frontend</workingDirectory>
+                            <executable>${bash.exec}</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>${assets.fix.src}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-npm-install</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <workingDirectory>${maven.multiModuleProjectDirectory}/egdd-frontend</workingDirectory>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>--loglevel</argument>
+                                <argument>verbose</argument>
+                                <argument>${npm.install.command}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <!-- Fixing resource path in library not handled by angular CLI -->
+                        <!-- Warning: this step modifies the local installation of dependency @egdx/shared. -->
+                        <id>fix assets location in @egdx/shared-angular module</id>
+                        <!-- To check if the modification was successful, use:
+                          grep -rE -o '.{0,20}assets/.{0,20}' *-frontend/node_modules/@egdx/shared-angular
+                        -->
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <workingDirectory>${maven.multiModuleProjectDirectory}/egdd-frontend</workingDirectory>
+                            <executable>${bash.exec}</executable>
+                            <arguments>
+                                <argument>-c</argument>
+                                <argument>${assets.fix.shared-angular}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-npm-build</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <workingDirectory>${maven.multiModuleProjectDirectory}/egdd-frontend</workingDirectory>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build-prod</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- disable plugins enabled by default lifecycle -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-resources</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testResources</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <npm.install.command>install</npm.install.command>
+            </properties>
+        </profile>
+        <profile>
+            <id>bash5</id>
+            <activation>
+                <property>
+                    <name>bash.version</name>
+                    <value>5</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- using CDATA to prevent newline insertion by code formatting -->
+                <assets.fix.src>
+                    <![CDATA[${find.exec} src -name '*.html' | ${xargs.exec} ${grep.exec} -l assets/ | ${xargs.exec} -n 1 -r -t ${sed.exec} -r -i \"s#([\\\"'])assets/#\\1static/assets/#g\"]]></assets.fix.src>
+                <assets.fix.shared-angular>
+                    <![CDATA[${find.exec} node_modules/@egdx/shared-angular -name '*.js*' | ${xargs.exec} ${grep.exec} -l assets/ | ${xargs.exec} -n 1 -r -t ${sed.exec} -r -i \"s#([\\\"'])(\\.\\./)*assets/#\\1static/assets/#g\"]]></assets.fix.shared-angular>
+            </properties>
+        </profile>
+    </profiles>
+</project>

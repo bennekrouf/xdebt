@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.2</version>
+        <relativePath /> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>ch.vd.sipf</groupId>
+    <artifactId>sipfbatchrpt</artifactId>
+    <version>2022RPT.A.2-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>sipf-batch-rpt</name>
+    <description>Batch d'exécution de la requête d'extraction RPT</description>
+
+    <organization>
+        <name>Cross Systems SA</name>
+        <url>www.cross-systems.ch</url>
+    </organization>
+
+    <properties>
+        <devex.app.name>sipf-batch-rpt</devex.app.name>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+        <java.version>11</java.version>
+        <start-class>ch.vd.sipf.batch.rpt.SipfBatchRPTApplication</start-class>
+        <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <powermock.version>2.0.2</powermock.version>
+        <!-- 'build.userId' et 'devex.configTag' doivent être renseignés comme variables d'environnement par Jenkins -->
+        <build.userId />
+        <devex.configTag />
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+        <devex.deployUnit>sipfbatchrpt</devex.deployUnit>
+        <devex.deployEnv>IN</devex.deployEnv>
+        <devex.deployTarget>BatchRHEL9</devex.deployTarget>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>oracle-jdbc</artifactId>
+            <version>7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includes>
+                    </includes>
+                    <requiresUnpack>
+                        <dependency>
+                            <groupId>oracle</groupId>
+                            <artifactId>oracle-jdbc</artifactId>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.opencsv</groupId>
+                            <artifactId>opencsv</artifactId>
+                        </dependency>
+                    </requiresUnpack>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>ch.vd.sipf.batch.rpt.SipfBatchRPTApplication</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-sources-test</id>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- Création de la release dans DevEx -->
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Déploiement du batch en intégration par Devex -->
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                            <deployTarget>${devex.deployTarget}</deployTarget>
+                            <configTag>${devex.configTag}</configTag>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>${devex.deployEnv}</environment>
+                                    <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/sipf-batch-rpt.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/sipf-batch-rpt.git</developerConnection>
+        <url>https://dsigit.etat-de-vaud.ch/outils/git/projects/FISC/repos/sipf-batch-rpt/browse</url>
+      <tag>HEAD</tag>
+  </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

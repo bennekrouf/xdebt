@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal.alimentation</groupId>
+        <artifactId>dossier-fiscal-alimentation-app</artifactId>
+        <version>24R2.C.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-alimentation-echange-sortant</artifactId>
+    <packaging>jar</packaging>
+    <name>dossier-fiscal-alimentation-echange-sortant</name>
+    <description>Couche gérant les échanges sortants</description>
+
+    <dependencies>
+
+        <!-- Project -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-alimentation-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-alimentation-metier</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-alimentation-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core-common</groupId>
+            <artifactId>tao-communication</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-alimentation-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.coverage.exclusions>**/model/**/*.*,**/config/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

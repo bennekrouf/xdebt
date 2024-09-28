@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <project.encoding>Cp1252</project.encoding>
+        <lib.spring.version>5.3.27</lib.spring.version>
+        <lib.junit.version>4.13</lib.junit.version>
+        <lib.tao.pp.version>24R3.B.2</lib.tao.pp.version>
+    </properties>
+
+    <parent>
+        <groupId>ch.vd.fiscalite</groupId>
+        <artifactId>shared-parent-plugin</artifactId>
+        <version>2.0.9</version>
+    </parent>
+
+    <artifactId>evaudtax-engine-api</artifactId>
+    <version>2024.4-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <encoding>${project.encoding}</encoding>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.fiscalite</groupId>
+            <artifactId>tao-pp-engine-api</artifactId>
+            <version>${lib.tao.pp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${lib.junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${lib.spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/evaudtax-engine-api.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/evaudtax-engine-api.git</developerConnection>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/evaudtax-engine-api/browse</url>
+        <tag>2023.4</tag>
+    </scm>
+
+</project>

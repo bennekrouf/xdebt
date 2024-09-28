@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.ses.pej</groupId>
+    <artifactId>pejcartographie-parent</artifactId>
+    <version>1.0.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>PEJ - Cartographie - Parent</name>
+
+    <parent>
+        <groupId>ch.vd.cyber.parent</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>9.11.0</version>
+        <relativePath />
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/pejcartographie.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>pej-model</module>
+        <module>pej-ajoutactivites</module>      <!-- 101278 and 101280 -->
+        <module>pej-publicationactivites</module>    <!-- 101282 -->
+        <module>pej-cartographie-bo</module>        <!-- BO -->
+    </modules>
+
+</project>

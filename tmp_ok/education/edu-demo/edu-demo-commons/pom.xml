@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.demo</groupId>
+        <artifactId>edu-demo</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>edu-demo-commons</artifactId>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <properties>
+    </properties>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client-spring-boot-starter</artifactId>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>5.16.6</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.inugami.monitoring.distributions</groupId>
+            <artifactId>inugami_monitoring_spingboot</artifactId>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-jackson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.14.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>problem</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client</artifactId>
+            <version>5.7.6</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

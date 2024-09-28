@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.sipf</groupId>
+        <artifactId>sipf</artifactId>
+        <version>5.37.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>ch.vd.sipf</groupId>
+    <artifactId>wsdperm</artifactId>
+    <packaging>jar</packaging>
+    <name>wsdperm</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>commundperm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <version>${cxf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-hc</artifactId>
+            <version>${cxf-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>interfaceshared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
+ </project>

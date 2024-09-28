@@ -1,0 +1,151 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>ch.vd.dfin.tao</groupId>
+    <artifactId>tao-pm-batch-rpt-parent</artifactId>
+    <version>2022RPT.A.2-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tao-pm-batch-rpt</artifactId>
+  <name>tao-pm-batch-rpt</name>
+  <packaging>pom</packaging>
+
+  <properties>
+
+    <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+    <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+    <!-- 'build.userId' et 'devex.configTag' doivent être renseignés comme variables d'environnement par Jenkins -->
+
+    <build.userId />
+    <devex.configTag />
+
+    <devex.deployUnit>taopmbatchrpt</devex.deployUnit>
+    <devex.deployEnv>IN</devex.deployEnv>
+    <devex.deployTarget>BatchRHEL9</devex.deployTarget>
+    <devex.releaseVersion>${project.version}</devex.releaseVersion>
+
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>ch.vd.dfin.tao</groupId>
+      <artifactId>tao-pm-batch-rpt-app</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <artifactItems>
+            <artifactItem>
+              <groupId>ch.vd.dfin.tao</groupId>
+              <artifactId>tao-pm-batch-rpt-app</artifactId>
+              <version>${project.version}</version>
+            </artifactItem>
+          </artifactItems>
+        </configuration>
+        <executions>
+          <execution>
+            <id>copy-dependencies-distribution</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>${project.basedir}/src/main/assemblies/assembly-distribution.xml</descriptor>
+          </descriptors>
+          <outputDirectory>${dist.build.dir}</outputDirectory>
+          <finalName>${project.artifactId}-${project.version}</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <profiles>
+    <profile>
+      <!-- Création de la release dans DevEx -->
+      <id>devex.release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>false</skip>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>ch.vd.devex</groupId>
+            <artifactId>devex-maven-plugin</artifactId>
+            <version>${devex-maven-plugin.version}</version>
+            <configuration>
+              <deployUnit>${devex.deployUnit}</deployUnit>
+              <deployTarget>${devex.deployTarget}</deployTarget>
+              <configTag>${devex.configTag}</configTag>
+            </configuration>
+            <executions>
+              <execution>
+                <id>release</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>create-release</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- Déploiement du batch en intégration par Devex -->
+      <id>devex.in</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>ch.vd.devex</groupId>
+            <artifactId>devex-maven-plugin</artifactId>
+            <version>${devex-maven-plugin.version}</version>
+            <configuration>
+              <deployUnit>${devex.deployUnit}</deployUnit>
+              <deployTarget>${devex.deployTarget}</deployTarget>
+              <configTag>${devex.configTag}</configTag>
+            </configuration>
+            <executions>
+              <execution>
+                <id>deploy</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+                <configuration>
+                  <environment>${devex.deployEnv}</environment>
+                  <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

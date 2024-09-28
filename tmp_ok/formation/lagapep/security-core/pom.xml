@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.formation.lagapep</groupId>
+        <artifactId>lagapep-root</artifactId>
+        <version>13.7.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>lagapep-security-core</artifactId>
+    <name>Lagapep - Core Security</name>
+    <description>Core Security module of Lagapep</description>
+
+    <properties>
+        <shared-iam.version>9.2.0</shared-iam.version>
+    </properties>
+
+    <dependencies>
+        <!-- Lagapep modules -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>lagapep-user-integration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- ACV/DGNSI - IAM -->
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iam</artifactId>
+            <version>${shared-iam.version}</version>
+        </dependency>
+
+        <!-- Spring Boot Starters -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Hazelcast -->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
+        </dependency>
+
+        <!-- Helpers -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

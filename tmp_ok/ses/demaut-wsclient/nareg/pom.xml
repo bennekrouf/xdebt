@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>demaut-wsclient-nareg</artifactId>
+    <version>2.7.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>demaut-wsclient-nareg</name>
+
+    <parent>
+        <groupId>ch.vd.ses</groupId>
+        <artifactId>demaut-wsclient</artifactId>
+        <version>2.7.0-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.ses</groupId>
+            <artifactId>demaut-wsclient-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-avs</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.14</version>
+            <exclusions>
+                <exclusion>
+                    <!-- clashes with spring-jcl -->
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-rt</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>devsupport-keepass-properties-api</artifactId>
+            <version>${devsupport.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.ses</groupId>
+            <artifactId>demaut-wsclient-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>devsupport-keepass-properties-starter</artifactId>
+            <version>${devsupport.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>4.0.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-nareg</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>${project.basedir}/src/main/resources/wsdl/NaregService.wsdl</wsdl>
+                                    <wsdlLocation>classpath:wsdl/NaregService.wsdl</wsdlLocation>
+                                    <bindingFiles>
+                                        <bindingFile>${project.basedir}/src/main/resources/bindings/jaxws_bindings.xjb</bindingFile>
+                                        <bindingFile>${project.basedir}/src/main/resources/bindings/jaxb_bindings.xjb</bindingFile>
+                                    </bindingFiles>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

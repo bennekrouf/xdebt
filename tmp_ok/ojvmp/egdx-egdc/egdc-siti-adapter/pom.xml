@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ch.vd.justice.egdc</groupId>
+        <artifactId>egdc-parent</artifactId>
+        <version>24.2.5</version>
+    </parent>
+
+    <artifactId>egdc-siti-adapter-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>${project-name.prefix}${project.artifactId}</name>
+
+    <description>The parent pom for egdc-siti-adapter modules</description>
+
+    <modules>
+        <module>egdc-siti-adapter-api</module>
+        <module>egdc-siti-adapter-impl</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+    </dependencies>
+</project>

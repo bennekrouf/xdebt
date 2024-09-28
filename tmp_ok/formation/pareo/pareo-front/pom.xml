@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<packaging>pom</packaging>
+
+	<parent>
+		<artifactId>master-pom</artifactId>
+		<groupId>ch.vd.sieeo.pareo</groupId>
+		<version>24.4.2-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>pareo-front</artifactId>
+	<version>24.4.2-SNAPSHOT</version>
+
+	<properties>
+		<sonar.skip>true</sonar.skip>
+		<NODE_VERSION>v18.19.0</NODE_VERSION>
+		<NPM_VERSION>10.2.3</NPM_VERSION>
+	</properties>
+
+	<dependencies>
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+
+			<!-- COMPILATION FRONT -->
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.12.1</version>
+
+				<configuration>
+					<skip>${skip.build.front}</skip>
+					<workingDirectory>${project.basedir}</workingDirectory>
+					<installDirectory>${project.build.directory}</installDirectory>
+					<nodeVersion>${NODE_VERSION}</nodeVersion>
+					<npmVersion>${NPM_VERSION}</npmVersion>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>ng build</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build-prod</arguments>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>install node, npm to check dependencies</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm update</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<skip>${skip.front.dependencies.update}</skip>
+							<arguments>update</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

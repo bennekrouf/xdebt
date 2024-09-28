@@ -92,5 +92,5 @@ pub enum KPIStatus {
 pub struct KPIResult {
     pub dependency_name: String,
     pub current_version: String,
-    pub kpi_status: KPIStatus,
+    pub status: KPIStatus,
 }

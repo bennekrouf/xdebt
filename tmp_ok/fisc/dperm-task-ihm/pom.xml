@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>ch.vd.fiscalite</groupId>
+  <artifactId>dperm-ldt-ihm</artifactId>
+  <version>24R2.C.2-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>dperm-ldt-ihm</name>
+
+  <scm>
+    <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/dperm-task-ihm</url>
+    <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-task-ihm.git</connection>
+    <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-task-ihm.git</developerConnection>
+    <tag>${project.artifactId}-${project.version}</tag>
+  </scm>
+
+  <ciManagement>
+    <system>Jenkins CI</system>
+    <url>https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/view/all/job/dperm-task-ihm//</url>
+  </ciManagement>
+
+  <developers>
+    <developer>
+      <id>r6gom2</id>
+      <name>Sophian Boulekroune</name>
+    </developer>
+    <developer>
+      <id>g9xil4</id>
+      <name>David Giangiacomo</name>
+    </developer>
+    <developer>
+      <id>j0nux5</id>
+      <name>Hicham Chouknat</name>
+    </developer>
+    <developer>
+      <id>sep3s8</id>
+      <name>Fabien Grimaldi</name>
+    </developer>
+  </developers>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- TIMESTAMP Pour l'assembly distribution -->
+    <build.timestamp>${maven.build.timestamp}</build.timestamp>
+    <maven.build.timestamp.format>yyyyMMdd-HHmmss</maven.build.timestamp.format>
+
+
+    <local.distribution.artifact.file>${project.build.directory}/${dist.app.name}.zip</local.distribution.artifact.file>
+    <dist.app.link.name>dperm-ldt-ihm</dist.app.link.name>
+    <dist.app.name>dperm-ldt-ihm-${project.version}</dist.app.name>
+    <xfile.upload.from>${user.name}</xfile.upload.from>
+  </properties>
+
+
+  <distributionManagement>
+    <repository>
+      <id>nexus.releases</id>
+      <name>Nexus releases</name>
+      <url>${nexus.url.releases}</url>
+    </repository>
+    <snapshotRepository>
+      <id>nexus.snapshots</id>
+      <name>Nexus snaphots</name>
+      <url>${nexus.url.snapshots}</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>exec-npm-install</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>exec-npm-build</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+    <!-- PLUGIN MANAGEMENT -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>buildnumber-maven-plugin</artifactId>
+          <version>1.0-beta-2</version>
+          <configuration>
+            <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+            <items>
+              <item>timestamp</item>
+            </items>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>validate</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.6.0</version>
+          <executions>
+            <execution>
+              <id>exec-npm-install</id>
+              <phase>generate-sources</phase>
+              <configuration>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>install</argument>
+                </arguments>
+              </configuration>
+              <goals>
+                <goal>exec</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>exec-npm-build</id>
+              <phase>generate-sources</phase>
+              <configuration>
+                <executable>npm</executable>
+                <arguments>
+                  <argument>run</argument>
+                  <argument>build</argument>
+                </arguments>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.0.0</version>
+          <configuration>
+            <descriptors>
+              <descriptor>assembly/distribution.xml</descriptor>
+            </descriptors>
+          </configuration>
+          <executions>
+            <execution>
+              <id>make-assembly</id>
+              <phase>package</phase>
+              <configuration>
+                <finalName>${dist.app.link.name}</finalName>
+                <appendAssemblyId>false</appendAssemblyId>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <skip>false</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>JENKINS</id>
+      <activation>
+        <file>
+          <exists>${dperm.task.server.keyfile}</exists>
+        </file>
+      </activation>
+      <properties>
+        <local.keyfile>${dperm.task.server.keyfile}</local.keyfile>
+        <local.keyfile.passphrase>P66Fh9h2Pv5e8R3jzfT#2*!9vZx39b</local.keyfile.passphrase>
+        <local.knownhosts>${dperm.task.server.knownhosts}</local.knownhosts>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>springboot-profile</id>
+      <properties>
+        <packaging.type>jar</packaging.type>
+        <log.appender>CONSOLE</log.appender>
+        <site.path>../${project.artifactId}-ihm/target/site</site.path>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+              <mainClass>${main.class}</mainClass>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

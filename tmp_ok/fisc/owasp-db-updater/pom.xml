@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.dfin.owasp</groupId>
+    <artifactId>owasp-db-updater</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip>
+
+        <lib.ojdbc10.version>19.11.0.0</lib.ojdbc10.version>
+        <owasp-maven-check.version>7.1.0</owasp-maven-check.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>7.1.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.oracle.database.jdbc</groupId>
+                        <artifactId>ojdbc10</artifactId>
+                        <version>${lib.ojdbc10.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <databaseDriverName>oracle.jdbc.driver.OracleDriver</databaseDriverName>
+                    <connectionString>jdbc:oracle:thin:@ldap://oid.etat-de-vaud.ch:389/app_s6l5ze_co,cn=OracleContext,dc=etat-de-vaud,dc=ch</connectionString>
+                    <databaseUser>OWASP</databaseUser>
+                    <databasePassword>RdzLChNrAYcwvv4Yo1rM</databasePassword>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>update-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+	
+	<distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+</project>

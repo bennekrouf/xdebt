@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal</groupId>
+        <artifactId>dossier-fiscal</artifactId>
+        <version>25R1.A.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-echange-sortant</artifactId>
+    <name>dossier-fiscal-echange-sortant</name>
+    <description>Couche gérant les échanges sortants</description>
+
+    <dependencies>
+
+        <!-- Project -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core-common</groupId>
+            <artifactId>tao-communication</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.coverage.exclusions>**/model/**/*.*,**/config/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

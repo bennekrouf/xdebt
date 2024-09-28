@@ -1,0 +1,435 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <groupId>ch.vd.sipf</groupId>
+    <artifactId>sipf</artifactId>
+    <version>5.37.0</version>
+    <packaging>pom</packaging>
+    <name>Distribution SIPF</name>
+    <description>Build de distribution du projet SIPF</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <assembly.finalName>sipf-${project.version}</assembly.finalName>
+        <assembly.sql.finalName>SIPF_${project.version}</assembly.sql.finalName>
+
+        <!-- version des livrables du packaging -->
+        <sipf.name>sipf-war</sipf.name>
+        <explorer.name>crossexplorer-sipf</explorer.name>
+        <sipf.version>5.37.0</sipf.version>
+        <explorer.version>2.26.10</explorer.version>
+        <db.version>5.37.0</db.version>
+
+        <!-- plugin maven -->
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-dependency-plugin.version>3.1.0</maven-dependency-plugin.version>
+        <iterator-maven-plugin.version>0.5.1</iterator-maven-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+
+        <!-- Profiles pour DevEx, peut-etre overridé par application ou par un process Jenkins -->
+        <devex.profiles>devex.deploy</devex.profiles>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <devex.deployTarget>Tomcat9RHEL8</devex.deployTarget>
+        <devex.deployUnit>sipf</devex.deployUnit>
+        <devex.deployEnv>IN</devex.deployEnv>
+
+        <devex.deployTargetBatch>Tomcat9RHEL8</devex.deployTargetBatch>
+        <devex.deployUnitBatch>sipfbatch</devex.deployUnitBatch>
+
+        <!-- Le TAG de config correspondant dans le repository GIT de configuration -->
+        <devex.configTag>master</devex.configTag>
+    </properties>
+
+
+    <scm>
+        <connection>${scm.url}</connection>
+        <developerConnection>${scm.url}</developerConnection>
+        <tag>sipf-5.37.0</tag>
+    </scm>
+
+    <profiles>
+
+        <profile>
+            <id>dsi</id><!-- Profil DSI Vaud -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <scm.url>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/sipf-dist.git</scm.url>
+            </properties>
+
+            <distributionManagement>
+                <repository>
+                    <id>nexus.releases</id>
+                    <name>Nexus releases</name>
+                    <url>${nexus.url}/app-${application.repository}-stable</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus.snapshots</id>
+                    <name>Nexus snaphots</name>
+                    <url>${nexus.url}/app-${application.repository}-snapshots</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <id>fournisseur</id><!-- Fournisseur de la solution -->
+            <properties>
+                <scm.url>scm:git:http://git.cross-systems.ch/MFISC/sipf-dist.git</scm.url>
+            </properties>
+
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <name>Artifactory-releases</name>
+                    <url>http://svmartifactory.micropole.net:8082/artifactory/sipf-release/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>snapshots</id>
+                    <name>Artifactory-snapshots</name>
+                    <url>http://svmartifactory.micropole.net:8082/artifactory/sipf-snapshot/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <!-- pour le déploiement en CROSS -->
+            <id>env.cross</id>
+            <properties>
+                <assembly.env>CROSS</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assemblyCross.xml</descriptor>
+                            </descriptors>
+                            <finalName>sipf</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- pour le déploiement en IN -->
+            <id>env.in</id>
+            <properties>
+                <assembly.env>IN</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Pour faire la livraison au CEI dans xFile -->
+            <id>build-delivery-devex</id>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <deployUnit>${devex.deployUnit}</deployUnit>
+                                    <deployTarget>${devex.deployTarget}</deployTarget>
+                                    <configTag>${devex.configTag}</configTag>
+                                </configuration>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>release-batch</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <deployUnit>${devex.deployUnitBatch}</deployUnit>
+                                    <deployTarget>${devex.deployTargetBatch}</deployTarget>
+                                    <configTag>${devex.configTag}</configTag>
+                                </configuration>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <configuration>
+                                    <deployUnit>${devex.deployUnit}</deployUnit>
+                                    <deployTarget>${devex.deployTarget}</deployTarget>
+                                    <configTag>${devex.configTag}</configTag>
+                                    <environment>${devex.deployEnv}</environment>
+                                    <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                                </configuration>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>deploy-batch</id>
+                                <phase>deploy</phase>
+                                <configuration>
+                                    <deployUnit>${devex.deployUnitBatch}</deployUnit>
+                                    <deployTarget>${devex.deployTargetBatch}</deployTarget>
+                                    <configTag>${devex.configTag}</configTag>
+                                    <environment>${devex.deployEnv}</environment>
+                                    <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                                </configuration>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.vd.sipf</groupId>
+                                    <artifactId>${sipf.name}</artifactId>
+                                    <version>${sipf.version}</version>
+                                    <type>war</type>
+                                    <outputDirectory>target/dependencies</outputDirectory>
+                                    <destFileName>${sipf.name}-${sipf.version}.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>cross.vaud</groupId>
+                                    <artifactId>${explorer.name}</artifactId>
+                                    <version>${explorer.version}</version>
+                                    <type>war</type>
+                                    <outputDirectory>target/dependencies</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.soebes.maven.plugins</groupId>
+                <artifactId>iterator-maven-plugin</artifactId>
+                <version>${iterator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>batchs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>iterator</goal>
+                        </goals>
+                        <configuration>
+                            <folder>batchs/conf</folder>
+                            <pluginExecutors>
+                                <pluginExecutor>
+                                    <plugin>
+                                        <artifactId>maven-resources-plugin</artifactId>
+                                        <version>${maven-resources-plugin.version}</version>
+                                    </plugin>
+                                    <configuration>
+                                        <includeEmptyDirs>true</includeEmptyDirs>
+                                        <outputDirectory>${basedir}/target/batchs/@item@</outputDirectory>
+                                        <resources>
+
+                                            <resource>
+                                                <targetPath />
+                                                <directory>batchs/structure</directory>
+                                                <filtering>false</filtering>
+                                            </resource>
+
+                                            <resource>
+                                                <targetPath>config</targetPath>
+                                                <directory>batchs/conf/@item@/config</directory>
+                                                <filtering>false</filtering>
+                                            </resource>
+                                            <resource>
+                                                <targetPath>config</targetPath>
+                                                <directory>batchs/conf/</directory>
+                                                <includes>
+                                                    <include>ProcessBatch.properties</include>
+                                                </includes>
+                                                <filtering>false</filtering>
+                                            </resource>
+                                        </resources>
+                                    </configuration>
+                                    <goal>copy-resources</goal>
+                                </pluginExecutor>
+
+                            </pluginExecutors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sql</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>iterator</goal>
+                        </goals>
+                        <configuration>
+                            <folder>sql/SQL-DELIVERY/sipf</folder>
+                            <pluginExecutors>
+                                <pluginExecutor>
+                                    <plugin>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-assembly-plugin</artifactId>
+                                        <version>${maven-assembly-plugin.version}</version>
+                                    </plugin>
+                                    <configuration>
+                                        <outputDirectory>${basedir}/target/sql/</outputDirectory>
+                                        <descriptors>
+                                            <descriptor>assembly-sql.xml</descriptor>
+                                        </descriptors>
+                                        <finalName>${assembly.sql.finalName}</finalName>
+                                    </configuration>
+                                    <goal>single</goal>
+                                </pluginExecutor>
+                            </pluginExecutors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>rename-sql</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <copy todir="${basedir}/target/sql/temp" includeemptydirs="false">
+                                    <fileset dir="${basedir}/target/sql" />
+                                    <mapper type="glob" from="${assembly.sql.finalName}-*" to="${assembly.sql.finalName}_*" />
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

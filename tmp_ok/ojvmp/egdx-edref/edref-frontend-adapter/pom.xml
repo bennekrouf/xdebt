@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.justice.edref</groupId>
+        <artifactId>edref-parent</artifactId>
+        <version>24.2.1</version>
+    </parent>
+
+    <artifactId>edref-frontend-adapter</artifactId>
+    <packaging>jar</packaging>
+    <name>${project-name.prefix}${project.artifactId}</name>
+
+    <description>frontend-adapter</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java-extended-scalars</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>edref-domain</artifactId>
+        </dependency>
+        <!-- Coming soon!
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>edref-security-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>edref-application-web</artifactId>
+        </dependency>
+         -->
+        <dependency>
+            <groupId>ch.vd.justice.shared</groupId>
+            <artifactId>shared-frontend-adapter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.justice.edref</groupId>
+            <artifactId>edref-security-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+        </dependency>
+        <!-- Required to setup transactions at GraphQL entry point. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

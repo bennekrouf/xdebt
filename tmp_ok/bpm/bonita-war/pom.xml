@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <groupId>ch.vd.bpm</groupId>
+    <artifactId>bonita</artifactId>
+    <version>7.15.4-vd-03-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
+
+    <properties>
+        <bonita.version>2022.2-u4</bonita.version>
+        <bonita.tomcat.zip>${bonita.release.dir}/BonitaSubscription-${bonita.version}.zip</bonita.tomcat.zip>
+        <iam-authentication.version>2.6.0</iam-authentication.version>
+    </properties>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.bpm</groupId>
+            <artifactId>iam-authentication</artifactId>
+            <version>${iam-authentication.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.bonitasoft.engine</groupId>
+                    <artifactId>bonita-common-sp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.bonitasoft.engine</groupId>
+                    <artifactId>bonita-server-sp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bonitasoft.console</groupId>
+                    <artifactId>console-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bonitasoft.console</groupId>
+                    <artifactId>console-common</artifactId>
+                </exclusion>
+
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>3.2.2</version>
+            <configuration>
+                <!--failOnMissingWebXml>false</failOnMissingWebXml-->
+                <webResources>
+                    <resource>
+                        <directory>./target/dist-war</directory>
+                        <excludes>
+                            <exclude>WEB-INF/web.xml</exclude>
+                            <exclude>login.jsp</exclude>
+                        </excludes>
+                    </resource>
+                </webResources>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+                <execution>
+                    <phase>generate-resources</phase>
+                    <configuration>
+                        <tasks>
+                            <echo message="unzipping setup" />
+                            <unzip src="${bonita.tomcat.zip}" dest="${project.build.directory}">
+                                <patternset>
+                                    <include name="BonitaSubscription-${bonita.version}/server/webapps/bonita.war" />
+                                </patternset>
+                            </unzip>
+                            <unzip src="${project.build.directory}/BonitaSubscription-${bonita.version}/server/webapps/bonita.war" dest="${project.build.directory}/dist-war" />
+
+                            <move file="${project.build.directory}/dist-war/login.jsp" tofile="${project.build.directory}/dist-war/login-direct.jsp" />
+                        </tasks>
+                    </configuration>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <!--plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.1.1</version>
+            <executions>
+                <execution>
+                    <id>copy-iam-authentication</id>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <artifactItems>
+                    <artifactItem>
+                        <groupId>ch.vd.bpm</groupId>
+                        <artifactId>iam-authentication</artifactId>
+                        <version>${iam-authentication.version}</version>
+                        <type>jar</type>
+                        <overWrite>false</overWrite>
+                        <outputDirectory>${project.build.outputDirectory}/WEB-INF/lib</outputDirectory>
+                    </artifactItem>
+                </artifactItems>
+                <overWriteReleases>false</overWriteReleases>
+                <overWriteSnapshots>true</overWriteSnapshots>
+            </configuration>
+        </plugin-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.3</version>
+            <configuration>
+                <goals>clean deploy</goals>
+                <tagNameFormat>@{project.version}</tagNameFormat>
+                <pushChanges>true</pushChanges>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>zcisve</id>
+            <activation>
+                <property>
+                    <name>user.name</name>
+                    <value>zcisve</value>
+                </property>
+            </activation>
+            <properties>
+                <bonita.release.dir>/dev/bonita/work</bonita.release.dir>
+            </properties>
+        </profile>
+        <profile>
+            <id>xsirvl</id>
+            <activation>
+                <property>
+                    <name>user.name</name>
+                    <value>xsirvl</value>
+                </property>
+            </activation>
+            <properties>
+                <bonita.release.dir>/home/xsirvl/work/bonita-release</bonita.release.dir>
+            </properties>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id> <!-- doit matcher l'id du server dans settings.xml -->
+            <name>Nexus DGSNI</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGSNI</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/bpm/bonita-war</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+</project>

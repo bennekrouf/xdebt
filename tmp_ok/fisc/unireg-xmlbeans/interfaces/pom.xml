@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Unireg-XmlBeans -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>unireg-xmlbeans-interfaces</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>ch.vd.unireg</groupId>
+		<artifactId>unireg-xmlbeans-base</artifactId>
+		<!-- BEGIN_LVERSION -->
+		<version>1.65-SNAPSHOT</version>
+		<!-- END_LVERSION -->
+	</parent>
+	
+	<name>UniregCTB - XmlBeans - Interfaces</name>
+	<description>UniregCTB - Contient les interfaces des beans Xml</description>
+
+	<!-- Build plugins and sources -->
+	<build>
+		<defaultGoal>install</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<argLine>${surefire.argline}</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+		
+		<!-- Build resources -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${basedir}/target/generated-resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*</include>
+				</includes>
+			</testResource>
+		</testResources>
+	</build>
+	
+</project>
+

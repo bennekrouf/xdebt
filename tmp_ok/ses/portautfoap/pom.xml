@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.sante.cyber</groupId>
+    <artifactId>portautfoap</artifactId>
+    <version>0.0.5-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>Front Office Cyber de Portaut</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <!-- On ne veut que des dépendences sur maven central excepté prestations-be -->
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.14.RELEASE</version>
+        <relativePath />
+    </parent>
+
+    <scm>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/ses/repos/portautfoap/browse</url>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/portautfoap.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ses/portautfoap.git</developerConnection>
+        <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+
+    <profiles>
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- Override the executable names for Windows -->
+                <npm.executable>npm</npm.executable>
+                <yarn.executable>yarn</yarn.executable>
+                <ng.executable>ng</ng.executable>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Pas de build du front -->
+            <id>nof</id>
+            <properties>
+                <build.nofront>true</build.nofront>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>not</id>
+            <!-- NOTests -->
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+        <profile>
+            <id>xfile.va</id>
+            <properties>
+                <xfile.url>http://exploitation-va.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+            </properties>
+        </profile>
+        <profile>
+            <!-- pour le déploiement en IN -->
+            <id>env.in</id>
+            <properties>
+                <assembly.env>IN</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Pour faire la livraison dans XFile -->
+            <id>xfile</id>
+            <properties>
+                <assembly.env>CEI</assembly.env>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- Pour générer le fichier pour le CEI -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${assembly.finalName}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>cei.aew.web</groupId>
+                        <artifactId>cei-maven-plugin</artifactId>
+                        <version>${cei-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>upload</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <webresourceurl>${xfile.url}</webresourceurl>
+                            <filetoupload>target/${assembly.finalName}.tar.gz</filetoupload>
+                            <from>${xfile.group}</from>
+                            <to>WEB</to>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <configTag>${devex.configTag}</configTag>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>release</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <configTag>${devex.configTag}</configTag>
+                            <environment>IN</environment>
+                            <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Edgware.SR3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- DSI -->
+        <!-- demaut commons -->
+        <dependency>
+            <groupId>ch.vd.sante.demaut</groupId>
+            <artifactId>demaut-commons</artifactId>
+            <version>${demaut-commons.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.hateoas</groupId>
+            <artifactId>spring-hateoas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cybersdk</groupId>
+            <artifactId>prestations-be</artifactId>
+            <version>${prestations-be.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>${itext.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>ch.vd.cybersdk</groupId>
+            <artifactId>prestations-be</artifactId>
+            <version>${prestations-be.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <goals>${release.goals}</goals>
+                    <releaseProfiles>${release.profiles}</releaseProfiles>
+                    <updateDependencies>false</updateDependencies>
+                    <pushChanges>true</pushChanges>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <arguments>-Dmaven.javadoc.skip=true</arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <configuration>
+                    <workingDirectory>${basedir}/front</workingDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>exec-yarn-install</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <executable>${yarn.executable}</executable>
+                            <arguments>
+                                <argument>--pure-lockfile</argument>
+                            </arguments>
+                            <skip>${build.nofront}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-ngcli-build</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <executable>${yarn.executable}</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>buildprod</argument>
+                            </arguments>
+                            <skip>${build.nofront}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-ngcli-dist</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>front/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>version.txt</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
+        <xfile.url>http://exploitation.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+        <!-- TO BE CHANGED (FISC, TEP, ESB, ...)-->
+        <xfile.group>dsi_demaut</xfile.group>
+
+        <assembly.env>TBD</assembly.env>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+        <build.nofront>false</build.nofront>
+
+        <!-- La version 2.1.7 de itext est la dernière qu'on peut utiliser -->
+        <!-- à cause d'un changement de licence incomptaible -->
+        <itext.version>2.1.7</itext.version>
+        <commons-lang3.version>3.6</commons-lang3.version>
+        <commons-io.version>2.5</commons-io.version>
+        <mockito.version>2.9.0</mockito.version>
+
+        <!-- libs DSI -->
+        <demaut-commons.version>1.0.0-SNAPSHOT</demaut-commons.version>
+        <prestations-be.version>4.13.0</prestations-be.version>
+
+        <!-- maven plugins -->
+        <cei-maven-plugin.version>1.0.3</cei-maven-plugin.version>
+        <maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
+        <devex-maven-plugin.version>1.0.15</devex-maven-plugin.version>
+
+        <!-- executables -->
+        <yarn.executable>yarn</yarn.executable>
+        <ng.executable>ng</ng.executable>
+        <npm.executable>npm</npm.executable>
+
+        <!-- Profiles pour DevEx, peut-etre overridé par application ou par un process Jenkins -->
+        <devex.profiles>devex.release,devex.in</devex.profiles>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <release.profiles>not,xfile,${devex.profiles}</release.profiles>
+        <!-- Les goals assembly:single et cei:upload sont deja pris par xfile -->
+        <release.goals>clean install</release.goals>
+
+        <!-- Le TAG de config correspondant dans le repository GIT de configuration -->
+        <devex.configTag>master</devex.configTag>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>DSAS-repo</id>
+            <name>DSAS-repo</name>
+            <url>${nexus.url}/dsas-releases</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <id>DSAS-snapshots</id>
+            <name>DSAS-snapshots</name>
+            <url>${nexus.url}/dsas-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

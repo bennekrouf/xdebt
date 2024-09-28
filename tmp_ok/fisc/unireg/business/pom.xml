@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- POM for Business -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>unireg-business</artifactId>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>ch.vd.unireg</groupId>
+        <artifactId>unireg</artifactId>
+        <!-- BEGIN_LVERSION -->
+        <version>24R2.C.5-SNAPSHOT</version>
+        <!-- END_LVERSION -->
+    </parent>
+
+    <name>Unireg - Business</name>
+    <description>Unireg, Le registre unifie de l'Etat de Vaud - Business</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-validation</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-brave</artifactId>
+            <version>1.1.0</version>
+            <exclusions>
+                <!-- remplacé par jakarta.jms:jakarta.jms-api -->
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>javax.jms-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>unireg-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>unireg-core</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>unireg-nexus-data</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>unireg-nexus-data</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>unireg-avatars</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>     <!-- en production, les images des avatars sont importées par les dépendances au niveau web/ws -->
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.unireg</groupId>
+            <artifactId>unireg-bvrplus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-status-manager</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-batch-transaction</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.unireg</groupId>
+            <artifactId>unireg-jaxb2-events</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.unireg</groupId>
+            <artifactId>unireg-jaxb2-editique</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.unireg</groupId>
+            <artifactId>unireg-jaxb2-capitastra</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.unireg</groupId>
+            <artifactId>unireg-wsclient-efacture</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.registre</groupId>
+            <artifactId>shared-jmx-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.registre</groupId>
+            <artifactId>shared-jmx-atomikos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.registre</groupId>
+            <artifactId>shared-simple-indexer</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-client</artifactId>
+            <version>5.8.1</version>
+            <exclusions>
+                <!-- Saleté de lombok (en attendant la résolution du JIRA ESB-3157) -->
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+                <!-- Clash avec jakarta.activation:jakarta.activation-api -->
+                <exclusion>
+                    <groupId>javax.activation</groupId>
+                    <artifactId>activation</artifactId>
+                </exclusion>
+                <!-- Clash avec jakarta.annotation:jakarta.annotation-api -->
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </exclusion>
+                <!-- Clash avec jakarta.jms:jakarta.jms-api -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.brave</groupId>
+            <artifactId>brave-instrumentation-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${activemq.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- remplacé par javax.jms/javax.jms-api v2.0.1 -->
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-pool</artifactId>
+            <version>${activemq.version}</version>
+            <exclusions>
+                <exclusion>
+                    <!-- remplacé par javax.jms/javax.jms-api v2.0.1 -->
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                </exclusion>
+                <!-- Clash avec jakarta.transaction:jakarta.transaction-api -->
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-ra</artifactId>
+            <version>${activemq.version}</version>
+            <exclusions>
+                <!-- Clash avec jakarta.annotation:jakarta.annotation-api -->
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>javax.annotation-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.technical.esb</groupId>
+            <artifactId>esb-validation</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-jxpath</groupId>
+                    <artifactId>commons-jxpath</artifactId>
+                </exclusion>
+                <!-- Clash avec org.slf4j:jcl-over-slf4j -->
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.ejb</groupId>
+            <artifactId>ejb</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iban-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javaparser</groupId>
+            <artifactId>javaparser-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Build plugins and sources -->
+    <build>
+        <!-- Build plugins -->
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <!-- Ce plugin permet de packager les classes de src/test/java dans leur propre jar de testing -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Generate UML graph -->
+            <!--
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>site</phase>
+                        <configuration>
+                            <tasks>
+                                <ant target="all" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+        </plugins>
+
+        <!-- Build resources -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/*.xml</exclude>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>${basedir}/target/generated-resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
+</project>
+

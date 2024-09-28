@@ -8,8 +8,6 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
     let current_version = &analysis.dependency_version.current_version;
     let today = Utc::now().date_naive();
 
-    let mut kpi_status: KPIStatus = KPIStatus::NonCompliant("No roadmap available".to_string());
-
     if let Some(roadmap) = analysis.roadmap.as_ref() {
         let mut sorted_entries = roadmap.entries.clone();
         sorted_entries.sort_by(|a, b| {
@@ -21,52 +19,51 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
             }
         });
 
-        let current_version_in_roadmap = sorted_entries.iter().any(|record| {
-            record.version == *current_version
-        });
+        let current_version_in_roadmap = sorted_entries.iter().any(|record| record.version == *current_version);
 
-        if current_version_in_roadmap {
-            for record in &sorted_entries {
-                let record_version = &record.version;
+        // Check for the latest version available
+        let latest_version_needed = match sorted_entries.first() {
+            Some(record) if compare_versions(&record.version, current_version) => Some(record.version.clone()),
+            _ => None,
+        };
 
-                if compare_versions(current_version, record_version) {
-                    kpi_status = KPIStatus::Compliant("Version is compliant.".to_string());
-
-                    if let Some(end_date) = record.end_date {
-                        kpi_status = if end_date <= today {
-                            KPIStatus::UpgradeNeeded(format!("Upgrade needed by {}", end_date))
-                        } else {
-                            KPIStatus::NoActionNeeded("No action needed.".to_string())
-                        };
-                    } else {
-                        kpi_status = KPIStatus::NoActionNeeded("No action needed (latest version).".to_string());
-                    }
-
-                    break; // Exit the loop after finding the compliant version
+        // Using `match` to determine the status based on the roadmap and version
+        let status = match (current_version_in_roadmap, latest_version_needed) {
+            // Case: Current version is in the roadmap
+            (true, _) => {
+                // Find the first compliant record and match its end date
+                match sorted_entries.iter().find(|record| compare_versions(current_version, &record.version)) {
+                    Some(record) => match record.end_date {
+                        Some(end_date) if end_date <= today => {
+                            KPIStatus::UpgradeNeeded(format!("Upgrade needed by {} for version {}", end_date, record.version))
+                        },
+                        _ => KPIStatus::NoActionNeeded(format!("No action needed for version {}", record.version)),
+                    },
+                    None => KPIStatus::Compliant("Version is compliant.".to_string()),
                 }
-            }
-        }
+            },
 
-        if !current_version_in_roadmap {
-            if let Some(record) = sorted_entries.first() {
-                kpi_status = KPIStatus::NonCompliant(format!("Upgrade needed to version {} (latest version)", record.version));
-                if let Some(end_date) = record.end_date {
-                    kpi_status = KPIStatus::UpgradeNeeded(format!("Upgrade needed to version {} (latest version) by {}", record.version, end_date));
-                }
-            }
-        }
+            // Case: Current version is not in the roadmap but a newer version exists
+            (false, Some(latest_version)) => {
+                KPIStatus::UpgradeNeeded(format!("Upgrade needed to version {} (latest version)", latest_version))
+            },
 
-        // Return None if no action is needed
-        if let KPIStatus::NoActionNeeded(_) = kpi_status {
-            return None;
-        }
+            // Case: Current version is not in the roadmap and no newer version found
+            (false, None) => match sorted_entries.first() {
+                Some(record) => KPIStatus::NonCompliant(format!("Upgrade needed to version {} (latest version)", record.version)),
+                None => KPIStatus::NonCompliant("No valid roadmap entry found.".to_string()),
+            },
+        };
 
-        // Return the KPIResult only if kpi_status is not in NoActionNeeded state
-        Some(KPIResult {
-            dependency_name: roadmap.dependency.clone(),
-            current_version: current_version.clone(),
-            kpi_status,
-        })
+        // Return the KPIResult or None if no action is needed
+        match status {
+            KPIStatus::NoActionNeeded(_) => None,
+            _ => Some(KPIResult {
+                dependency_name: roadmap.dependency.clone(),
+                current_version: current_version.clone(),
+                status,
+            }),
+        }
     } else {
         panic!("No roadmap available");
     }

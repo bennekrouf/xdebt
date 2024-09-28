@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.devsupport</groupId>
+    <artifactId>projects-common</artifactId>
+    <version>2.3.6-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>DEVSUPPORT - Common POMs Module</name>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/devsup/projects-common</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>vd-dependencies</module>
+        <module>vd-application-parent</module>
+        <module>vd-spring-boot-starter</module>
+        <module>vd-library-parent</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <goals>clean deploy</goals>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <pushChanges>true</pushChanges>
+                    <localCheckout>true</localCheckout>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven-release-plugin.version>3.1.0</maven-release-plugin.version>
+    </properties>
+
+</project>

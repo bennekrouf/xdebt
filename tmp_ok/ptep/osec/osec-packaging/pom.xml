@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>osec</artifactId>
+        <groupId>ch.vd.tep.osec</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>osec-packaging</artifactId>
+    <name>OSEC Livrables</name>
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.tep.osec.web</groupId>
+            <artifactId>osec-application</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>package</classifier>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.tep.osec</groupId>
+            <artifactId>osec-cecb-interface</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>package</classifier>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.tep.osec</groupId>
+            <artifactId>osec-contrevenant</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>package</classifier>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.tep.osec</groupId>
+            <artifactId>osec-capitastra-interface</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>package</classifier>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>osec-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeClassifiers>package</includeClassifiers>
+                            <outputDirectory>${project.build.directory}/dist-tmp</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="${project.build.directory}/osec-dist-${project.version}" />
+                                <mkdir dir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}" />
+                                <mkdir dir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/batch" />
+                                <mkdir dir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/config" />
+                                <mkdir dir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/deployment" />
+                                <copy todir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/batch/osec-cecb-interface">
+                                    <fileset dir="${project.build.directory}/dist-tmp/osec-cecb-interface-${project.version}">
+                                        <include name="**/*.*" />
+                                        <include name="**/*" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/batch/osec-capitastra-interface">
+                                    <fileset dir="${project.build.directory}/dist-tmp/osec-capitastra-interface-${project.version}">
+                                        <include name="**/*.*" />
+                                        <include name="**/*" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/batch/osec-contrevenant">
+                                    <fileset dir="${project.build.directory}/dist-tmp/osec-contrevenant-${project.version}">
+                                        <include name="**/*.*" />
+                                        <include name="**/*" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/deployment">
+                                    <fileset dir="${project.build.directory}/dist-tmp/osec-application-${project.version}">
+                                        <include name="*.war" />
+                                    </fileset>
+                                </copy>
+                                <move file="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/deployment/osec-application-${project.version}.war" tofile="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/deployment/osec.war"/>
+                                <copy todir="${project.build.directory}/osec-dist-${project.version}/osec-${project.version}/config">
+                                    <fileset dir="${project.build.directory}/dist-tmp/osec-application-${project.version}/config">
+                                        <include name="*.xml" />
+                                    </fileset>
+                                </copy>
+                                <zip destfile="${project.build.directory}/${project.parent.artifactId}-${project.version}.zip" basedir="${project.build.directory}/osec-dist-${project.version}" update="true" />
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>cei.aew.web</groupId>
+                <artifactId>cei-maven-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <webresourceurl>http://outils-xweb-ws.etat-de-vaud.ch/outils/xweb/api</webresourceurl>
+                    <filetoupload>${project.build.directory}/${project.parent.artifactId}-${project.version}.zip</filetoupload>
+                    <from>qoqev7</from>
+                    <to>WEB</to>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

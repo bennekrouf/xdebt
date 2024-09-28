@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<name>dperm-portail-xfile-ihm</name>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.vd.fiscalite</groupId>
+	<artifactId>dperm-portail-xfile-ihm</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/dperm-portail-xfile-ihm/browse</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-portail-xfile-ihm.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-portail-xfile-ihm.git</developerConnection>
+		<tag>${project.artifactId}-${project.version}</tag>
+	</scm>
+
+	<ciManagement>
+		<system>Jenkins CI</system>
+		<url>https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/job/dperm-portail-xfile-ihm/</url>
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<id>p3wany</id>
+			<name>Francois Achache</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<toDownload.groupId></toDownload.groupId><!-- A DEFINIR -->
+		<toDownload.artifactId></toDownload.artifactId><!-- A DEFINIR -->
+		<toDownload.version></toDownload.version><!-- A DEFINIR -->
+		<!-- Le USER QUI POUSSE SUR XFILE -->
+		<xfile.from>${user.name}</xfile.from>
+		<xfile.url>http://exploitation-va.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+		<xfile.va>true</xfile.va><!-- Deploiement sur le serveur xfile de validation  -->
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>deployment</id>
+			<name>Internal Releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>deployment</id>
+			<name>Internal Snapshots</name>
+			<url>${nexus.url.snapshots}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>XFILE</id>
+			<activation>
+				<property>
+					<name>xfile.va</name>
+					<value>false</value>
+				</property>
+			</activation>
+			<properties>
+				<xfile.url>http://exploitation.etat-de-vaud.ch/outils/web/ws/rest</xfile.url>
+			</properties>
+		</profile>
+		<profile>
+			<id>ARTIFACT</id>
+			<activation>
+				<property>
+					<name>toDownload.artifactId</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>3.0.2</version>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${toDownload.groupId}</groupId>
+									<artifactId>${toDownload.artifactId}</artifactId>
+									<version>${toDownload.version}</version>
+									<type>zip</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>cei.aew.web</groupId>
+						<artifactId>cei-maven-plugin</artifactId>
+						<version>1.0.1</version>
+						<configuration>
+							<webresourceurl>${xfile.url}</webresourceurl>
+							<to>WEB</to>
+						</configuration>
+						<executions>
+							<execution>
+								<id>deploy-xfile</id>
+								<phase>package</phase>
+								<goals>
+									<goal>upload</goal>
+								</goals>
+								<configuration>
+									<filetoupload>${project.build.directory}/${toDownload.artifactId}-${toDownload.version}.zip</filetoupload>
+									<from>${xfile.from}</from>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

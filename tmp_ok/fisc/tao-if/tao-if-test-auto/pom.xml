@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- ###### PARENT ###### -->
+    <parent>
+        <artifactId>tao-if-app</artifactId>
+        <groupId>ch.vd.dfin.tao.tao-if</groupId>
+        <version>24R2.0.3.3-SNAPSHOT</version>
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>tao-if-test-auto</artifactId>
+    <packaging>jar</packaging>
+    <name>tao-if test auto</name>
+    <description>Librairie Web TAO IF : Spring-boot, Hibernate, shared-iam, AngularJS, bootstrap Usabilis
+    </description>
+
+    <!-- ###### PROPERTIES ###### -->
+
+    <properties>
+        <spring-boot-devmode>false</spring-boot-devmode>
+        <!-- Paramètres JVM -->
+        <jvm.mem.params>-Xmx1024</jvm.mem.params>
+
+        <test.skipping>true</test.skipping>
+        <compile.test.skipping>true</compile.test.skipping>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Définition par défaut du plugin pour que les tests ne soient pas exécutés lors d'un build du projet -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>${test.skipping}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Définition par défaut du plugin pour que la compilation des classes de test ne soient pas exécutés lors d'un build du projet -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <skip>${compile.test.skipping}</skip>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                        <arg>-Amapstruct.verbose=true</arg>
+                    </compilerArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- Profil pour l'intégration continue -->
+            <id>testIntegration</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Les tests ne sont pas skippés -->
+                <test.skipping>false</test.skipping>
+                <!-- La compilation des classes test n'est pas skippée -->
+                <compile.test.skipping>false</compile.test.skipping>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-config-base</id>
+                                <!-- here the phase you need -->
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <encoding>${project.encoding}</encoding>
+                                    <outputDirectory>config/tao-if/config</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/tao-if-web/appDir/developpement/tao-if/config</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-config-message</id>
+                                <!-- here the phase you need -->
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <encoding>${project.encoding}</encoding>
+                                    <outputDirectory>config/tao-if/messages</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>
+                                                ${project.parent.basedir}/tao-if-web/appDir/developpement/tao-if/messages
+                                            </directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <encoding>${project.encoding}</encoding>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <useFile>false</useFile>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                            <!--argLine>${jacoco.agent.argLine}</argLine-->
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <runOrder>alphabetical</runOrder>
+                            <!-- Ajout du forkMode pour permettre la création d'un process pour chaque test et par conséquence le re-loader du context pour chaque test -->
+                            <!--forkMode>always</forkMode-->
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <!-- Ajout de variables utilisables dans le code java pour savoir que le test est lancé depuis hudson -->
+                            <systemPropertyVariables>
+                                <!-- variable qui indique le path du filestore -->
+                                <pathFilestore>filestore</pathFilestore>
+                                <!-- variable qui indique le path du répertoire de config -->
+                                <appDir>config</appDir>
+                                <!-- Variable qui indique si le serveur mail SMTP doit être démarré ou non -->
+                                <serveurMailInactif>true</serveurMailInactif>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <encoding>${project.encoding}</encoding>
+                            <skip>true</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-test</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <!-- spring boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>javax.ws.rs-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jta-atomikos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- spring boot -->
+
+        <!-- VD shred-->
+        <dependency>
+            <artifactId>shared-fisc-jmx</artifactId>
+            <groupId>ch.vd.fiscalite.shared</groupId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iam</artifactId>
+        </dependency>
+        <!-- VD shared -->
+
+        <!-- tao -->
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-core-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-core-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-core-business</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-core-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-engine</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr250-api</artifactId>
+                    <groupId>javax.annotation</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-metier</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-business-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-services</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j-1.2-api</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-engine</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-exchange-entrant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-exchange-sortant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-web</artifactId>
+            <classifier>test-auto</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- tao -->
+
+        <!-- dependencies -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>2.29.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-jaxb</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc10</artifactId>
+        </dependency>
+        <!-- dependencies -->
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-webmvc-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+        </dependency>
+        <!-- Swagger -->
+
+        <!-- Dépendances ajoutées pour JAVA 9 / 11 -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+
+        <!-- Outils de génération de code -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+        </dependency>
+        <!-- Outils de génération de code -->
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>ch.vd.dfin.tao.tao-if</groupId>
+            <artifactId>tao-if-test-common</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core</groupId>
+            <artifactId>tao-core-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.dfin.tao</groupId>
+            <artifactId>tao-test-automatise</artifactId>
+            <version>4.4.1</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-pool</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-ra</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib-nodep</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- TEST -->
+    </dependencies>
+
+    <!-- ###### BUILD ###### -->
+</project>

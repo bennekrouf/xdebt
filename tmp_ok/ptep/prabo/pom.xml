@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.ptep.prabo</groupId>
+    <artifactId>prabo-parent</artifactId>
+    <version>24.0.10-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>P+R Abo (prabo) - Parent</name>
+
+    <parent>
+        <groupId>ch.vd.cyber.parent</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>12.22.0</version>
+        <relativePath />
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/ptep/prabo.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>prabocommon</module>
+        <module>prabofo</module>
+        <module>prabobo</module>
+    </modules>
+    <properties>
+        <devex.configTag>master</devex.configTag>
+    </properties>
+
+</project>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.demo</groupId>
+        <artifactId>edu-demo</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>edu-demo-webapp</artifactId>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <properties>
+        <super.springboot.enabled>true</super.springboot.enabled>
+        <super.test.mutation>false</super.test.mutation>
+    </properties>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-infrastructures</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-interfaces</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-ui</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_logs_obfuscator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.inugami.monitoring.distributions</groupId>
+            <artifactId>inugami_monitoring_spingboot</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor.netty</groupId>
+            <artifactId>reactor-netty</artifactId>
+            <version>0.9.25.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct.extensions.spring</groupId>
+            <artifactId>mapstruct-spring-annotations</artifactId>
+            <version>${org.mapstruct.extensions.spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-package</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/resources/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.parent.basedir}/edu-demo-ui/src/main/edu-app/dist/edu-app</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

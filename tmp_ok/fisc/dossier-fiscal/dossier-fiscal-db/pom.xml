@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal</groupId>
+        <artifactId>dossier-fiscal</artifactId>
+        <version>25R1.A.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-db</artifactId>
+    <name>dossier-fiscal-db</name>
+    <description>Scripts de base de données</description>
+
+    <properties>
+        <updateDataBaseFromScratchOnError>false</updateDataBaseFromScratchOnError>
+        <updateDatabase.goal>updateDatabase</updateDatabase.goal>
+    </properties>
+
+    <dependencies>
+
+        <!-- FIXME : à supprimer une fois l'utilitaire chronobase migré dans un projet plugin Maven/Mojo -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>filter-properties</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>read-project-properties</goal>
+                            </goals>
+                            <configuration>
+                                <files>
+                                    <file>${basedir}/src/main/filters/filters-${appDir.env}.properties</file>
+                                    <file>${basedir}/src/main/filters/filters.properties</file>
+                                </files>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.dbmaintain</groupId>
+                    <artifactId>dbmaintain-maven-plugin</artifactId>
+                    <configuration>
+                        <databases>
+                            <database>
+                                <driverClassName>${db.jdbc.driverClassName}</driverClassName>
+                                <userName>${db.jdbc.username}</userName>
+                                <password>${db.jdbc.password}</password>
+                                <url>${db.jdbc.url}</url>
+                                <schemaNames>${db.jdbc.username}</schemaNames>
+                            </database>
+                        </databases>
+                        <autoCreateDbMaintainScriptsTable>true</autoCreateDbMaintainScriptsTable>
+                        <scriptEncoding>${project.encoding}</scriptEncoding>
+                        <qualifiers>refdata,notest,dbinteg</qualifiers>
+                        <excludedQualifiers>${extraExcludedQualifiers}</excludedQualifiers>
+                        <fromScratchEnabled>${updateDataBaseFromScratchOnError}</fromScratchEnabled>
+                        <allowOutOfSequenceExecutionOfPatches>true</allowOutOfSequenceExecutionOfPatches>
+                        <updateSequences />
+                    </configuration>
+                    <executions>
+                        <!-- Run with var "-DupdateDatabase.goal=markDatabaseAsUpToDate" to mark all scripts as up to date -->
+                        <execution>
+                            <id>dossier-fiscal-task-main</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>${updateDatabase.goal}</goal>
+                            </goals>
+                            <configuration>
+                                <scriptLocations>
+                                    ${project.build.outputDirectory}/db/pre/DOSSIER_FISCAL,
+                                    ${project.build.outputDirectory}/db/diff/DOSSIER_FISCAL
+                                </scriptLocations>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>dossier-fiscal-clear</id>
+                            <phase>none</phase>
+                            <goals>
+                                <goal>clearDatabase</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+
+            <!-- Génération du package -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>${project.artifactId}</finalName>
+                    <descriptors>
+                        <descriptor>${basedir}/src/main/assembly/dossier-fiscal-bd-release.xml</descriptor>
+                    </descriptors>
+                    <attach>true</attach>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assembly-bd</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sélection + filters des SQL -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <overwrite>true</overwrite>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>filter-sql-scripts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/db/diff/DOSSIER_FISCAL</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources/db/diff/DOSSIER_FISCAL</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <filters>
+                                <filter>${basedir}/src/main/filters/filters-${appDir.env}.properties</filter>
+                                <!-- <filter>${basedir}/src/main/filters/filters.properties</filter> -->
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- Joue le différentiel des scripts sur le schéma -->
+            <id>updateDB</id>
+            <build>
+                <plugins>
+
+                    <!-- Rend accessible dans le scope Maven les propriétés présentes dans les filtres -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-properties</id>
+                                <phase>initialize</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- DbMaintain -->
+                    <plugin>
+                        <groupId>org.dbmaintain</groupId>
+                        <artifactId>dbmaintain-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dossier-fiscal-task-main</id>
+                                <phase>pre-integration-test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- Efface tous les objets et données du schéma, puis rejoue tous les scripts -->
+            <id>updateFromScratchDB</id>
+            <build>
+                <plugins>
+
+                    <!-- Rend accessible dans le scope Maven les propriétés présentes dans les filtres -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-properties</id>
+                                <phase>initialize</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- DbMaintain -->
+                    <plugin>
+                        <groupId>org.dbmaintain</groupId>
+                        <artifactId>dbmaintain-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dossier-fiscal-clear</id>
+                                <phase>initialize</phase>
+                            </execution>
+                            <execution>
+                                <id>dossier-fiscal-task-main</id>
+                                <phase>pre-integration-test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!-- Efface tous les objets et données du schéma -->
+            <id>clearDB</id>
+            <build>
+                <plugins>
+
+                    <!-- Rend accessible dans le scope Maven les propriétés présentes dans les filtres -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-properties</id>
+                                <phase>initialize</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- DbMaintain -->
+                    <plugin>
+                        <groupId>org.dbmaintain</groupId>
+                        <artifactId>dbmaintain-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dossier-fiscal-clear</id>
+                                <phase>initialize</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.cybersdk</groupId>
+    <artifactId>edipm-parent</artifactId>
+    <version>24.1.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Edipm - Parent</name>
+
+    <parent>
+        <groupId>ch.vd.cyber.parent</groupId>
+        <artifactId>application-parent</artifactId>
+        <version>13.3.0</version>
+        <relativePath/>
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/prest-edipm.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <modules>
+        <module>edipm-common</module>
+        <module>prestedipmupload</module>
+        <module>prestedipm-common</module>
+        <module>prestedipm-pf23</module>
+        <module>prestedipm-pf24</module>
+        <module>prestedipm-pf25</module>
+        <module>prestedipm</module>
+    </modules>
+
+    <properties>
+        <devex.configTag>master</devex.configTag>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
+        <cybercontextfiscrestclient.version>2.1.7</cybercontextfiscrestclient.version>
+        <fisc-secu-client.version>1.0.0</fisc-secu-client.version>
+        <spring-mock.version>2.0.8</spring-mock.version>
+        <edipm-engine-api-version>24R3.A.1-SNAPSHOT</edipm-engine-api-version>
+
+        <sonar.cpd.exclusions>prestedipm-pf*/**/*</sonar.cpd.exclusions>
+    </properties>
+
+</project>

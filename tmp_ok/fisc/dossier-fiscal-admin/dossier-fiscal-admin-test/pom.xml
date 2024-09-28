@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal.admin</groupId>
+        <artifactId>dossier-fiscal-admin-app</artifactId>
+        <version>24R2.C.6-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-admin-test</artifactId>
+    <packaging>jar</packaging>
+    <name>dossier-fiscal-admin-test</name>
+    <description>Module parent des tests</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.dfin.tao.core-common</groupId>
+            <artifactId>tao-core-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-admin-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>dossier-fiscal-admin-metier</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.registre</groupId>
+            <artifactId>shared-base</artifactId>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>ch/vd/dfin/dossierfiscal/admin/test/model/*.class</exclude>
+                                <exclude>ch/vd/dfin/dossierfiscal/admin/test/model/**/*.class</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.coverage.exclusions>**/model/**/*.*,**/config/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

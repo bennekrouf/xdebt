@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.acm</groupId>
+    <artifactId>appian-devex-deployer-parent</artifactId>
+    <version>1.0.13-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMdd_HHmm</maven.build.timestamp.format>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
+        <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+        <assembly.finalName>${project.build.finalName}</assembly.finalName>
+        <maven-release-plugin.releaseProfiles />
+        <release.profiles>not,ch-int,${maven-release-plugin.releaseProfiles}</release.profiles>
+        <devex-maven-plugin.version>2.0.0</devex-maven-plugin.version>
+        <devex-maven-plugin.configTag>${ConfigTag}</devex-maven-plugin.configTag>
+        <devex-maven-plugin.releaseVersion>${project.version}</devex-maven-plugin.releaseVersion>
+        <devex-maven-plugin.deployUnit>${project.artifactId}</devex-maven-plugin.deployUnit>
+        <devex-maven-plugin.warprojectonly>false</devex-maven-plugin.warprojectonly>
+        <devex-maven-plugin.deployTarget>Platform</devex-maven-plugin.deployTarget>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>create release</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>deploy IN</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>IN</environment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>nexus</id>
+            <properties>
+                <maven-release-plugin.releaseProfiles>devex.release,devex.in</maven-release-plugin.releaseProfiles>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus DGNSI</name>
+                    <url>${nexus.url}/app-${application.repository}-stable</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus DGNSI</name>
+                    <url>${nexus.url}/app-${application.repository}-snapshots</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>ch.vd.devex</groupId>
+                    <artifactId>devex-maven-plugin</artifactId>
+                    <version>${devex-maven-plugin.version}</version>
+                    <configuration>
+                        <configTag>${devex-maven-plugin.configTag}</configTag>
+                        <releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+                        <deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+                        <deployTarget>${devex-maven-plugin.deployTarget}</deployTarget>
+                        <warProjectOnly>${devex-maven-plugin.warprojectonly}</warProjectOnly>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <executions>
+                        <execution>
+                            <id>zip-application-files</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>run</goal>
+                            </goals>
+                            <configuration>
+                                <target>
+                                    <zip destfile="${project.build.directory}/application_${timestamp}.zip" basedir="${project.basedir}/application_files" />
+                                    <zip destfile="${project.build.directory}/${project.artifactId}.zip">
+                                        <fileset dir="." includes="config/**" />
+                                        <fileset dir="." includes="*.properties" />
+                                        <fileset dir="${project.build.directory}" includes="application_*.zip" />
+                                    </zip>
+                                </target>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>assembly.xml</descriptor>
+                        </descriptors>
+                        <finalName>${assembly.finalName}</finalName>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <tarLongFileMode>posix</tarLongFileMode>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                            <phase>package</phase> <!-- bind to the packaging phase -->
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                    <configuration>
+                        <goals>clean deploy</goals>
+                        <releaseProfiles>${maven-release-plugin.releaseProfiles}</releaseProfiles>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                        <pushChanges>true</pushChanges>
+                        <checkModificationExcludes>
+                            <checkModificationExclude>application_files/site/*.xml</checkModificationExclude>
+                            <checkModificationExclude>application_files/application/*.xml</checkModificationExclude>
+                        </checkModificationExcludes>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.stable}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/devsup/appian-devex-deployer-parent.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/devsup/appian-devex-deployer-parent.git</developerConnection>
+        <tag>head</tag>
+    </scm>
+</project>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>ch.vd.securite.hrcinternet</groupId>
+	<artifactId>hrcinternet</artifactId>
+	<name>hrcinternet</name>
+	<description>hrcinternet</description>
+	<version>1.1.20-SNAPSHOT</version>
+
+	<scm>
+		<developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/ojvmp/hrc-internet.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<properties>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<config.location>./config</config.location>
+		<devex-maven-plugin.version>1.1.1</devex-maven-plugin.version>
+		<maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+		<devex-maven-plugin.configTag>1.1.10</devex-maven-plugin.configTag>
+		<assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+		<release.goals>clean install</release.goals>
+		<devex.profiles>devex.release,devex.in</devex.profiles>
+		<release.profiles>assembly,nexus,${devex.profiles}</release.profiles>
+		<devex-maven-plugin.releaseVersion>${project.version}</devex-maven-plugin.releaseVersion>
+		<devex-maven-plugin.deployUnit>${project.artifactId}</devex-maven-plugin.deployUnit>
+		<warprojectonly>false</warprojectonly>
+		<maven-release-plugin.version>3.0.1</maven-release-plugin.version>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${maven-release-plugin.version}</version>
+					<configuration>
+						<goals>${release.goals}</goals>
+						<releaseProfiles>${release.profiles}</releaseProfiles>
+						<tagNameFormat>@{project.version}</tagNameFormat>
+						<pushChanges>true</pushChanges>
+						<localCheckout>true</localCheckout>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>ch.vd.devex</groupId>
+					<artifactId>devex-maven-plugin</artifactId>
+					<version>${devex-maven-plugin.version}</version>
+					<configuration>
+						<configTag>${devex-maven-plugin.configTag}</configTag>
+						<releaseVersion>${devex-maven-plugin.releaseVersion}</releaseVersion>
+						<deployUnit>${devex-maven-plugin.deployUnit}</deployUnit>
+						<warProjectOnly>${warprojectonly}</warProjectOnly>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.3.0</version>
+
+				<executions>
+					<execution>
+						<id>assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly.xml</descriptor>
+							</descriptors>
+							<finalName>${project.name}-${project.version}</finalName>
+							<!--<appendAssemblyId>false</appendAssemblyId> -->
+							<tarLongFileMode>posix</tarLongFileMode>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>assembly</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>${maven-assembly-plugin.version}</version>
+						<executions> 
+							<execution>
+								<id>tar-gz</id>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<phase>package</phase>
+								<configuration>
+									<finalName>${project.artifactId}-${project.version}</finalName>
+									<appendAssemblyId>false</appendAssemblyId>
+									<attach>true</attach>
+									<tarLongFileMode>warn</tarLongFileMode>
+									<descriptors>
+										<descriptor>${basedir}/assembly.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-install-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-install</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>nexus</id>
+			<properties>
+				<release.goals>clean deploy</release.goals>
+				<devex-maven-plugin.phase>deploy</devex-maven-plugin.phase>
+			</properties>
+			<distributionManagement>
+				<repository>
+					<id>nexus-dgnsi-server</id>
+					<name>Nexus DGNSI</name>
+					<url>${nexus.url}/app-${application.repository}-stable</url>
+				</repository>
+				<snapshotRepository>
+					<id>nexus-dgnsi-server</id>
+					<name>Nexus DGNSI</name>
+					<url>${nexus.url}/app-${application.repository}-snapshots</url>
+					<uniqueVersion>false</uniqueVersion>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>devex.release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>ch.vd.devex</groupId>
+						<artifactId>devex-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>create release</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>create-release</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>devex.in</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>ch.vd.devex</groupId>
+						<artifactId>devex-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy IN</id>
+								<phase>deploy</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+								<configuration>
+									<environment>IN</environment>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

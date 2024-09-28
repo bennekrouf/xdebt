@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>siel-assembly</artifactId>
+    <name>prj_ev-bleusiel siel [assembly]</name>
+    <description>[siel] assembly</description>
+    <version>9.2.2-SNAPSHOT</version>
+    <packaging>war</packaging>
+    
+	<parent>
+		<groupId>ch.vd.institutions.siel</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>9.1.0</version>
+	</parent>
+
+    <properties>
+        <!-- See properties defined in environment-xx/maven/settings.xml -->
+        <!-- Properties to define on command line: -->
+        <!-- - config.location -->
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <product.name>siel</product.name>
+        <product.siel.name>sielcore</product.siel.name>
+        <product.sql.dir>siel-core</product.sql.dir>
+        <fonts.location.default>../fonts</fonts.location.default>
+        <config.location.default>../config</config.location.default>
+        <batches.config.location.default>../batch</batches.config.location.default>
+        <migration.config.location.default>../siel-migration/batch</migration.config.location.default>
+
+        <!-- Default value: for customer -->
+        <fonts.location>${fonts.location.default}</fonts.location>
+        <config.location>${config.location.default}</config.location>
+        <batches.config.location>${batches.config.location.default}</batches.config.location>
+        <migration.config.location>${migration.config.location.default}</migration.config.location>
+
+        <batch-test-chargement.name>bleusiel-siel-test-chargement</batch-test-chargement.name>
+        <batch-test-chargement.location>../siel-migration/batch/${batch-test-chargement.name}</batch-test-chargement.location>
+        <batch-test-chargement.output>batch/${batch-test-chargement.name}</batch-test-chargement.output>
+
+        <batch-migration.name>bleusiel-siel-migration-chargement</batch-migration.name>
+        <batch-migration.location>../siel-migration/batch/${batch-migration.name}</batch-migration.location>
+        <batch-migration.output>batch/${batch-migration.name}</batch-migration.output>
+
+		<batch-fix-AlfrescoAccesses.name>bleusiel-siel-update-document-acces</batch-fix-AlfrescoAccesses.name>
+		<batch-fix-AlfrescoAccesses.location>../batch/${batch-fix-AlfrescoAccesses.name}</batch-fix-AlfrescoAccesses.location>
+		<batch-fix-AlfrescoAccesses.output>batch/${batch-fix-AlfrescoAccesses.name}</batch-fix-AlfrescoAccesses.output>
+
+		<batch-fix-AlfrescoMeta.name>bleusiel-siel-update-document-meta</batch-fix-AlfrescoMeta.name>
+		<batch-fix-AlfrescoMeta.location>../batch/${batch-fix-AlfrescoMeta.name}</batch-fix-AlfrescoMeta.location>
+		<batch-fix-AlfrescoMeta.output>batch/${batch-fix-AlfrescoMeta.name}</batch-fix-AlfrescoMeta.output>
+
+        <!-- Shortcut to skip build of front. -->
+        <!-- Handy when already build. -->
+        <skip.front>false</skip.front>
+        <!-- currently, we skip npm publication (no secure way of storing credentials) -->
+        <skip.front.publish>true</skip.front.publish>
+        <!-- define to true if there is no SQL in this release -->
+		<assembly.sql.skip>true</assembly.sql.skip>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <assembly.finalName>${product.siel.name}-${project.version}</assembly.finalName>
+        <devex-maven-plugin.version>1.1.2</devex-maven-plugin.version>
+        <devex-maven-plugin.configTag>master</devex-maven-plugin.configTag>
+        <devex-maven-plugin.releaseVersion>${project.version}</devex-maven-plugin.releaseVersion>
+        <devex-maven-plugin.deployUnit>${product.siel.name}</devex-maven-plugin.deployUnit>
+        <attachZip>true</attachZip> <!-- Override in nexus profile -->
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <!-- see corresponding overlay in maven-war-plugin configuration -->
+            <groupId>ch.vd.institutions.siel</groupId>
+            <artifactId>siel-bootstrap</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <!-- see corresponding dependencySet in migration.xml -->
+            <!-- use provided scope to exclude this library when packing war by maven
+                war plugin -->
+            <groupId>ch.vd.institutions.siel</groupId>
+            <artifactId>siel-migration-chargement</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- see corresponding dependencySet in migration.xml -->
+            <!-- use provided scope to exclude this library when packing war by maven
+                war plugin -->
+            <groupId>ch.vd.institutions.siel</groupId>
+            <artifactId>siel-test-chargement</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+			<!-- see corresponding dependencySet in migration.xml -->
+            <!-- use provided scope to exclude this library when packing war by maven
+                war plugin -->
+            <groupId>ch.vd.institutions.siel</groupId>
+            <artifactId>siel-document-acces</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- see corresponding dependencySet in migration.xml -->
+            <!-- use provided scope to exclude this library when packing war by maven
+                war plugin -->
+            <groupId>ch.vd.institutions.siel</groupId>
+            <artifactId>siel-document-meta</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- extract version information without SNAPSHOT -->
+                    <execution>
+                        <id>app-version</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>product.version</name>
+                            <value>${project.version}</value>
+                            <regex>(-SNAPSHOT)?$</regex>
+                            <replacement />
+                        </configuration>
+                    </execution>
+                    <!-- extract version information for NPM -->
+                    <execution>
+                        <id>npm-version</id>
+                        <goals>
+                            <goal>regex-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>product.npm.version</name>
+                            <value>${project.version}</value>
+                            <regex>^([0-9]+)\.([0-9]+)\.([0-9]+)([.-]([0-9]+))?(-P2)?(-PGA)?(-SNAPSHOT)?$</regex>
+                            <replacement>$1.$2.$3$7$8</replacement>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>execute-npm-install</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skip.front}</skip>
+                            <executable>npm</executable>
+                            <workingDirectory>../siel-front</workingDirectory>
+                            <arguments>
+								<argument>ci</argument>
+                                <argument>--no-optional</argument>
+                                <argument>--no-audit</argument>
+                                <argument>--no-progress</argument>
+                                <!-- <argument>- -verbose</argument> -->
+                            </arguments>
+                            <environmentVariables>
+                                <sass_binary_site>${sass_binary_site}</sass_binary_site>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>execute-npm-build</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skip.front}</skip>
+                            <executable>npm</executable>
+                            <workingDirectory>../siel-front</workingDirectory>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>execute-npm-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skip.front.publish}</skip>
+                            <executable>npm</executable>
+                            <workingDirectory>../siel-front</workingDirectory>
+                            <arguments>
+                                <argument>publish</argument>
+                                <!-- required for yarn -->
+                                <argument>--new-version</argument>
+                                <argument>${product.npm.version}-${maven.build.timestamp}</argument>
+                                <!-- Note: to avoid creation of a git tag when 'yarn config set version-git-tag
+                                    false' wasn't applied -->
+                                <argument>--no-git-tag-version</argument>
+                                <argument>--verbose</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- assembly -->
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-front-to-web-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <primaryArtifact>false</primaryArtifact>
+                            <archive>
+                                <addMavenDescriptor>false</addMavenDescriptor>
+                            </archive>
+                            <webResources>
+                                <webResource>
+                                    <directory>../siel-front/dist</directory>
+                                </webResource>
+                            </webResources>
+                            <overlays>
+                                <overlay>
+                                    <!-- see related dependency -->
+                                    <id>back</id>
+                                    <groupId>ch.vd.institutions.siel</groupId>
+                                    <artifactId>siel-bootstrap</artifactId>
+                                    <type>war</type>
+                                </overlay>
+                            </overlays>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${product.name}</finalName>
+                            <excludes>
+                                <exclude>
+                                    <groupId>ch.vd.institutions.siel</groupId>
+                                    <artifactId>siel-bootstrap</artifactId>
+                                </exclude>
+                            </excludes>
+                            <!-- ideally we should create a new Layout. But we can greatly reduce
+                            the size this way -->
+                            <excludeGroupIds>
+                                ch.vd.institutions.siel,org.slf4j,com.atomikos,
+                                com.aspose,com.fasterxml.jackson.core,com.hazelcast,com.querydsl,
+                                edu.ucar,org.apache.activemq, org.apache.commons,org.apache.cxf,
+                                org.apache.pdfbox,org.apache.poi,org.apache.sis.core,
+                                org.apache.tomcat.embed,org.apache.tomcat,
+                                org.bouncycastle,org.hibernate,
+                                org.springframework.boot,org.springframework,org.springframework.security,
+                                org.springframework.batch,org.springframework.data,
+                                com.sun.xml.bind,org.slf4j,
+                                org.apache.xmlbeans,org.apache.logging.log4j,org.apache.httpcomponents,
+                                org.apache.geronimo.specs,net.sf.ehcache,com.google.guava,io.github.kohsah,
+                                org.aspectj,org.apache.chemistry.opencmis,org.xhtmlrenderer,
+                                net.java.dev.jna,org.mnode.ical4j,org.eclipse.jdt.core.compiler,
+                                org.apache.tika,
+
+                            </excludeGroupIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <attach>${attachZip}</attach>
+                            <descriptor>src/bin.xml</descriptor>
+                            <finalName>${assembly.finalName}</finalName>
+                            <!--<appendAssemblyId>false</appendAssemblyId> -->
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>batch</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <attach>${attachZip}</attach>
+                            <descriptor>src/batch.xml</descriptor>
+                            <finalName>${product.name}-${project.version}</finalName>
+                        </configuration>
+                    </execution>
+                    <!--execution>
+                        <id>migration</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/migration.xml</descriptor>
+                            <finalName>${product.name}-${project.version}</finalName>
+                        </configuration>
+                    </execution-->
+                    <execution>
+                        <id>sql</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <attach>${attachZip}</attach>
+                            <skipAssembly>${assembly.sql.skip}</skipAssembly>
+                            <descriptor>src/sql.xml</descriptor>
+                            <finalName>${product.name}-${project.version}</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- skip default plugins inherited from super POM -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-resources</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testResources</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <!--This plugin's configuration is used to store Eclipse m2e settings
+                    only. It has no influence on the Maven build itself. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.mojo
+                                        </groupId>
+                                        <artifactId>
+                                            exec-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.6.0,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>exec</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <finalName>${assembly.finalName}</finalName>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jenkins</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>.</directory>
+                        <includes>
+                            <include>sonar-project.properties</include>
+                        </includes>
+                        <filtering>true</filtering>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-resources</id>
+                                <phase>process-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>default-testResources</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- build DGNSI -->
+        <profile>
+            <id>dgnsi</id>
+            <properties>
+                <dgnsi>true</dgnsi>
+                <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+                <attachZip>false</attachZip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dgnsi</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/dgnsi.xml</descriptor>
+                                    </descriptors>
+                                    <finalName>${assembly.finalName}</finalName>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <tarLongFileMode>gnu</tarLongFileMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-install</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- After creating the assembly, we only keep the .tar.gz, otherwise, the deploy goal will upload both the jar and the assembly -->
+                    <!-- Using deploy:deploy-file is not convenient, because we cannot cleanly choose the repository type, ie SNAPSHOT vs STABLE to which we want to upload -->
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- we can't override this id -->
+                                <id>default-clean</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.build.directory}</directory>
+                                            <excludes>
+                                                <exclude>${assembly.finalName}.tar.gz</exclude>
+                                            </excludes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnits>
+                                <deployUnit>${product.siel.name}</deployUnit>
+                            </deployUnits>
+                            <deployTarget>EmbeddedRHEL8</deployTarget>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>create release</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <version>${devex-maven-plugin.version}</version>
+                        <configuration>
+                            <deployUnits>
+                                <deployUnit>${product.siel.name}</deployUnit>
+                            </deployUnits>
+                            <deployTarget>EmbeddedRHEL8</deployTarget>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deploy IN</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>IN</environment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>elca</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <sass_binary_site>
+                    https://artifactory.svc.elca.ch/artifactory/prj_ev-bleusiel_npm/node-sass
+                </sass_binary_site>
+            </properties>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

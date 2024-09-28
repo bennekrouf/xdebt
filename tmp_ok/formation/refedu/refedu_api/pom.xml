@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =================================================================== -->
+    <!-- PARENT -->
+    <!-- =================================================================== -->
+    <parent>
+        <groupId>ch.vd.formation.relev</groupId>
+        <artifactId>relevBase</artifactId>
+        <version>3.11.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- =================================================================== -->
+    <!-- PROJECT -->
+    <!-- =================================================================== -->
+    <artifactId>refedu-api</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>jar</packaging>
+    <description>Artefact contenant des interfaces et DTO de base</description>
+
+</project>

@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao</groupId>
+        <artifactId>tao-pm-batch-rpt-parent</artifactId>
+        <version>2022RPT.A.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tao-pm-batch-rpt-app</artifactId>
+    <packaging>jar</packaging>
+    <name>Batch d'extractions</name>
+
+    <properties>
+
+        <!-- JDK -->
+        <jdk.version>1.11</jdk.version>
+        <maven.compiler.target>1.11</maven.compiler.target>
+        <maven.compiler.source>1.11</maven.compiler.source>
+        <maven.compiler.release>11</maven.compiler.release>
+        <java.version>1.11</java.version>
+
+        <project.encoding>Cp1252</project.encoding>
+        <tao.batch.common.ind>2.0.1</tao.batch.common.ind>
+        <tao.common.util>2.0.7</tao.common.util>
+
+        <lib.spring.version>5.2.20.RELEASE</lib.spring.version>
+        <lib.hibernate.version>5.4.2.Final</lib.hibernate.version>
+        <lib.commons-io>1.2</lib.commons-io>
+        <lib.commons-dbcp>1.2.2</lib.commons-dbcp>
+        <lib.slf4j>1.7.25</lib.slf4j>
+        <lib.log4j>2.17.1</lib.log4j>
+        <lib.log4j1>1.2.14</lib.log4j1>
+        <lib.junit>4.12</lib.junit>
+        <lib.cglib>2.2</lib.cglib>
+        <lib.beaxmlbeans>2.3.1.0</lib.beaxmlbeans>
+        <lib.ojdbc7>12.1.0.2.0</lib.ojdbc7>
+
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                    <configuration>
+                        <encoding>${project.encoding}</encoding>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.dfin.tao</groupId>
+            <artifactId>tao-batch-common-ind</artifactId>
+            <version>${tao.batch.common.ind}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${lib.junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${lib.spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${lib.commons-dbcp}</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle.jdbc</groupId>
+            <artifactId>ojdbc7</artifactId>
+            <version>${lib.ojdbc7}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${lib.commons-io}</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>${lib.cglib}</version>
+        </dependency>
+
+        <!-- slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${lib.slf4j}</version>
+        </dependency>
+
+        <!-- log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${lib.log4j}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${lib.log4j}</version>
+        </dependency>
+        <!-- Nécessaire pour tao-exchange qui utilise encore log4j -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>${lib.log4j}</version>
+        </dependency>
+
+        <!-- bridge common-logging - log4j2 (spring, taoadmin)-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>${lib.log4j}</version>
+        </dependency>
+        <!-- bridge slf4j - log4j2 (activmq etc..)-->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${lib.log4j}</version>
+        </dependency>
+    </dependencies>
+
+</project>

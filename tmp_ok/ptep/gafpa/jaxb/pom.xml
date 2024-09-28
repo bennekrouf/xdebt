@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+	<artifactId>gafpa-jaxb</artifactId>
+    <version>5.1.2-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Prestation - Gafpa - JAXB</name>
+
+    <parent>
+        <groupId>ch.vd.cyber.parent</groupId>
+        <artifactId>spring-cloud-parent</artifactId>
+        <version>3.5.11</version>
+        <relativePath />
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.cyber</groupId>
+            <artifactId>starter-bo-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>${maven-jaxb2-plugin.version}</version>
+                <configuration>
+                    <strict>false</strict>
+                    <!--
+                     see https://github.com/highsource/maven-jaxb2-plugin/wiki/Catalogs-in-Strict-Mode
+                    -->
+                    <schemaDirectory>${basedir}/src/main/resources/xsd/</schemaDirectory>
+                    <generatePackage>ch.vd.gafpa.jaxb.evd_0037_1</generatePackage>
+                    <schemaIncludes>
+                        <include>eVD-0037-1-0.xsd</include>
+                    </schemaIncludes>
+                    <args>
+                        <arg>-extension</arg>
+                        <arg>-Xvalue-constructor</arg>
+                        <arg>-XNonNullGetter-api</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-value-constructor</artifactId>
+                        <version>3.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>ch.vd.shared.jaxb-plugins</groupId>
+                        <artifactId>xjc-non-null-getter</artifactId>
+                        <version>2.0.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+                    <items>
+                        <item>timestamp</item>
+                    </items>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

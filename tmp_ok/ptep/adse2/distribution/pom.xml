@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.ptep.adse</groupId>
+        <artifactId>adse</artifactId>
+        <version>14.1.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>adse-distribution</artifactId>
+    <packaging>pom</packaging>
+    <name>ADSE Distribution</name>
+
+    <properties>
+        <dist.dir>${project.build.directory}/dist</dist.dir>
+        <devex-maven-plugin.version>1.1.1</devex-maven-plugin.version>
+        <devex-maven-plugin.phase>deploy</devex-maven-plugin.phase>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-config</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-gesreau-export</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+		
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-suspension-dossier</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-facturation-export</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-fusion-commune</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-localite</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-facturation-suivi</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-batch-adresse-referentiel</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-database</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-documentation</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-modeles</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-online-docs</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-rapports</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-web</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>adse-web</artifactId>
+            <version>${project.version}</version>
+            <classifier>distribution</classifier>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>ch.vd.devex</groupId>
+                    <artifactId>devex-maven-plugin</artifactId>
+                    <version>${devex-maven-plugin.version}</version>
+                    <configuration>
+                        <url>${devex.url}</url>
+                        <deployUnits>
+                            <deployUnit>${devex.deployUnit}</deployUnit>
+                        </deployUnits>
+                        <deployTarget>${devex.deployTarget}</deployTarget>
+                        <configTag>${devex.configTag}</configTag>
+                        <environment>IN</environment>
+                        <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <exportAntProperties>true</exportAntProperties>
+                            <target>
+                                <condition property="isSnapshot">
+                                    <contains string="${project.version}" substring="-SNAPSHOT" />
+                                </condition>
+                                <condition property="deployFileUrl" value="${project.distributionManagement.snapshotRepository.url}">
+                                    <isset property="isSnapshot" />
+                                </condition>
+                                <property name="deployFileUrl" value="${project.distributionManagement.repository.url}" />
+                                <echo>Repository URL: ${deployFileUrl}</echo>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                
+                <dependencies>
+                </dependencies>
+
+                <executions>
+                    <execution>
+                        <id>unpack-adse-config</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-config</includeArtifactIds>
+                            <outputDirectory>${dist.dir}/config</outputDirectory>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-adse-web</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-web</includeArtifactIds>
+                            <excludeTypes>war</excludeTypes>
+                            <outputDirectory>${dist.dir}/deployment</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+					<execution>
+                        <id>unpack-adse-batchs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-batch-gesreau-export,adse-batch-suspension-dossier,adse-batch-facturation-export,adse-batch-facturation-suivi,adse-batch-localite,adse-batch-fusion-commune,adse-batch-adresse-referentiel</includeArtifactIds>
+                            <outputDirectory>${dist.dir}/batchs</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+<!--                     <execution> -->
+<!--                         <id>copy-adse-rapports</id> -->
+<!--                         <phase>package</phase> -->
+<!--                         <goals> -->
+<!--                             <goal>copy-dependencies</goal> -->
+<!--                         </goals> -->
+<!--                         <configuration> -->
+<!--                             <includeArtifactIds>adse-rapports</includeArtifactIds> -->
+<!--                             <outputDirectory>${dist.dir}/rapports</outputDirectory> -->
+<!--                             <excludeTransitive>true</excludeTransitive> -->
+<!--                         </configuration> -->
+<!--                     </execution> -->
+
+                    <execution>
+                        <id>copy-adse-online-docs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-online-docs</includeArtifactIds>
+                            <outputDirectory>${dist.dir}/online</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>copy-adse-modeles</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-modeles</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-adse-database</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-database</includeArtifactIds>
+                            <outputDirectory>${dist.dir}/db</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-adse-documentation</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-documentation</includeArtifactIds>
+                            <outputDirectory>${dist.dir}/doc</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>unpack-adse-web-release-notes</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>adse-web</includeArtifactIds>
+                            <excludeClassifiers>distribution</excludeClassifiers>
+                            <includes>**/release-notes.txt</includes>
+                            <outputDirectory>${dist.dir}/doc</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>adse2-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- we can't override this id -->
+                        <id>default-clean</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>${project.build.directory}</directory>
+                                    <excludes>
+                                        <exclude>adse2-${project.version}.tar.gz</exclude>
+                                    </excludes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>deploy-file-to-nexus</id>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+			</plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy-file-to-nexus</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy-file</goal>
+                                </goals>
+                                <configuration>
+                                    <file>target/adse2-${project.version}.tar.gz</file>
+                                    <repositoryId>nexus-dgnsi-server</repositoryId>
+                                    <url>${deployFileUrl}</url>
+                                    <groupId>ch.vd.ptep.adse</groupId>
+                                    <artifactId>adse2</artifactId>
+                                    <version>${project.version}</version>
+                                    <packaging>tar.gz</packaging>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>IN</environment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>deploy-after-release</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="local.project.artifact.name" value="${project.build.finalName}" />
+                                        <property name="local.distribution.artifact.name" value="${local.project.artifact.name}-distribution" />
+                                        <property name="local.distribution.artifact.file" value="${project.build.directory}/${local.distribution.artifact.name}.zip" />
+					<!-- Suppression du déploiment auto sur serveur linux -->
+                                        <!-- <ant antfile="build-deploy.xml" /> -->
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>local-deploy</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="local.project.artifact.name" value="${project.build.finalName}" />
+                                        <property name="local.distribution.artifact.name" value="${local.project.artifact.name}-distribution" />
+                                        <property name="local.distribution.artifact.file" value="${project.build.directory}/${local.distribution.artifact.name}.zip" />
+                                        <property name="local.project.version" value="${project.version}" />
+                                        <property name="local.project.build.directory" value="${project.build.directory}" />
+                                        <ant antfile="local-deploy.xml" />
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-dgnsi-server</id>
+            <name>Nexus DGNSI</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

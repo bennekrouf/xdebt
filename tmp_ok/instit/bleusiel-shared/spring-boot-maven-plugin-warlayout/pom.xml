@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ch.vd.institutions.siel</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>10.3.1-SNAPSHOT</version>
+		<relativePath>../shared-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>spring-boot-maven-plugin-warlayout</artifactId>
+	<name>prj_ev-bleusiel spring-boot-maven-plugin-warlayout</name>
+	<packaging>jar</packaging>
+
+	<description>Layout to create the self-executable war</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-loader-tools</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>ch.vd.fiscalite</groupId>
+		<artifactId>dperm-portail-pom</artifactId>
+		<version>23R1.C.1</version>
+	</parent>
+
+	<artifactId>dperm-memo</artifactId>
+	<version>24R2.C.1-SNAPSHOT</version>
+	<packaging>${packaging.type}</packaging>
+	<name>dperm-memo</name>
+
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/dperm-memo/browse</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-memo.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dperm-memo.git</developerConnection>
+		<tag>dperm-memo-20R2.A.4</tag>
+	</scm>
+
+	<ciManagement>
+		<system>Jenkins CI</system>
+		<url>https://validation.portail.etat-de-vaud.ch/outils/jenkins-fisc/job/snapshot-dperm-portail-memo/</url>
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<id>p3wany</id>
+			<name>Francois Achache</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<main.class>ch.vd.fiscalite.SpringBootRunner</main.class>
+		<!-- COMMONS -->
+		<jigsaw-core.version>2.9.27</jigsaw-core.version>
+		<ojdbc7.version>12.1.0.2.0</ojdbc7.version>
+		<orika.version>1.4.6</orika.version>
+		<jacoco.version>0.8.5</jacoco.version>
+		<shared-fisc-jmx.version>2.0.3</shared-fisc-jmx.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- HYSTRIX-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+			<version>2.1.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+			<version>2.1.0.RELEASE</version>
+		</dependency>
+		<!-- END HYSTRIX-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.fiscalite.shared</groupId>
+			<artifactId>jigsaw-core</artifactId>
+			<version>${jigsaw-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.fiscalite.shared</groupId>
+			<artifactId>jigsaw-core</artifactId>
+			<classifier>tests</classifier>
+			<version>${jigsaw-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.fiscalite.shared</groupId>
+			<artifactId>shared-fisc-jmx</artifactId>
+			<version>${shared-fisc-jmx.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>net.sf.ehcache</groupId>
+					<artifactId>ehcache-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<!-- Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+		</dependency>
+		<!-- Orika mapping framework -->
+		<dependency>
+			<groupId>ma.glasnost.orika</groupId>
+			<artifactId>orika-core</artifactId>
+			<version>${orika.version}</version>
+		</dependency>
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+		</dependency>
+		<!-- run -->
+		<dependency>
+			<groupId>oracle.jdbc</groupId>
+			<artifactId>ojdbc7</artifactId>
+			<version>${ojdbc7.version}</version>
+		</dependency>
+		<!-- envers -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<!-- TESTS DEPENDENCIES-->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- ASSERTJ -->
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>${jacoco.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.sql</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>cz.habarta.typescript-generator</groupId>
+				<artifactId>typescript-generator-maven-plugin</artifactId>
+				<version>2.2.413</version>
+				<executions>
+					<execution>
+						<id>generate-typescript-entities</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<jsonLibrary>jackson2</jsonLibrary>
+					<classPatterns>
+						<pattern>ch.vd.fiscalite.dperm.memos.entity.**</pattern>
+						<pattern>ch.vd.fiscalite.dperm.memos.api.v1.dto.**</pattern>
+					</classPatterns>
+					<customTypeMappings>
+						<mapping>java.time.ZonedDateTime:Date</mapping>
+						<mapping>java.time.LocalDate:Date</mapping>
+					</customTypeMappings>
+					<outputFileType>implementationFile</outputFileType>
+					<outputFile>target/memo.entities.ts</outputFile>
+					<outputKind>module</outputKind>
+					<sortDeclarations>true</sortDeclarations>
+					<mapPackagesToNamespaces>false</mapPackagesToNamespaces>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>client</classifier>
+							<includes>
+								<include>ch/vd/fiscalite/dperm/memos/api/v1/dto/*</include>
+								<include>ch/vd/fiscalite/dperm/memos/api/v1/entity/*</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!-- JaCoCo configuration -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>${jacoco.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

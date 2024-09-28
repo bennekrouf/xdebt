@@ -1,0 +1,1190 @@
+<?xml version="1.0"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.vd.sipf</groupId>
+    <artifactId>sipf</artifactId>
+    <version>5.37.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Sipf Aggregator</name>
+    <description>Aggregator of the Sipf modules.</description>
+    <organization>
+        <name>Cross Systems SA</name>
+        <url>www.cross-engineering.ch</url>
+    </organization>
+
+    <scm>
+        <connection>${scm.url}</connection>
+        <developerConnection>${scm.url}</developerConnection>
+      <tag>HEAD</tag>
+  </scm>
+
+    <properties>
+        <revision>5.37.0-SNAPSHOT</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+
+        <!-- Versions des librairies et plugins utilisés -->
+        <cross-version>2.16.8-re9</cross-version>
+        <crossutil-version>3.6.0</crossutil-version>
+        <cross-explorer-version>2.26.10</cross-explorer-version>
+        <crossautorisation-version>1.6.1</crossautorisation-version>
+        <crossunit-version>2.2.0</crossunit-version>
+        <cxf-version>3.5.3</cxf-version>
+        <jackson-version>2.13.3</jackson-version>
+        <cxf-xjc-plugin-version>3.3.0</cxf-xjc-plugin-version>
+        <rs-version>1.1.1</rs-version>
+        <spring.version>5.3.19</spring.version>
+        <spring-batch.version>4.3.5</spring-batch.version>
+        <poi.version>4.1.1</poi.version>
+        <project-root>${basedir}</project-root>
+
+        <!-- Version api tests -->
+        <junit.version>4.13</junit.version>
+        <mockito.version>3.2.4</mockito.version>
+        <powermock.version>2.0.5</powermock.version>
+
+        <!-- Version des api VD utilisées -->
+        <unireg-jaxb-version>7.11</unireg-jaxb-version>
+        <unireg-jaxb-party-version>7.11</unireg-jaxb-party-version>
+        <unireg-ws-v8-version>8.10</unireg-ws-v8-version>
+        <fidor-jaxb2-version>1.15</fidor-jaxb2-version>
+
+        <!-- Définition des versions des librairies utilisées par JaCoCo -->
+        <jacoco-version>0.8.4</jacoco-version>
+        <jacoco-asm-version>7.1</jacoco-asm-version>
+
+        <!-- Version des plugins maven utilisé -->
+        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-dependency-plugin.version>3.1.0</maven-dependency-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.cross.themis</groupId>
+                <artifactId>Parser</artifactId>
+                <version>1.6.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4-rule-agent</artifactId>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-javaagent</artifactId>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito2</artifactId>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-classloading-xstream</artifactId>
+                <version>${powermock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>xmlunit</groupId>
+                <artifactId>xmlunit</artifactId>
+                <version>1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dbunit</groupId>
+                <artifactId>dbunit</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <dependency>
+                <!-- corrige un problème de nommage de la méta-factory SOAP sur Java 11 avec la version 1.4.0 tirée par CXF 3.3.1 (voir https://github.com/javaee/metro-jax-ws/issues/1237) -->
+                <groupId>com.sun.xml.messaging.saaj</groupId>
+                <artifactId>saaj-impl</artifactId>
+                <version>1.5.2-b01</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>cross.vaud</groupId>
+            <artifactId>crossserver</artifactId>
+            <version>${cross-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <!-- exclusion pour éviter un conflit de version -->
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>cross.vaud</groupId>
+                    <artifactId>crossunit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>cross.vaud</groupId>
+            <artifactId>crossunit</artifactId>
+            <version>${crossunit-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.dbunit</groupId>
+                    <artifactId>dbunit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jdbc</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jms</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-api</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-hibernate4</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>atomikos-util</artifactId>
+            <version>${atomikos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cross.vaud</groupId>
+            <artifactId>crossutil</artifactId>
+            <version>${crossutil-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>oracle-jdbc</artifactId>
+            <version>10.0</version>
+        </dependency>
+
+        <!-- Uniquement pour les tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4-rule-agent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-classloading-xstream</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-javaagent</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.4.0-b180830.0359</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.4.0-b180830.0438</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>2.4.0-b180830.0438</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>javax.activation-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestSections>
+                                <manifestSection>
+                                    <name>custom</name>
+                                    <manifestEntries>
+                                        <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+                                    </manifestEntries>
+                                </manifestSection>
+                            </manifestSections>
+                        </archive>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-jsch</artifactId>
+                            <version>1.9.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.jcraft</groupId>
+                            <artifactId>jsch</artifactId>
+                            <version>0.1.51</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sf.incanto</groupId>
+                            <artifactId>incanto</artifactId>
+                            <version>0.2.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>commons-net</groupId>
+                            <artifactId>commons-net</artifactId>
+                            <version>3.3</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-commons-net</artifactId>
+                            <version>1.9.4</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.7.0.1746</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <generateBackupPoms>false</generateBackupPoms>
+                </configuration>
+            </plugin>
+
+            <!-- Definition des paramètres de compilation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>11</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+
+            <!-- Permet de generer les jars de sources de tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestSections>
+                            <manifestSection>
+                                <name>custom</name>
+                                <manifestEntries>
+                                    <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+                                </manifestEntries>
+                            </manifestSection>
+                        </manifestSections>
+                    </archive>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach-sources-test</id>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Permet de generer les jars de tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestSections>
+                            <manifestSection>
+                                <name>custom</name>
+                                <manifestEntries>
+                                    <Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+                                </manifestEntries>
+                            </manifestSection>
+                        </manifestSections>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Permet de ne pas executer les tests maintenant -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <groups>ch.cross.fwk.categories.FastTest</groups>
+                    <argLine>@{argLine} --illegal-access=permit --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED
+                        -Djava.awt.headless=true -Dorg.jboss.logging.provider=slf4j
+                        -Dlogback.configurationFile=${project.basedir}/../Config/sipf_dev/sipf/config/sipf/logbackConsole.xml
+                    </argLine>
+                </configuration>
+            </plugin>
+
+            <!-- Récupère les dépendences nécessaire à l'usage de Jacoco -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jacoco-dependency-ant</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jacoco</groupId>
+                                    <artifactId>org.jacoco.ant</artifactId>
+                                    <version>${jacoco-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jacoco</groupId>
+                                    <artifactId>org.jacoco.report</artifactId>
+                                    <version>${jacoco-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jacoco</groupId>
+                                    <artifactId>org.jacoco.core</artifactId>
+                                    <version>${jacoco-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jacoco</groupId>
+                                    <artifactId>org.jacoco.agent</artifactId>
+                                    <version>${jacoco-version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.ow2.asm</groupId>
+                                    <artifactId>asm</artifactId>
+                                    <version>${jacoco-asm-version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <stripVersion>true</stripVersion>
+                            <outputDirectory>${basedir}/target/jacoco-jars</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+            L'exécution du plugin javadoc avec umlgraph nécessite l'installation de l'application graphviz-2.38.msi dans l'environnement exécutant le build.
+            L'installeur graphviz-2.38.msi est disponible sur R:\Masters\Dev & Systems\Vaud\Maven
+            Il faut ajouter dans la variable d'environnement Path le chemin de l'exécutable (ex de chemin: C:\Progs\Graphviz2.38\bin)
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>site</phase>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+              Configure the JaCoCo plugin for both unit and integration tests.
+              Each agent sets an ${argLine} property which configures the JaCoCo
+              agent.
+              Since this same ${argLine} property is used by both Surefire and
+              Failsafe to start a JVM and run tests, agent configuration is
+              implicitly included.
+            -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-unit-test-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-unit-test-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Regroupement des ressources pour les tests d'intégration afin de les déployer sur les environnements de test -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resource-one</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>../target/sipf/data</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/test/resources/app/sipf/data</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Profil DSI Vaud, définition propre à l'usage du projet dans le contexte de la DGNSI -->
+    <profiles>
+        <profile>
+            <id>dsi</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <scm.url>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/sipf.git</scm.url>
+                <!-- VERSION ATOMIKOS PAYANTE A DEFINIR POUR UN BUILD DSI DSI -->
+                <atomikos.version>4.0.71</atomikos.version>
+            </properties>
+
+            <distributionManagement>
+                <repository>
+                    <id>nexus.releases</id>
+                    <name>Nexus releases</name>
+                    <url>${nexus.url.releases}</url>
+                </repository>
+
+                <snapshotRepository>
+                    <id>nexus.snapshots</id>
+                    <name>Nexus snaphots</name>
+                    <url>${nexus.url.snapshots}</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <!-- Fournisseur de la solution, définition propre à l'usage du projet dans le contexte de CROSS -->
+        <profile>
+            <id>fournisseur</id>
+            <properties>
+                <scm.url>scm:git:https://git.cross-systems.ch/MFISC/VAUD/sipf.git</scm.url>
+                <!-- VERSION ATOMIKOS GRATUITE A DEFINIR POUR UN BUILD CROSS -->
+                <atomikos.version>4.0.6</atomikos.version>
+            </properties>
+
+            <distributionManagement>
+                <repository>
+                    <id>central</id>
+                    <name>Artifactory-releases</name>
+                    <url>http://svmartifactory.micropole.net:8082/artifactory/sipf-release/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>snapshots</id>
+                    <name>Artifactory-snapshots</name>
+                    <url>http://svmartifactory.micropole.net:8082/artifactory/sipf-snapshot/</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <!-- Le profile default définit la liste des modules composant le déliverable sipf -->
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>Ihm-Explorer</module>
+                <module>InterfaceEasyLink</module>
+                <module>InterfaceInfrastructure</module>
+                <module>InterfaceRegistreSIPF</module>
+                <module>InterfaceSecurite</module>
+                <module>InterfaceShared</module>
+                <module>WSUniregV8RestCXF</module>
+                <module>WSFidorRestCXF</module>
+                <module>WSInterfaceInfrastructureRest</module>
+                <module>WSRefSecV2</module>
+                <module>WSElementsDeclaresRestCxf</module>
+                <module>Commun</module>
+                <module>commundperm</module>
+                <module>Evenement</module>
+                <module>Export</module>
+                <module>Comptabilite</module>
+                <module>Paiement</module>
+                <module>Facturation</module>
+                <module>GestionBatch</module>
+                <module>Relance</module>
+                <module>Remise</module>
+                <module>repartition</module>
+                <module>CreanceImpProc</module>
+                <module>Taxation</module>
+                <module>InterfaceElementsDeclares</module>
+                <module>TaxationPM</module>
+                <module>InterfaceESB</module>
+                <module>InterfaceImpression</module>
+                <module>InterfaceBAM</module>
+                <module>InterfacePMAssujetties</module>
+                <module>InterfacePaiementIso20022</module>
+                <module>InterfaceProcofiev</module>
+                <module>InterfaceProcofievQuittance</module>
+                <module>InterfaceProcofievStatut</module>
+                <module>InterfaceProconcept</module>
+                <module>InterfaceReceptionFrais</module>
+                <module>InterfaceReceptionPaiementsOP</module>
+                <module>InterfaceReceptionThemis</module>
+                <module>InterfaceTAO</module>
+                <module>InterfaceThemis</module>
+                <module>InterfaceDPerm</module>
+                <module>InterfaceEvenementFidor</module>
+                <module>InterfaceEvenementUnireg</module>
+                <module>interfaceevenementdperm</module>
+                <module>InterfaceRepelec</module>
+                <module>interfacegestioncontexte</module>
+                <module>Interet</module>
+                <module>Poursuites</module>
+                <module>Editique</module>
+                <module>Situation</module>
+                <module>Mgr</module>
+                <module>WSInterfaceACICOM</module>
+                <module>WSBvrPlus</module>
+                <module>WSDPerm</module>
+                <module>SpringBatch</module>
+                <module>CrossTest</module>
+                <module>CacheLoader</module>
+                <module>MockESB</module>
+                <module>interfacetam</module>
+                <module>interfaceefacture</module>
+                <module>sipf-rest</module>
+                <module>sipf-war</module>
+            </modules>
+        </profile>
+
+        <!-- Le profile deploy définit la liste des modules correspondant aux war de l'application sipf -->
+        <profile>
+            <id>deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>sipf-war</module>
+                <module>explorer</module>
+            </modules>
+        </profile>
+
+
+        <!-- Le profile assembly-cross permet la constitution des éléments nécessaires au déploiement de Sipf dans un environnement tomcat (war, fichiers de configuration et ressources de tests) -->
+        <profile>
+            <id>assembly-cross</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>${maven-deploy-plugin.version}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${maven-dependency-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>ch.vd.sipf</groupId>
+                                            <artifactId>sipf-war</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>war</type>
+                                            <outputDirectory>target/dependencies</outputDirectory>
+                                            <destFileName>sipf-${project.version}.war</destFileName>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>cross.vaud</groupId>
+                                            <artifactId>crossexplorer-sipf</artifactId>
+                                            <version>${cross-explorer-version}</version>
+                                            <type>war</type>
+                                            <outputDirectory>target/dependencies</outputDirectory>
+                                            <destFileName>crossexplorer-sipf-${cross-explorer-version}.war
+                                            </destFileName>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- Pour générer les fichiers à déployer -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${maven-assembly-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>sipf</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>gnu</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+
+                    <!-- pour déployer les fichier sur l'environnement sélectionné -->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <scp todir="${server-tomcat-user}:${server-pwd}@${server-ip}:/opt/tomcat/${env-name}/webapps" verbose="true" trust="true" failonerror="true">
+                                            <fileset dir="${basedir}/target/sipf/${env-name}/deployment" />
+                                        </scp>
+                                        <scp todir="${server-tomcat-user}:${server-pwd}@${server-ip}:/opt/tomcat/${env-name}/app/sipf/config" verbose="true" trust="true" failonerror="true">
+                                            <fileset dir="${basedir}/target/sipf/${env-name}/config" />
+                                        </scp>
+                                        <scp todir="${server-tomcat-user}:${server-pwd}@${server-ip}:/opt/tomcat/${env-name}/app/sipf/data" verbose="true" trust="true" failonerror="false">
+                                            <fileset dir="${basedir}/target/sipf/${env-name}/data" />
+                                        </scp>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- propriétés pour l'environnement de développement PC Windows -->
+        <profile>
+            <id>env-dev</id>
+            <properties>
+                <server-ip>localhost</server-ip>
+                <server-name>localhost</server-name>
+                <env-name>sipf_dev</env-name>
+                <server-tomcat-port>8088</server-tomcat-port>
+                <servlet-test-output-format>html</servlet-test-output-format>
+                <servlet-test-output-file>C:\temp\sipf\JUnit_Test_Sipf_${project.version}.html</servlet-test-output-file>
+            </properties>
+        </profile>
+
+        <!-- propriétés pour l'environnement de build de nuit (svmsipfint:opt/tomcat/sipf_build) -->
+        <profile>
+            <id>env-build</id>
+            <properties>
+                <server-ip>172.16.32.118</server-ip>
+                <server-name>svmsipfint</server-name>
+                <env-name>sipf_build</env-name>
+                <server-tomcat-user>root</server-tomcat-user>
+                <server-pwd>1+password</server-pwd>
+                <server-port>22</server-port>
+                <server-tomcat-port>7002</server-tomcat-port>
+                <jacoco-agent-port>7171</jacoco-agent-port>
+            </properties>
+        </profile>
+
+        <!-- propriétés pour l'environnement de build du livrable (svmsipfint:opt/tomcat/sipf_preliv) -->
+        <profile>
+            <id>env-preliv</id>
+            <properties>
+                <server-ip>172.16.32.118</server-ip>
+                <server-name>svmsipfint</server-name>
+                <env-name>sipf_preliv</env-name>
+                <server-tomcat-user>root</server-tomcat-user>
+                <server-pwd>1+password</server-pwd>
+                <server-port>22</server-port>
+                <server-tomcat-port>8002</server-tomcat-port>
+                <jacoco-agent-port>8171</jacoco-agent-port>
+            </properties>
+        </profile>
+
+        <!-- propriétés pour l'environnement Livraison de déploiement du livrable (svmsipfliv:opt/tomcat/sipf_liv) -->
+        <profile>
+            <id>env-liv</id>
+            <properties>
+                <server-ip>172.16.32.152</server-ip>
+                <server-name>svmsipfliv</server-name>
+                <env-name>sipf_liv</env-name>
+                <server-tomcat-user>root</server-tomcat-user>
+                <server-pwd>1+password</server-pwd>
+                <server-port>22</server-port>
+                <server-tomcat-port>9002</server-tomcat-port>
+                <jacoco-agent-port>9171</jacoco-agent-port>
+            </properties>
+        </profile>
+
+        <!-- propriétés pour l'environnement Livraison2 de déploiement du livrable (svmsipfliv:opt/tomcat/sipf_liv2) -->
+        <profile>
+            <id>env-liv2</id>
+            <properties>
+                <server-ip>172.16.32.152</server-ip>
+                <server-name>svmsipfliv</server-name>
+                <env-name>sipf_liv2</env-name>
+                <server-tomcat-user>root</server-tomcat-user>
+                <server-pwd>1+password</server-pwd>
+                <server-port>22</server-port>
+                <server-tomcat-port>10002</server-tomcat-port>
+                <jacoco-agent-port>10171</jacoco-agent-port>
+            </properties>
+        </profile>
+
+        <profile>
+            <!-- Le profile RunServletTestEnvBuild permet l'exécution des tests via la servlet dans l'environnement courant-->
+            <id>RunServletTest</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <java jar="httprequest\pochttpRequest.jar" fork="true" failonerror="true" maxmemory="128m">
+                                            <arg value="http://${server-name}:${server-tomcat-port}/fiscalite/sipf/servlet/JUnit?All=true&amp;Run=Run+Selection&amp;output=${servlet-test-output-format}" />
+                                            <arg value="${servlet-test-output-file}" />
+                                        </java>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!--Profile associé au profile RunServletTest pour déterminer le format du rapport de test produit : xml-->
+            <id>xml-test-report</id>
+            <properties>
+                <servlet-test-output-format>xml</servlet-test-output-format>
+                <servlet-test-output-file>${project.basedir}/target/TEST-Sipf_${project.version}.xml
+                </servlet-test-output-file>
+            </properties>
+        </profile>
+
+        <profile>
+            <!--Profile associé au profile RunServletTest pour déterminer le format du rapport de test produit : html-->
+            <id>html-test-report</id>
+            <properties>
+                <servlet-test-output-format>html</servlet-test-output-format>
+                <servlet-test-output-file>JUnit_Test_Sipf_${project.version}.html</servlet-test-output-file>
+            </properties>
+        </profile>
+
+        <profile>
+            <!-- Le profile GetJacocoFileEnvBuild permet la récupération du fichier jacoco de l'environnement de build-->
+            <id>GetJacocoFileEnvTomcat</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+
+                                        <!-- Récuperation du fichier de jacoco dans l'environnement de nightbuild -->
+                                        <ftp action="get" server="${server-ip}" remotedir="/opt/tomcat/${env-name}/app/sipf/data/jacoco" userid="${server-tomcat-user}" password="${server-pwd}" depends="yes" verbose="yes" binary="no">
+                                            <fileset dir="target" />
+                                        </ftp>
+
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <!--<sonar.host.url>https://sonar.cross-systems.ch/</sonar.host.url>
+                <sonar.login>jenkins</sonar.login>
+                <sonar.password>1+password</sonar.password>
+                <sonar.scm.provider>git</sonar.scm.provider>-->
+                <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+                <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+                <!--<sonar.tests>${project.basedir}/../../report</sonar.tests>-->
+                <!--<sonar.junit.reportPaths>${project.basedir}/../target/</sonar.junit.reportPaths>-->
+                <sonar.junit.reportPaths>
+                    ./target/surefire-reports,
+                    ../../sipf/report
+                </sonar.junit.reportPaths>
+                <sonar.coverage.jacoco.xmlReportPaths>
+                    ${project.basedir}/../target/report/jacoco.xml,
+                    ${project.basedir}/../../target/report/jacoco.xml
+                </sonar.coverage.jacoco.xmlReportPaths>
+                <sonar.language>java</sonar.language>
+                <sonar.java.source>11</sonar.java.source>
+                <!--
+                <sonar.exclusions>**/*.html, **/*.css, **/*.js, **/*.xml, **/*.xsd, **/*.yml, **/*.jsp
+                </sonar.exclusions>
+                <sonar.test.exclusions>/src/test/**/*</sonar.test.exclusions>
+                -->
+                <sonar.coverage.exclusions>**/_javassist_**/**/*.*, **/scc/**/*.*, **/cyber/**/*.*, **/dematerialisation/**/*.*, **/dperm/**/*.*, **/host_interfaces/**/*.*</sonar.coverage.exclusions>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Le profile JacocoNB permet de récupérer le dump jacoco de l'agent démarré sur NB et de produire la couverture de code -->
+            <id>JacocoDump</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco-version}</version>
+                        <configuration>
+                            <address>${server-name}</address>
+                            <port>${jacoco-agent-port}</port>
+                            <reset>true</reset>
+                            <append>false</append>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <taskdef name="report" classname="org.jacoco.ant.ReportTask">
+                                            <classpath path="${basedir}/target/jacoco-jars/org.jacoco.ant.jar" />
+                                            <classpath path="${basedir}/target/jacoco-jars/org.jacoco.core.jar" />
+                                            <classpath path="${basedir}/target/jacoco-jars/org.jacoco.report.jar" />
+                                            <classpath path="${basedir}/target/jacoco-jars/org.jacoco.agent.jar" />
+                                            <classpath path="${basedir}/target/jacoco-jars/asm-all.jar" />
+                                        </taskdef>
+
+                                        <delete dir="${basedir}/target/report" failonerror="false" />
+                                        <mkdir dir="${basedir}/target/report" />
+                                        <mkdir dir="${basedir}/target/report/jacoco" />
+
+                                        <report>
+                                            <executiondata>
+                                                <file file="${basedir}/target/jacoco.exec" />
+                                            </executiondata>
+                                            <structure name="Sipf Project">
+                                                <classfiles>
+                                                    <fileset dir="${basedir}">
+                                                        <include name="**/target/classes/**" />
+                                                    </fileset>
+                                                </classfiles>
+                                                <sourcefiles>
+                                                    <fileset dir="${basedir}">
+                                                        <include name="**/src/main/java/**" />
+                                                    </fileset>
+                                                </sourcefiles>
+                                            </structure>
+                                            <html destdir="${basedir}/target/report/jacoco" />
+                                            <xml destfile="${basedir}/target/report/jacoco.xml" />
+                                        </report>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>commons-net</groupId>
+                                <artifactId>commons-net</artifactId>
+                                <version>1.4.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-commons-net</artifactId>
+                                <version>1.7.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.ant</groupId>
+                                <artifactId>ant-junit</artifactId>
+                                <version>1.7.1</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm</artifactId>
+                                <version>${jacoco-asm-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm-tree</artifactId>
+                                <version>${jacoco-asm-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.ow2.asm</groupId>
+                                <artifactId>asm-commons</artifactId>
+                                <version>${jacoco-asm-version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>dependency-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>6.5.3</version>
+                        <configuration>
+                            <!-- To change for a smaller value when most of the issues will be fixed -->
+                            <failBuildOnCVSS>800</failBuildOnCVSS>
+                            <outputDirectory>${project.basedir}/../../</outputDirectory>
+                            <failOnError>false</failOnError>
+                            <suppressionFile>dependency-check-suppression.xml</suppressionFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

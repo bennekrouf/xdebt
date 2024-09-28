@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PARENT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.mireo.bo</groupId>
+        <artifactId>mireo-bo</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <artifactId>mireo-bo-infrastructure</artifactId>
+    <name>MIREO-BO (infrastructure)</name>
+
+    <!-- =======================================================================
+    = PROPERTIES
+    ======================================================================== -->
+    <properties>
+        <!-- START - PROJECT DEPENDENCIES VERSION -->
+        <!-- END   - PROJECT DEPENDENCIES VERSION -->
+
+        <!-- START - SUPER POM TOGGLE -->
+        <super.deploy.enabled>false</super.deploy.enabled>
+        <super.pitest.enabled>false</super.pitest.enabled>
+        <super.owasp.false.positive.file>${project.basedir}/../owasp-false-positive.xml</super.owasp.false.positive.file>
+        <maven-checkstyle-plugin.enabled>false</maven-checkstyle-plugin.enabled>
+        <maven-checkstyle-plugin.configLocation>${project.basedir}/../checkstyle-rules.xml</maven-checkstyle-plugin.configLocation>
+        <!-- END   - SUPER POM TOGGLE -->
+
+        <!-- START - OTHER -->
+        <!-- END   - OTHER -->
+    </properties>
+
+    <!-- =======================================================================
+    = MODULES
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = DEPENDENCY MANAGEMENT
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = DEPENDENCIES
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.mireo.bo</groupId>
+            <artifactId>mireo-bo-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.mireo.bo</groupId>
+            <artifactId>mireo-bo-commons</artifactId>
+        </dependency>
+
+        <!-- TESTING -->
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_commons_test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+
+    <!-- =======================================================================
+    = PROFILES
+    ======================================================================== -->
+</project>

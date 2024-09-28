@@ -1,0 +1,227 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.dsi.ses</groupId>
+    <artifactId>alfresco-rest</artifactId>
+    <name>Alfresco Rest Lib</name>
+    <version>1.0.8-SNAPSHOT</version>
+    <properties>
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- maven release plugin configuration for applications -->
+        <release.goals>clean install</release.goals>
+        <upload.profile>nexus</upload.profile>
+        <assembly.profile>assembly</assembly.profile>
+        <release.profiles>not,${assembly.profile},${upload.profile}</release.profiles>
+        <release.pushChanges>true</release.pushChanges>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+        <executable.finalName>${project.artifactId}</executable.finalName>
+
+    </properties>
+
+    <scm>
+        <developerConnection>scm:git:git@bitbucket.etat-de-vaud.ch::/ses/alfresco-rest</developerConnection>
+        <tag>master</tag>
+    </scm>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.10.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.20.0</version>
+        </dependency>
+
+        <!-- dependence pour client http -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.gsonfire</groupId>
+            <artifactId>gson-fire</artifactId>
+            <version>1.8.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- fin dependence pour client http -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>6.6.0</version>
+                <executions>
+                    <execution>
+                        <id>search</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/rest/alfresco-search.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <library>okhttp-gson</library>
+                            <configOptions>
+                                <basePackage>ch.vd.dsi.ses.alfresco.search</basePackage>
+                                <modelPackage>ch.vd.dsi.ses.alfresco.search.model</modelPackage>
+                                <apiPackage>ch.vd.dsi.ses.alfresco.search.api</apiPackage>
+                                <invokerPackage>ch.vd.dsi.ses.alfresco.search.client</invokerPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <openApiNullable>false</openApiNullable>
+                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>core</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/rest/alfresco-core.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <library>okhttp-gson</library>
+                            <configOptions>
+                                <basePackage>ch.vd.dsi.ses.alfresco.core</basePackage>
+                                <modelPackage>ch.vd.dsi.ses.alfresco.core.model</modelPackage>
+                                <apiPackage>ch.vd.dsi.ses.alfresco.core.api</apiPackage>
+                                <invokerPackage>ch.vd.dsi.ses.alfresco.core.client</invokerPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <openApiNullable>false</openApiNullable>
+                                <disallowAdditionalPropertiesIfNotPresent>false</disallowAdditionalPropertiesIfNotPresent>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- No Tests -->
+            <id>not</id>
+            <properties>
+                <skipTests>true</skipTests>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>assembly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <configuration>
+                            <goals>${release.goals}</goals>
+                            <releaseProfiles>${release.profiles}</releaseProfiles>
+                            <tagNameFormat>@{project.version}</tagNameFormat>
+                            <arguments>-Dmaven.javadoc.skip=true -Dmaven.source.skip=true</arguments>
+                            <pushChanges>${release.pushChanges}</pushChanges>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>nexus</id>
+            <properties>
+                <release.goals>clean deploy</release.goals>
+                <devex-maven-plugin.phase>deploy</devex-maven-plugin.phase>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-dgnsi-server</id> <!-- doit matcher l'id du server dans settings.xml uniquement sur jenkins -->
+                    <name>Nexus DGSNI</name>
+                    <url>${nexus.url.stable}</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus DGSNI</name>
+                    <url>${nexus.url.snapshots}</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
+
+</project>

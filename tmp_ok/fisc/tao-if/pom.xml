@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- ###### PARENT ###### -->
+    <parent>
+        <groupId>ch.vd.dfin.tao.pom</groupId>
+        <artifactId>tao-pom</artifactId>
+        <version>1.1.26</version>
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.dfin.tao.tao-if</groupId>
+    <artifactId>tao-if-app</artifactId>
+    <version>24R2.0.3.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>tao-if</name>
+
+    <!-- ###### MODULES ###### -->
+    <modules>
+        <module>tao-if-services</module>
+        <module>tao-if-metier</module>
+        <module>tao-if-web</module>
+        <module>tao-if-dao</module>
+        <module>tao-if-db</module>
+        <module>tao-if-engine</module>
+        <module>tao-if-parseur-bible</module>
+        <module>tao-if-business-service</module>
+        <module>tao-if-jacoco-report</module>
+        <module>tao-if-repository-externe</module>
+        <module>tao-if-test-common</module>
+        <module>tao-if-exchange</module>
+        <module>tao-if-test-auto</module>
+        <module>tao-if-distribution</module>
+    </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- ###### SCM : Source Control Management ###### -->
+    <!-- définition de l'url de connection au serveur GIT pour le projet -->
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-if.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-if.git</developerConnection>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tao-if</url>
+        <tag>24R2.A.1</tag>
+    </scm>
+
+    <!-- ###### PROPERTIES ###### -->
+
+    <properties>
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- JDK -->
+        <jdk.version>1.11</jdk.version>
+        <java.version>1.11</java.version>
+
+        <!-- ### librairies ### -->
+        <tao-core.version>24R1.B-IF.1</tao-core.version>
+        <tao-jmx.version>2.0.3</tao-jmx.version>
+        <shared-iam.version>9.2.14</shared-iam.version>
+        <tao-parseur-bible.version>1.15.8-IF.5</tao-parseur-bible.version>
+        <tao-exchange-generated-sources.version>23R2.A.2</tao-exchange-generated-sources.version>
+
+        <!-- Overriding spring boot config -->
+        <liquibase.version>4.15.0</liquibase.version>
+
+        <!-- Others -->
+        <jaxb2-basics.version>1.11.1</jaxb2-basics.version>
+        <javax.inject.version>2.5.0-b32</javax.inject.version>
+        <enforcer.plugin.disabled>false</enforcer.plugin.disabled>
+        <easy-rules-core.version>4.1.0</easy-rules-core.version>
+
+        <springdoc.version>1.4.8</springdoc.version>
+
+        <!-- Profiles supplémentaires activés (par défaut) lors d'une release -->
+        <release.skipTests>${skipTests}</release.skipTests>
+        <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+        <dist.app.name>tao-if-${project.version}</dist.app.name>
+        <dist.app.link.name>tao-if</dist.app.link.name>
+        <file.mode.release>0644</file.mode.release>
+
+        <jaxb-output-directory>${project.build.directory}/generated/out</jaxb-output-directory>
+
+        <!-- Maintenir cette version en accord avec Spring boot -->
+         <mockito.version>3.4.0</mockito.version>
+        <!-- <powermock-api-mockito.version>2.0.7</powermock-api-mockito.version>-->
+        <hk2.version>2.6.1</hk2.version>
+        <objenesis.version>3.0.1</objenesis.version>
+        <lombok.version>1.18.22</lombok.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
+
+        <atomikos.version>4.0.80</atomikos.version>
+        <log4j-core.version>2.17.1</log4j-core.version>
+
+        <!-- JaCoCo Properties -->
+        <jacoco.version>0.8.8</jacoco.version>
+        <owasp-maven-check.version>7.1.0</owasp-maven-check.version>
+
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/../tao-if-jacoco-report/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.dependencyCheck.jsonReportPath>
+            {project.basedir}/../tao-if-jacoco-report/target/dependency-check-report.json
+        </sonar.dependencyCheck.jsonReportPath>
+        <sonar.dependencyCheck.htmlReportPath>
+            {project.basedir}/../tao-if-jacoco-report/target/dependency-check-report.html
+        </sonar.dependencyCheck.htmlReportPath>
+        <sonar.coverage.exclusions>
+            **/*.ts
+        </sonar.coverage.exclusions>
+
+        <!-- Override de taopom -->
+        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
+
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <skipTests>false</skipTests>
+
+        <!-- Mettre à jour tao-pom et spring boot -->
+        <spring-framework.version>5.2.20.RELEASE</spring-framework.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Modules applicatifs -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-metier</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-services</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-repository-externe</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-exchange-source</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-exchange-entrant</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-exchange-sortant</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>tao-if-business-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Modules applicatifs -->
+
+            <!-- vd shraed -->
+            <dependency>
+                <groupId>ch.vd.fiscalite.shared</groupId>
+                <artifactId>shared-fisc-jmx</artifactId>
+                <version>${tao-jmx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-iam-core</artifactId>
+                <version>${shared-iam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.shared</groupId>
+                <artifactId>shared-iam-web</artifactId>
+                <version>${shared-iam.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao</groupId>
+                <artifactId>tao-exchange-generated-sources</artifactId>
+                <version>${tao-exchange-generated-sources.version}</version>
+            </dependency>
+            <!-- vd shraed -->
+
+            <!-- Tao-Core -->
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-api</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-test</artifactId>
+                <version>${tao-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.powermock</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-test-dao</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-impl</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-engine</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-engine-impl</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-communication</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-business</artifactId>
+                <version>${tao-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core</groupId>
+                <artifactId>tao-core-web</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.utils</groupId>
+                <artifactId>tao-parseur-bible</artifactId>
+                <version>${tao-parseur-bible.version}</version>
+            </dependency>
+            <!-- Tao-Core -->
+
+            <!-- dependencies -->
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>${objenesis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>1.10</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.0.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc10</artifactId>
+                <version>${lib.ojdbc10.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2.external</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2-api</artifactId>
+                <version>${hk2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jeasy</groupId>
+                <artifactId>easy-rules-core</artifactId>
+                <version>${easy-rules-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase.version}</version>
+            </dependency>
+            <!-- dependencies -->
+
+            <!-- Compatibilité avec les vieux projets -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j-core.version}</version>
+            </dependency>
+            <!-- Compatibilité avec les vieux projets -->
+
+            <!-- Swagger -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-webmvc-core</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-security</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <!-- Swagger -->
+
+            <!-- Dépendances ajoutées pour JAVA 9 / 11 -->
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.2</version>
+            </dependency>
+            <!-- Compatibilité avec les vieux projets -->
+
+            <!-- Outils de génération de code -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Outils de génération de code -->
+
+            <!-- TEST -->
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.5.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.tao-if</groupId>
+                <artifactId>tao-if-test-common</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-inline</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- TEST -->
+        </dependencies>
+    </dependencyManagement>
+
+
+    <!-- ###### BUILD ###### -->
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <useDefaultDelimiters>true</useDefaultDelimiters>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <inherited>true</inherited>
+                    <configuration>
+                        <release>11</release>
+                        <debug>true</debug>
+                        <debuglevel>lines,vars,source</debuglevel>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                            <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                            <arg>-Amapstruct.verbose=true</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${lombok.mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <configuration>
+                        <localCheckout>true</localCheckout>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.19.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.0.2</version>
+                    <configuration>
+                        <ignoreNonCompile>true</ignoreNonCompile>
+                        <ignoredUsedUndeclaredDependencies>
+                            <ignoredUsedUndeclaredDependency>javax.annotation:javax.annotation-api
+                            </ignoredUsedUndeclaredDependency>
+                            <ignoredUsedUndeclaredDependency>org.glassfish.hk2.external:aopalliance-repackaged
+                            </ignoredUsedUndeclaredDependency>
+                        </ignoredUsedUndeclaredDependencies>
+                        <ignoredUnusedDeclaredDependencies>
+                            <ignoredUnusedDeclaredDependency>com.jayway.jsonpath:json-path
+                            </ignoredUnusedDeclaredDependency>
+                            <ignoredUnusedDeclaredDependency>org.springframework.boot:spring-boot-starter-tomcat
+                            </ignoredUnusedDeclaredDependency>
+                            <ignoredUnusedDeclaredDependency>org.springframework.boot:spring-boot-starter-jta-atomikos
+                            </ignoredUnusedDeclaredDependency>
+                            <ignoredUnusedDeclaredDependency>org.springframework.boot:spring-boot-starter-test
+                            </ignoredUnusedDeclaredDependency>
+                        </ignoredUnusedDeclaredDependencies>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>xsd</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <schemaDirectory>src/main/resources/xsd</schemaDirectory>
+                                <encoding>${project.build.sourceEncoding}</encoding>
+                                <markGenerated>true</markGenerated>
+                                <extension>true</extension>
+                                <strict>false</strict>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <skip>${enforcer.plugin.disabled}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-dependency-version</id>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence />
+                                <requireProperty>
+                                    <property>project.version</property>
+                                    <message>La version du projet doit être spécifiée</message>
+                                    <regex>^.*((-SNAPSHOT)|\d)</regex>
+                                    <regexMessage>La version du project doit terminer par un nombre ou bien
+                                        "-SNAPSHOT"
+                                    </regexMessage>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- ###### PROFILES ###### -->
+
+    <profiles>
+        <profile>
+            <id>dev01</id>
+            <activation>
+                <!-- Profile "dev" activé par défaut pour simplifier le développement -->
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <appDir.env>dev01</appDir.env>
+                <extraExcludedQualifiers>dbinteg,testauto</extraExcludedQualifiers>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dev02</id>
+            <activation>
+                <!-- Profile "dev" activé par défaut pour simplifier le développement -->
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <appDir.env>dev02</appDir.env>
+                <extraExcludedQualifiers>dbinteg,testauto</extraExcludedQualifiers>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dev03</id>
+            <activation>
+                <!-- Profile "dev" activé par défaut pour simplifier le développement -->
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <appDir.env>dev03</appDir.env>
+                <extraExcludedQualifiers>dbinteg,testauto</extraExcludedQualifiers>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>dev04</id>
+            <activation>
+                <!-- Profile "dev" activé par défaut pour simplifier le développement -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <appDir.env>dev04</appDir.env>
+                <extraExcludedQualifiers>dbinteg,testauto</extraExcludedQualifiers>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>integration</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>IN</value>
+                </property>
+            </activation>
+            <properties>
+                <appDir.env>integration</appDir.env>
+                <extraExcludedQualifiers />
+            </properties>
+        </profile>
+
+        <profile>
+            <id>I2</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>I2</value>
+                </property>
+            </activation>
+            <properties>
+                <appDir.env>I2</appDir.env>
+                <extraExcludedQualifiers />
+            </properties>
+        </profile>
+
+        <profile>
+            <id>checkPropertiesI10n</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <inherited>true</inherited>
+                        <groupId>com.googlecode.l10n-maven-plugin</groupId>
+                        <artifactId>l10n-maven-plugin</artifactId>
+                        <configuration>
+                            <ignoreFailure>false</ignoreFailure>
+                            <customPatterns />
+                            <excludedKeys />
+                            <reportsDir>${project.build.directory}/l10n-reports</reportsDir>
+                            <formatter>messageFormat</formatter>
+                            <dictionaryDir>${basedir}/../src/main/resources/l10n</dictionaryDir>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>validate-messages-resources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>validate</goal>
+                                </goals>
+                                <configuration>
+                                    <propertyDir>${basedir}/src/main/resources/messages</propertyDir>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>owasp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>${owasp-maven-check.version}</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.oracle.database.jdbc</groupId>
+                                <artifactId>ojdbc10</artifactId>
+                                <version>${lib.ojdbc10.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <formats>JSON,HTML</formats>
+                            <autoUpdate>false</autoUpdate>
+                            <databaseDriverName>oracle.jdbc.driver.OracleDriver</databaseDriverName>
+                            <connectionString>jdbc:oracle:thin:@ldap://oid.etat-de-vaud.ch:389/app_s6l5ze_co,cn=OracleContext,dc=etat-de-vaud,dc=ch</connectionString>
+                            <databaseUser>OWASP</databaseUser>
+                            <databasePassword>RdzLChNrAYcwvv4Yo1rM</databasePassword>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <!-- ###### DEPENDENCY MANAGEMENT ###### -->
+    <!-- allows to consolidate and centralize the management of dependency versions without adding dependencies which are inherited by all children -->
+
+</project>
+

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>sipf</artifactId>
+        <groupId>ch.vd.sipf</groupId>
+        <version>5.37.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>interfacetam</artifactId>
+
+    <name>interfacetam</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.fiscalite.tam.logger</groupId>
+            <artifactId>tam-utils-commons</artifactId>
+            <version>${tam-utils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.fiscalite.tam.logger</groupId>
+            <artifactId>tam-utils-logback</artifactId>
+            <version>${tam-utils.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <properties>
+        <tam-utils.version>1.0.10</tam-utils.version>
+    </properties>
+
+</project>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.demo</groupId>
+        <artifactId>edu-demo</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <artifactId>edu-demo-core</artifactId>
+
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <properties>
+    </properties>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.education.demo</groupId>
+            <artifactId>edu-demo-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.inugami</groupId>
+            <artifactId>inugami_commons_test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

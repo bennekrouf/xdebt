@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- ###### PARENT ###### -->
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.pom</groupId>
+        <artifactId>tao-pom</artifactId>
+        <version>1.1.25</version>
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.dfin.tao.dossier-fiscal.alimentation</groupId>
+    <artifactId>dossier-fiscal-alimentation-app</artifactId>
+    <version>24R2.C.6-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>dossier-fiscal-alimentation</name>
+
+    <!-- ###### MODULES ###### -->
+
+    <modules>
+        <module>dossier-fiscal-alimentation-business</module>
+        <module>dossier-fiscal-alimentation-dao</module>
+        <module>dossier-fiscal-alimentation-db</module>
+        <module>dossier-fiscal-alimentation-echange-entrant</module>
+        <module>dossier-fiscal-alimentation-echange-sortant</module>
+        <module>dossier-fiscal-alimentation-metier</module>
+        <module>dossier-fiscal-alimentation-services</module>
+        <module>dossier-fiscal-alimentation-test</module>
+        <module>dossier-fiscal-alimentation-test-automatise</module>
+        <module>dossier-fiscal-alimentation-web</module>
+        <module>dossier-fiscal-alimentation-jacoco-report</module>
+        <module>dossier-fiscal-alimentation-distribution</module>
+    </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url}/app-${application.repository}-stable</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url}/app-${application.repository}-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- ###### SCM : Source Control Management ###### -->
+    <!-- définition de l'url de connection au serveur GIT pour le projet -->
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dossier-fiscal-alimentation.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/dossier-fiscal-alimentation.git</developerConnection>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/dossier-fiscal-alimentation</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- ###### PROPERTIES ###### -->
+
+    <properties>
+
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- DEVEX -->
+        <devex-maven-plugin.version>1.0.19</devex-maven-plugin.version>
+
+        <!-- librairies -->
+        <tao-core.version>24R2.C.2</tao-core.version>
+        <tao-exchange-generated-sources.version>24R2.C.2</tao-exchange-generated-sources.version>
+        <dossier-fiscal-clients.version>24R2.C.2</dossier-fiscal-clients.version>
+
+        <!-- Others -->
+        <oracle.version>12.1.0.2.0</oracle.version>
+        <hk2.version>2.6.1</hk2.version>
+        <atomikos.version>5.0.108</atomikos.version>
+
+        <jaxb2-basics.version>1.11.1</jaxb2-basics.version>
+        <jackson.version>2.11.0</jackson.version>
+
+        <dist.app.name>dossier-fiscal-alimentation-${project.version}</dist.app.name>
+        <local.distribution.artifact.file>${project.build.directory}/${dist.app.name}.zip</local.distribution.artifact.file>
+        <file.mode.release>0644</file.mode.release>
+        <!-- enforce -->
+        <enforcer.plugin.disabled>false</enforcer.plugin.disabled>
+
+        <!-- Profiles supplémentaires activés (par défaut) lors d'une release -->
+        <release.add.profiles>integration,deploy-on-tomcat,updateDB</release.add.profiles>
+
+        <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+
+        <!-- JaCoCo Properties -->
+        <jacoco.version>0.8.7</jacoco.version>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/../dossier-fiscal-alimentation-jacoco-report/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.language>java</sonar.language>
+
+        <!-- Mettre à jour TAO-pom-->
+        <spring-framework.version>5.2.20.RELEASE</spring-framework.version>
+
+        <!-- Override de taopom -->
+        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
+
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <lombok.mapstruct.version>0.2.0</lombok.mapstruct.version>
+    </properties>
+
+    <!-- ###### BUILD ###### -->
+
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+
+                <!-- Ajout du plugin pour crer la version avec useDefaultDelimiters = true -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <useDefaultDelimiters>true</useDefaultDelimiters>
+                    </configuration>
+                </plugin>
+
+                <!-- This plugin is used to release a project with Maven, saving a lot of repetitive, manual work. Releasing a project is made in two steps: prepare and perform -->
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagNameFormat>@{project.version}</tagNameFormat>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.19.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.dbmaintain</groupId>
+                    <artifactId>dbmaintain-maven-plugin</artifactId>
+                    <version>2.7.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>oracle.jdbc</groupId>
+                            <artifactId>ojdbc7</artifactId>
+                            <version>${oracle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <configuration>
+                    <skip>${enforcer.plugin.disabled}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>check-dependency-version</id>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence />
+                                <requireProperty>
+                                    <property>project.version</property>
+                                    <message>La version du projet doit être spécifiée</message>
+                                    <regex>^.*((-SNAPSHOT)|\d)</regex>
+                                    <regexMessage>La version du project doit terminer par un nombre ou bien "-SNAPSHOT"</regexMessage>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- ###### PROFILES ###### -->
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <!-- Profile "dev" activé par défaut pour simplifier le développement -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <appDir.env>dev</appDir.env>
+                <spring-boot-devmode>true</spring-boot-devmode>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev-it-prec</id>
+            <properties>
+                <appDir.env>dev-it-prec</appDir.env>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>ic-1</id>
+            <properties>
+                <appDir.env>ic1</appDir.env>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev01</id>
+            <properties>
+                <appDir.env>dev01</appDir.env>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev02</id>
+            <properties>
+                <appDir.env>dev02</appDir.env>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev04</id>
+            <properties>
+                <appDir.env>dev04</appDir.env>
+                <extraExcludedQualifiers>dbinteg</extraExcludedQualifiers>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>IN</value>
+                </property>
+            </activation>
+            <properties>
+                <appDir.env>integration</appDir.env>
+                <extraExcludedQualifiers />
+            </properties>
+        </profile>
+        <profile>
+            <id>post-integration</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>I2</value>
+                </property>
+            </activation>
+            <properties>
+                <appDir.env>post-integration</appDir.env>
+                <extraExcludedQualifiers />
+            </properties>
+        </profile>
+        <profile>
+            <id>validation</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>val</value>
+                </property>
+            </activation>
+            <properties>
+                <appDir.env>validation</appDir.env>
+                <extraExcludedQualifiers />
+            </properties>
+        </profile>
+        <profile>
+            <id>build-delivery</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-war-plugin</artifactId>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${jacoco.version}</version>
+                        <executions>
+                            <execution>
+                                <id>jacoco-initialize</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!-- ###### DEPENDENCY MANAGEMENT ###### -->
+    <!-- allows to consolidate and centralize the management of dependency versions without adding dependencies which are inherited by all children -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Modules applicatifs -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-test</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-metier</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-services</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-business</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-echange-entrant</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-echange-sortant</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-test-automatise</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>dossier-fiscal-alimentation-web</artifactId>
+                <classifier>test-auto</classifier>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.dfin.tao.dossier-fiscal.clients</groupId>
+                <artifactId>dossier-fiscal-clients</artifactId>
+                <version>${dossier-fiscal-clients.version}</version>
+            </dependency>
+
+            <!-- Tao-Core -->
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-api</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-test</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-test-dao</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-impl</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-communication</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-business</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao.core-common</groupId>
+                <artifactId>tao-core-web</artifactId>
+                <version>${tao-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.vd.dfin.tao</groupId>
+                <artifactId>tao-exchange-generated-sources</artifactId>
+                <version>${tao-exchange-generated-sources.version}</version>
+            </dependency>
+
+            <!-- commons-lang3 (utilisé dans TAO-CORE et TAO-EXCHANGE) version 3.8.1 requise pour esb-client version 5.5.9 -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.8.1</version>
+            </dependency>
+            <dependency>
+                <groupId>wsdl4j</groupId>
+                <artifactId>wsdl4j</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2-api</artifactId>
+                <version>${hk2.version}</version>
+            </dependency>
+
+
+            <!-- Outils de génération de code -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Outils de génération de code -->
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>
+

@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PARENT
+    ======================================================================== -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.9</version>
+    </parent>
+
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <groupId>ch.vd.education.demo</groupId>
+    <artifactId>edu-demo</artifactId>
+
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <url>https://dsigit.etat-de-vaud.ch/outils/git/projects/EDUCATION/repos/edu-demo/browse</url>
+
+
+    <!-- =======================================================================
+    = PROPERTIES
+    ======================================================================== -->
+    <properties>
+        <!--:: FACETES :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <java.version>11</java.version>
+        <super.springboot.enabled>false</super.springboot.enabled>
+        <super.frontend.build.enabled>false</super.frontend.build.enabled>
+        <super.test.mutation />
+
+        <!--:: VERSIONS :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <ch.qos.logback.version>1.2.11</ch.qos.logback.version>
+        <ch.vd.technical.esb.version>5.4.1</ch.vd.technical.esb.version>
+
+        <com.h2database.version>2.1.214</com.h2database.version>
+
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+
+        <io.inugami.version>2.2.2</io.inugami.version>
+        <io.inugami.maven.plugin.analysis.version>1.6.3</io.inugami.maven.plugin.analysis.version>
+        <io.inugami.maven.plugin.lifecycle.version>2.0.1</io.inugami.maven.plugin.lifecycle.version>
+        <io.projectreactor.netty.version>0.9.25.RELEASE</io.projectreactor.netty.version>
+        <io.swagger.core.v3.version>2.1.12</io.swagger.core.v3.version>
+
+
+        <javax.persistence.version>2.2</javax.persistence.version>
+
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+
+        <net.logstash.logback.version>7.3</net.logstash.logback.version>
+
+        <org.apache.activemq.version>5.16.6</org.apache.activemq.version>
+        <org.apache.geronimo.specs.version>1.1.1</org.apache.geronimo.specs.version>
+        <org.codehaus.mojo.version>3.3.0</org.codehaus.mojo.version>
+        <org.e1clipse.jetty.version>9.4.51.v20230217</org.e1clipse.jetty.version>
+        <org.liquibase.version>4.20.0</org.liquibase.version>
+        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+        <org.mapstruct.extensions.spring.version>1.0.0</org.mapstruct.extensions.spring.version>
+        <org.pitest.version>1.11.7</org.pitest.version>
+        <org.projectlombok.lombok-mapstruct-binding.version>0.2.0</org.projectlombok.lombok-mapstruct-binding.version>
+        <org.projectlombok.version>1.18.26</org.projectlombok.version>
+        <org.slf4j.version>1.7.36</org.slf4j.version>
+        <org.springdoc.springdoc-openapi-ui.version>1.6.4</org.springdoc.springdoc-openapi-ui.version>
+        <org.springframework.version>5.3.25</org.springframework.version>
+        <org.springframework.boot.version>2.7.9</org.springframework.boot.version>
+        <org.springframework.cloud.version>2021.0.6</org.springframework.cloud.version>
+        <org.springframework.restdocs.version>2.0.7.RELEASE</org.springframework.restdocs.version>
+        <org.springframework.cloud.spring-cloud-starter-contract-stub-runner.version>4.0.1</org.springframework.cloud.spring-cloud-starter-contract-stub-runner.version>
+
+        <org.zalando.problem.version>0.27.1</org.zalando.problem.version>
+    </properties>
+
+
+    <!-- =======================================================================
+    = MODULES
+    ======================================================================== -->
+    <modules>
+        <module>edu-demo-api</module>
+        <module>edu-demo-commons</module>
+        <module>edu-demo-core</module>
+        <module>edu-demo-interfaces</module>
+        <module>edu-demo-infrastructures</module>
+        <module>edu-demo-ui</module>
+        <module>edu-demo-webapp</module>
+    </modules>
+
+    <!-- =======================================================================
+    = DEPENDENCIES MANAGEMENT
+    ======================================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${ch.qos.logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-infrastructures</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.education.demo</groupId>
+                <artifactId>edu-demo-interfaces</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-client</artifactId>
+                <version>${ch.vd.technical.esb.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-client-core</artifactId>
+                <version>${ch.vd.technical.esb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.vd.technical.esb</groupId>
+                <artifactId>esb-client-spring-boot-starter</artifactId>
+                <version>${ch.vd.technical.esb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${com.h2database.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_api</artifactId>
+                <version>${io.inugami.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_commons</artifactId>
+                <version>${io.inugami.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.weld</groupId>
+                        <artifactId>weld-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_logs_obfuscator</artifactId>
+                <version>${io.inugami.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami</groupId>
+                <artifactId>inugami_commons_test</artifactId>
+                <version>${io.inugami.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami.monitoring.distributions</groupId>
+                <artifactId>inugami_monitoring_spingboot</artifactId>
+                <version>${io.inugami.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.inugami.maven.plugin.analysis</groupId>
+                <artifactId>inugami-project-analysis-maven-plugin-annotations</artifactId>
+                <version>${io.inugami.maven.plugin.analysis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.projectreactor.netty</groupId>
+                <artifactId>reactor-netty</artifactId>
+                <version>${io.projectreactor.netty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${io.swagger.core.v3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${javax.persistence.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.logstash.logback</groupId>
+                <artifactId>logstash-logback-encoder</artifactId>
+                <version>${net.logstash.logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${org.apache.activemq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>${org.apache.geronimo.specs.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-util</artifactId>
+                <version>${org.e1clipse.jetty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-io</artifactId>
+                <version>${org.e1clipse.jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${org.e1clipse.jetty.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${org.liquibase.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct.extensions.spring</groupId>
+                <artifactId>mapstruct-spring-annotations</artifactId>
+                <version>${org.mapstruct.extensions.spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${org.springdoc.springdoc-openapi-ui.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.tomakehurst</groupId>
+                        <artifactId>wiremock-jre8</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>4.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${org.springframework.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-activemq</artifactId>
+                <version>${org.springframework.boot.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.springframework.restdocs</groupId>
+                <artifactId>spring-restdocs-mockmvc</artifactId>
+                <version>${org.springframework.restdocs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+                <version>${org.springframework.cloud.spring-cloud-starter-contract-stub-runner.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8-standalone</artifactId>
+                <version>2.35.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8</artifactId>
+                <version>2.35.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${org.slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.33</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.zalando</groupId>
+                <artifactId>problem</artifactId>
+                <version>${org.zalando.problem.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+
+    <!-- =======================================================================
+    = DEPENDENCIES
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test_it/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>repackage</id>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                            <configuration>
+                                <skip>${super.springboot.enabled}</skip>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/test_it/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>5.0.0</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>8.1.2</version>
+                <configuration>
+                    <failBuildOnCVSS>8</failBuildOnCVSS>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${org.codehaus.mojo.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-integration-test-source-as-test-sources</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test_it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <showDeprecation>true</showDeprecation>
+                    <encoding>UTF-8</encoding>
+
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${org.projectlombok.version}</version>
+                        </path>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${org.projectlombok.lombok-mapstruct-binding.version}</version>
+                        </dependency>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+
+        </plugins>
+    </build>
+
+</project>

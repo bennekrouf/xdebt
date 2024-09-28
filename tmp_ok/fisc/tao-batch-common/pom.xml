@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>ch.vd.dfin.tao</groupId>
+		<artifactId>tao-parent</artifactId>
+		<version>3.0.15</version>
+	</parent>
+
+	<artifactId>tao-batch-common</artifactId>
+	<version>1.9-SNAPSHOT</version>
+	<name>TAO Batch Common - Framework pour les batches (multithreading, log, etc.)</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>ch.vd.dfin.tao.tao-pp</groupId>
+			<artifactId>tao-pp-external-services</artifactId>
+			<version>24.1.6</version>
+			<classifier>client-batch</classifier>
+			<exclusions>
+				<exclusion>
+					<artifactId>tao-pp-services</artifactId>
+					<groupId>ch.vd.dfin.tao.tao-pp</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>ch.vd.dfin.tao.tao-pp</groupId>
+			<artifactId>tao-pp-common</artifactId>
+			<version>24.1.6</version>
+			<classifier>client</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>net.sourceforge.beet</groupId>
+					<artifactId>beet-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.vd.dfin.tao.tao-pp</groupId>
+			<artifactId>tao-pp-lib</artifactId>
+			<version>24.1.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+
+	</dependencies>
+	<scm>
+      <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-batch-common.git</connection>
+      <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-batch-common.git</developerConnection>
+      <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tao-batch-common</url>
+      <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+</project>

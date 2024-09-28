@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PARENT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.cofop</groupId>
+        <artifactId>cofop</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <groupId>ch.vd.education.cofop</groupId>
+    <artifactId>cofop-webapp</artifactId>
+    <name>COFOP (webapp)</name>
+
+    <!-- =======================================================================
+    = PROPERTIES
+    ======================================================================== -->
+    <properties>
+        <super.bdd.test/>
+        <super.springboot.skip>false</super.springboot.skip>
+        <super.pitest.enabled>false</super.pitest.enabled>
+        <super.owasp.enabled>false</super.owasp.enabled>
+        <super.xfile.enabled/>
+        <super.devex.enabled/>
+        <inugami.maven.plugin.analysis.display.release.note.enabled/>
+        <super.assembly.enabled/>
+        <super.deploy.enabled/>
+        <super.owasp.false.positive.file>${project.basedir}/../owasp-false-positive.xml</super.owasp.false.positive.file>
+
+        <!--:: FRONT :::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+        <target.classes>${project.build.directory}/classes</target.classes>
+        <target.classes.publicOrStatic>public</target.classes.publicOrStatic>
+        <static.final.outputDirectory>static</static.final.outputDirectory>
+    </properties>
+
+    <!-- =======================================================================
+    = MODULES
+    ======================================================================== -->
+    <modules>
+    </modules>
+
+    <!-- =======================================================================
+    = DEPENDENCIES MANAGEMENT
+    ======================================================================== -->
+    <dependencyManagement>
+    </dependencyManagement>
+
+    <!-- =======================================================================
+    = DEPENDENCIES
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-infrastructure</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-interface</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.education.cofop</groupId>
+            <artifactId>cofop-front</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.shared</groupId>
+            <artifactId>shared-iam</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.devsupport</groupId>
+            <artifactId>vd-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- TESTING -->
+
+    </dependencies>
+
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>version.txt</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>version.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test_it/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>exec-copy-front-noindex</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${target.classes}/${target.classes.publicOrStatic}/${static.final.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../cofop-front/front/dist/package</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>index.html</exclude>
+                                        <!-- can be removed in a major version when all is migrated to APP_BASE_HREF -->
+                                        <exclude>static/**/*.*</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>exec-copy-front-onlyindex</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${target.classes}/${target.classes.publicOrStatic}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../cofop-front/front/dist/package</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>index.html</include>
+                                        <!-- can be removed in a major version when all is migrated to APP_BASE_HREF -->
+                                        <include>static/**/*.*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

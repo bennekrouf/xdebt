@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.ptep.sibat</groupId>
+        <artifactId>sibat-app</artifactId>
+        <version>5.19.13-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sibat</artifactId>
+    <packaging>pom</packaging>
+    <name>SIBAT Distribution</name>
+
+    <properties>
+        <dist.dir>${project.build.directory}/dist</dist.dir>
+        <deploy.dir>d:/dev/deploy/sibat/dev</deploy.dir>
+        <target.environment>dinf</target.environment>
+        <devex-maven-plugin.version>1.1.1</devex-maven-plugin.version>
+        <devex-maven-plugin.phase>deploy</devex-maven-plugin.phase>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_WEB</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_SERVICE</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_EXPORTS</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_STC</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_REGROUPEMENT</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_VALID</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_FUSION</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_IMPORTMO</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_IMPORTSTC</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>SIBAT_BATCH_LOCALITE</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+-->
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>sibat-documentation</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>sibat-database</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.ptep.sibat</groupId>
+            <artifactId>sibat-release</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <finalName>sibat-${project.version}</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+					<groupId>ch.vd.devex</groupId>
+					<artifactId>devex-maven-plugin</artifactId>
+					<version>${devex-maven-plugin.version}</version>
+					<configuration>
+						<url>${devex.url}</url>
+						<deployUnits>
+							<deployUnit>${devex.deployUnit}</deployUnit>
+						</deployUnits>
+						<deployTarget>${devex.deployTarget}</deployTarget>
+						<configTag>${devex.configTag}</configTag>
+						<environment>IN</environment>
+						<releaseVersion>${devex.releaseVersion}</releaseVersion>
+					</configuration>
+				</plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+         <plugin>
+           <artifactId>maven-antrun-plugin</artifactId>
+           <executions>
+            <execution>
+                <id>prepare-repository-url</id>
+                <phase>validate</phase>
+                <goals>
+                    <goal>run</goal>
+                </goals>
+                <configuration>
+                    <exportAntProperties>true</exportAntProperties>
+                    <target>
+                        <condition property="isSnapshot">
+                            <contains string="${project.version}" substring="-SNAPSHOT" />
+                        </condition>
+                        <condition property="deployFileUrl" value="${project.distributionManagement.snapshotRepository.url}">
+                            <isset property="isSnapshot" />
+                        </condition>
+                        <property name="deployFileUrl" value="${project.distributionManagement.repository.url}" />
+                        <echo>Repository URL: ${deployFileUrl}</echo>
+                    </target>
+                </configuration>
+            </execution>
+             <execution>
+               <phase>package</phase>
+               <goals>
+                 <goal>run</goal>
+               </goals>
+               <configuration>
+                 <tasks>
+                   <unzip src="../Sources/SIBAT_WEB/target/SIBAT_WEB-${project.version}-distribution.zip" dest="${project.build.directory}/dist/tmp" />          
+                   <copy file="${project.build.directory}/dist/tmp/SIBAT_WEB_V${project.version}/deployment/sibat.war" tofile="${project.build.directory}/dist/sibat-${project.version}/deployment/sibat.war" />
+                   <copy todir="${project.build.directory}/dist/sibat-${project.version}/config" overwrite="false">
+					  <fileset dir="../Sources/SIBAT_WEB/src/main/assembly/conf">
+					     <include name="**/liens-aide.properties" />
+					     <include name="log4j2.xml" />
+					  </fileset>
+					</copy>   
+					<mkdir dir="${project.build.directory}/dist/sibat-${project.version}/doc" />
+					<copy todir="${project.build.directory}/dist/sibat-${project.version}/doc" overwrite="false">
+					  <fileset dir="../Documentation/doc">
+					    <include name="*.doc" />
+					    <include name="*txt" />
+					  </fileset>
+					</copy>
+					<copy todir="${project.build.directory}/dist/sibat-${project.version}/doc" overwrite="false">
+					  <fileset dir="../Release/doc">
+					    <include name="*.txt" />
+					     <include name="*.xls" />
+					  </fileset>
+					</copy>
+					<delete dir="${project.build.directory}/dist/tmp" />     
+					<delete dir="${project.build.directory}/dist/services" />     
+					<delete dir="${project.build.directory}/dist/SIBAT" />  
+					<unzip src="../database/target/sibat-database-${project.version}-distribution.zip" dest="${project.build.directory}/sql" />
+                   <unzip src="../Sources/SIBAT_BATCH_VALID/target/SIBAT_BATCH_VALID-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_EXPORTS/target/SIBAT_BATCH_EXPORTS-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_STC/target/SIBAT_BATCH_STC-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_REGROUPEMENT/target/SIBAT_BATCH_REGROUPEMENT-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_FUSION/target/SIBAT_BATCH_FUSION-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_IMPORTMO/target/SIBAT_BATCH_IMPORTMO-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+<!--
+                   <unzip src="../Sources/SIBAT_BATCH_IMPORTSTC/target/SIBAT_BATCH_IMPORTSTC-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+                   <unzip src="../Sources/SIBAT_BATCH_LOCALITE/target/SIBAT_BATCH_LOCALITE-distribution.zip" dest="${project.build.directory}/dist/sibat-${project.version}/batch" />
+-->
+				   <zip destfile="${project.build.directory}/sibat-${project.version}-SQL.zip" basedir="${project.build.directory}/sql" update="true" />
+				   			   
+				   <unzip src="../Sources/SIBAT_SERVICE/target/SIBAT_SERVICE-${project.version}-distribution.zip" dest="${project.build.directory}/dist/services" />
+				   <copy todir="${project.build.directory}/dist/sibat-${project.version}/deployment" overwrite="false">
+					  <fileset dir="${project.build.directory}/dist/services/SIBAT_SERVICES_V${project.version}/deployment">
+					    <include name="*.*" />
+					  </fileset>
+					</copy>
+					<copy todir="${project.build.directory}/dist/sibat-${project.version}/config" overwrite="false">
+					  <fileset dir="${project.build.directory}/dist/services/SIBAT_SERVICES_V${project.version}/config">
+					    <include name="*.*" />
+					  </fileset>
+					</copy>
+					<delete dir="${project.build.directory}/dist/services" />
+				   <zip destfile="${project.build.directory}/sibat-${project.version}.zip" basedir="${project.build.directory}/dist" update="true" />
+                 </tasks>
+               </configuration>
+             </execution> 
+           </executions>
+         </plugin>
+        <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <id>default-deploy</id>
+                    <phase>none</phase>
+                </execution>
+                <execution>
+                    <id>deploy-file-to-nexus</id>
+                    <phase>package</phase>
+                </execution>
+            </executions>
+            <configuration>
+                <skip>false</skip>
+            </configuration>
+        </plugin>
+        </plugins>
+    </build> 
+
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy-file-to-nexus</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy-file</goal>
+                                </goals>
+                                <configuration>
+                                    <file>target/sibat-${project.version}.zip</file>
+                                    <repositoryId>nexus-dgnsi-server</repositoryId>
+                                    <url>${deployFileUrl}</url>
+                                    <groupId>ch.vd.ptep.sibat</groupId>
+                                    <artifactId>sibat</artifactId>
+                                    <version>${project.version}</version>
+                                    <packaging>zip</packaging>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>IN</environment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

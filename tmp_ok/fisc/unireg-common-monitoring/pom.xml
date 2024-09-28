@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for Unireg-XmlBeans -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.unireg</groupId>
+	<artifactId>unireg-common-monitoring</artifactId>
+	<packaging>jar</packaging>
+	<version>1.1.1-SNAPSHOT</version>
+
+	<name>Unireg - Common Monitoring</name>
+	<description>Unireg - Classes de monitoring communes à Nexus, Web et WS</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>ch.vd.unireg</groupId>
+			<artifactId>unireg-common</artifactId>
+			<version>${unireg-common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.registre</groupId>
+			<artifactId>shared-jmx-common</artifactId>
+			<version>${shared-jmx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.shared</groupId>
+			<artifactId>shared-service-tracing</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.vd.shared</groupId>
+			<artifactId>shared-status-manager</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+                    <release>11</release>
+                    <showDeprecation>true</showDeprecation>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<distributionManagement>
+		<repository>
+			<id>nexus.releases</id>
+			<name>Nexus releases</name>
+			<url>${nexus.url.releases}</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus.snapshots</id>
+			<name>Nexus snaphots</name>
+			<url>${nexus.url.snapshots}</url>
+			<!-- évite d'ajouter un timestamp à chaque déploiement : nécessaire pour avoir les sources synchrones avec un jar snapshot -->
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/unireg-common-monitoring</url>
+		<connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-common-monitoring.git</connection>
+		<developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/unireg-common-monitoring.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	
+	<properties>
+		<!-- Application settings -->
+		<copyright.year>2020</copyright.year>
+		<amp.genericCore>true</amp.genericCore>
+		<amp.fullSource>false</amp.fullSource>
+		<shared-jmx.version>4.2.0</shared-jmx.version>
+		<jackson.version>2.9.8</jackson.version>
+		<junit.version>4.12</junit.version>
+		<unireg-common.version>1.0.0</unireg-common.version>
+	</properties>
+	
+</project>
+

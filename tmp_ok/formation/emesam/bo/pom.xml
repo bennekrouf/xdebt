@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>emesambo</artifactId>
+    <version>9.3.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>eMesam - Backoffice</name>
+
+    <parent>
+        <groupId>ch.vd.formation.emesam</groupId>
+        <artifactId>emesam-parent</artifactId>
+        <version>9.3.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <scm>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/formation/emesam</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.formation.emesam</groupId>
+            <artifactId>emesam-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cyber</groupId>
+            <artifactId>starter-bo-jdbc-jms</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cyber.sdk</groupId>
+            <artifactId>backoffice-be</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cyber.sdk</groupId>
+            <artifactId>pdfrecap-be</artifactId>
+            <version>2.5.7</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cyber.sdk</groupId>
+            <artifactId>refinf-be</artifactId>
+            <version>${refinf-be.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.vd.cyber</groupId>
+            <artifactId>cyber-common</artifactId>
+            <version>${cyber-common.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Pour creation des scripts SQL -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+        </dependency>
+
+        <!-- Tests -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.pee</groupId>
+            <artifactId>pee-shared-testing</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.cyber.sdk</groupId>
+            <artifactId>backoffice-be</artifactId>
+            <version>${backoffice-be.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.cybersdk</groupId>
+            <artifactId>prestations-be</artifactId>
+            <version>${prestations-be.version}</version>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.cyber</groupId>
+            <artifactId>starter-bo-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>exec-yarn-install</id>
+                        <configuration>
+                            <executable>yarn</executable>
+                            <workingDirectory>front</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                            <skip>${build.nofront}</skip>
+                        </configuration>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-bower-install</id>
+                        <configuration>
+                            <executable>bower</executable>
+                            <workingDirectory>front</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                            <skip>${build.nofront}</skip>
+                        </configuration>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-gulp-build</id>
+                        <configuration>
+                            <executable>yarn</executable>
+                            <arguments>
+                                <argument>build</argument>
+                            </arguments>
+                            <workingDirectory>front</workingDirectory>
+                            <skip>${build.nofront}</skip>
+                        </configuration>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-gulp-test</id>
+                        <configuration>
+                            <skip>${skipTests}</skip>
+                            <executable>yarn</executable>
+                            <workingDirectory>front</workingDirectory>
+                            <arguments>
+                                <argument>test</argument>
+                            </arguments>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <skip>${build.nofront}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>copy-gulp-dist</id>
+                        <!-- here the phase you need -->
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>front/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>${maven-jaxb2-plugin.version}</version>
+                <configuration>
+                    <strict>false
+                    </strict> <!-- see https://github.com/highsource/maven-jaxb2-plugin/wiki/Catalogs-in-Strict-Mode -->
+                    <schemaDirectory>${basedir}/src/main/resources/xsd/refedu</schemaDirectory>
+                    <args>
+                        <arg>-extension</arg>
+                        <arg>-Xvalue-constructor</arg>
+                    </args>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>schema-generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaIncludes>
+                                <include>eleve-2-0.xsd</include>
+                            </schemaIncludes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-value-constructor</artifactId>
+                        <version>${jaxb2-value-constructor.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <properties>
+        <poi.version>3.15</poi.version>
+        <cyber-common.version>2.8.0</cyber-common.version>
+        <refinf-be.version>2.5.0</refinf-be.version>
+        <devex.configTag>master</devex.configTag>
+    </properties>
+
+</project>

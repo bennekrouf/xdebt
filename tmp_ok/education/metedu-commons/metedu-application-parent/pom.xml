@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- =======================================================================
+    = PARENT
+    ======================================================================== -->
+    <parent>
+        <groupId>ch.vd.education.metedu.commons</groupId>
+        <artifactId>metedu-dependencies</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
+        <relativePath>../metedu-dependencies</relativePath>
+    </parent>
+
+    <!-- =======================================================================
+    = PROJECT
+    ======================================================================== -->
+    <artifactId>metedu-application-parent</artifactId>
+    <name>MET-EDU (application)</name>
+    <packaging>pom</packaging>
+
+    <!-- =======================================================================
+    = PROPERTIES
+    ======================================================================== -->
+    <properties>
+        <super.springboot.skip>true</super.springboot.skip>
+        <super.frontend.build.enabled>false</super.frontend.build.enabled>
+        <build.nofront>false</build.nofront>
+        <super.querydsl.enabled>false</super.querydsl.enabled>
+        <super.test.mutation />
+        <super.owasp.enabled>false</super.owasp.enabled>
+        <super.owasp.false.positive.file>${project.basedir}/owasp-false-positive.xml</super.owasp.false.positive.file>
+        <maven-checkstyle-plugin.enabled>false</maven-checkstyle-plugin.enabled>
+        <maven-checkstyle-plugin.configLocation>${project.basedir}/checkstyle-rules.xml
+        </maven-checkstyle-plugin.configLocation>
+        <super.pitest.enabled>false</super.pitest.enabled>
+        <super.assembly.enabled>false</super.assembly.enabled>
+        <super.bdd.test>false</super.bdd.test>
+        <super.bdd.test.json.source.directory>${project.build.directory}/cucumber-reports
+        </super.bdd.test.json.source.directory>
+        <super.bdd.test.report.directory>${project.build.directory}/generated-report</super.bdd.test.report.directory>
+        <maven.failsafe.argLine />
+
+        <inugami.maven.plugin.analysis.writer.neo4j.url>bolt://localhost:7687
+        </inugami.maven.plugin.analysis.writer.neo4j.url>
+        <inugami.maven.plugin.analysis.writer.neo4j.user>neo4j</inugami.maven.plugin.analysis.writer.neo4j.user>
+        <inugami.maven.plugin.analysis.writer.neo4j.password>password
+        </inugami.maven.plugin.analysis.writer.neo4j.password>
+        <inugami.maven.plugin.analysis.git>true</inugami.maven.plugin.analysis.git>
+        <inugami.maven.plugin.analysis.display.release.note.enabled>false
+        </inugami.maven.plugin.analysis.display.release.note.enabled>
+        <mock.generator.path />
+
+        <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+        <super.nexus.enabled>false</super.nexus.enabled>
+        <devex-maven-plugin.configTag>master</devex-maven-plugin.configTag>
+        <devex-maven-plugin.deployTarget>EMBEDDED</devex-maven-plugin.deployTarget>
+        <super.devex.enabled>false</super.devex.enabled>
+
+        <!--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-->
+        <sonar.exclusion>
+            **/test/**,
+            **/test_it/**,
+            **/*Test.java,
+            **/*IT.java,
+            **/*Builder.java,
+            **/Q*Entity.java
+        </sonar.exclusion>
+        <sonar.coverage.exclusions>
+            **/*Test.java,
+            **/*IT.java,
+            **/*DatasourceConfiguration.java,
+            **/*Application.java,
+            **/*Property.java,
+            **/*Properties.java,
+            **/*ScheduledLogJsonReporterProperty.java,
+            **/*Constants.java,
+            **/*CacheConfiguration.java,
+            **/*Builder.java,
+            **/Q*Entity.java
+        </sonar.coverage.exclusions>
+        <sonar.cpd.exclusions>
+            **/*Entity.java,
+            **/dto/*.java,
+            **/*Test.java,
+        </sonar.cpd.exclusions>
+
+        <sonar.issue.ignore.multicriteria>e1,e2,e3,e4</sonar.issue.ignore.multicriteria>
+
+        <!-- exclude : java:S5838  Use isZero() instead -->
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S5838</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>**/src/test/**/*
+        </sonar.issue.ignore.multicriteria.e1.resourceKey>
+
+        <!-- exclude : java:S5361  Replace this call to "replaceAll()" by a call to the "replace()" -->
+        <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S5361</sonar.issue.ignore.multicriteria.e2.ruleKey>
+        <sonar.issue.ignore.multicriteria.e2.resourceKey>**/src/**/*</sonar.issue.ignore.multicriteria.e2.resourceKey>
+
+        <!-- exclude : java:S1710  Remove the 'ApiResponses' wrapper from this annotation group" -->
+        <sonar.issue.ignore.multicriteria.e3.ruleKey>java:S1710</sonar.issue.ignore.multicriteria.e3.ruleKey>
+        <sonar.issue.ignore.multicriteria.e3.resourceKey>**/src/**/*</sonar.issue.ignore.multicriteria.e3.resourceKey>
+
+        <!-- exclude : java:S2699 Add at least one assertion to this test case -->
+        <sonar.issue.ignore.multicriteria.e4.ruleKey>java:S2699</sonar.issue.ignore.multicriteria.e4.ruleKey>
+        <sonar.issue.ignore.multicriteria.e4.resourceKey>**/src/test/**/*
+        </sonar.issue.ignore.multicriteria.e4.resourceKey>
+    </properties>
+
+    <!-- =======================================================================
+    = DEPENDENCY MANAGEMENT
+    ======================================================================== -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ch.vd.devsupport</groupId>
+                <artifactId>vd-spring-boot-starter</artifactId>
+                <version>${ch.vd.devsupport.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- =======================================================================
+    = DEPENDENCIES
+    ======================================================================== -->
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+    </dependencies>
+    <!-- =======================================================================
+    = BUILD
+    ======================================================================== -->
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+
+            <testResource>
+                <directory>src/test_it/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>io.inugami.maven.plugin.lifecycle</groupId>
+                <artifactId>inugami-maven-lifecycle</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>io.inugami.maven.plugin.analysis</groupId>
+                <artifactId>inugami-project-analysis-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cluecumber-maven</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- =======================================================================
+    = PROFILES
+    ======================================================================== -->
+    <profiles>
+        <profile>
+            <id>not</id>
+            <properties>
+                <skipTests>true</skipTests>
+                <skipTestsFront>true</skipTestsFront>
+                <swagger.generator.disabled>true</swagger.generator.disabled>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>no.snapshot</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>owasp-dependency-check</id>
+            <properties>
+                <super.owasp.enabled />
+            </properties>
+        </profile>
+
+        <profile>
+            <id>nof</id>
+            <properties>
+                <build.nofront>true</build.nofront>
+                <skipTestsFront>true</skipTestsFront>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>assembly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>${super.assembly.enabled}package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <finalName>${assembly.finalName}</finalName>
+                            <descriptors>
+                                <descriptor>assembly.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-clean</id>
+                                <phase>${super.nexus.enabled}install</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${project.build.directory}</directory>
+                                            <excludes>
+                                                <exclude>${assembly.finalName}.tar.gz</exclude>
+                                            </excludes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>nexus</id>
+            <properties>
+                <release.goals>clean deploy</release.goals>
+                <devex-maven-plugin.phase>deploy</devex-maven-plugin.phase>
+                <super.deploy.enabled />
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus DGNSI</name>
+                    <url>${nexus.url}/app-jenkinsdgnsi-stable</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-dgnsi-server</id>
+                    <name>Nexus DGNSI</name>
+                    <url>${nexus.url}/app-jenkinsdgnsi-snapshots</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+
+        <profile>
+            <id>docker</id>
+            <properties>
+                <release.goals>clean verify</release.goals>
+                <release.profiles>not</release.profiles>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>devex.release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create</id>
+                                <phase>${super.devex.enabled}package</phase>
+                                <goals>
+                                    <goal>create-release</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>devex.in</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>ch.vd.devex</groupId>
+                        <artifactId>devex-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>${super.devex.enabled}${devex-maven-plugin.phase}</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                                <configuration>
+                                    <environment>IN</environment>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <node.packagemanager.executable>yarn.cmd</node.packagemanager.executable>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>ch.vd.sieeo.pareo</groupId>
+	<artifactId>master-pom</artifactId>
+	<packaging>pom</packaging>
+	<version>24.4.2-SNAPSHOT</version>
+	<name>PAREO Master POM</name>
+	<description>PAREO Master POM</description>
+	<organization>
+		<name>Tata Consultancy Services</name>
+		<url>www.tcs.com</url>
+	</organization>
+
+	<scm>
+		<connection>${scm.connexion}</connection>
+		<developerConnection>${scm.developerConnection}</developerConnection>
+		<url>${scm.url}</url>
+		<tag>${scm.tag}</tag>
+	</scm>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.9</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+
+	<properties>
+		<scm.connexion />
+		<scm.developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/formation/pareo.git</scm.developerConnection>
+		<scm.url />
+		<scm.tag>HEAD</scm.tag>
+
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+		<maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+		<jdk.version>17</jdk.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+
+		<oracle.jdbc.version>19.24.0.0</oracle.jdbc.version>
+		<postgresql.version>42.7.4</postgresql.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
+		<jacoco.aggregate.report>build-report/target/site/jacoco-aggregate/jacoco.xml</jacoco.aggregate.report>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/${jacoco.aggregate.report}</sonar.coverage.jacoco.xmlReportPaths>
+
+		<sonar.compiler.source>${maven.compiler.source}</sonar.compiler.source>
+		<sonar.compiler.target>${maven.compiler.target}</sonar.compiler.target>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.java.libraries>target</sonar.java.libraries>
+		<sonar.java.binaries>target</sonar.java.binaries>
+		<sonar.exclusions>
+			**/rest/conf/**,**/rest/dto/**,**/rest/cache/**,**/rest/esb/**,**/rest/poll/**,**/rest/scheduled/**,**/rest/security/**,**/rest/controller/error/**,**/rest/controller/security/**,
+			**/rest/esb/PareoQueue.java,
+			**/repository/conf/jpa/**,**/ch/vd/sieeo/pareo/repository/AbstractAuditedRepository.java,**/ch/vd/sieeo/pareo/repository/AuditRepositoryImpl.java,
+			**/ch/vd/sieeo/pareo/common/FileHelper.java,**/ch/vd/sieeo/pareo/repository/OracleRepositoryImpl.java,
+			**/ch/vd/sieeo/pareo/infra/mail/InfraMailer.java,
+			**/ch/vd/sieeo/pareo/infra/log/InfraLogger.java
+		</sonar.exclusions>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+
+		<!-- Major dependencies versions -->
+		<jackson.version>2.17.2</jackson.version>
+		<hikaricp.version>5.1.0</hikaricp.version> <!-- To override Spring boot default dependencies -->
+		<iam.version>10.1.0</iam.version>
+		<activemq.version>6.1.3</activemq.version>
+		<esb-client.version>6.0.1</esb-client.version>
+		<hsqldb.version>2.7.3</hsqldb.version>
+		<spring-test-dbunit.version>1.3.0</spring-test-dbunit.version>
+		<dbunit.version>2.8.0</dbunit.version>
+		<liquibase.version>4.29.2</liquibase.version>
+		<jaxb.version>4.0.5</jaxb.version>
+		<logback.version>1.5.8</logback.version>
+		<javers.version>7.6.2</javers.version>
+
+		<!-- Build properties -->
+		<skip.slow.tests>false</skip.slow.tests>
+		<skip.front.dependencies.update>true</skip.front.dependencies.update>
+		<skip.build.front>false</skip.build.front>
+		<front.dist.directory>../pareo-front/target/dist</front.dist.directory>
+
+		<maven.deploy.skip>true</maven.deploy.skip>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>check-front-dependencies-update</id>
+			<properties>
+				<skip.front.dependencies.update>false</skip.front.dependencies.update>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>low-memory-env</id>
+			<properties>
+				<skip.build.front>true</skip.build.front>
+				<skip.slow.tests>true</skip.slow.tests>
+				<skip.front.dependencies.update>true</skip.front.dependencies.update>
+				<front.dist.directory>../pareo-front/src/assets/html</front.dist.directory> <!-- Fake front ressources dir to avoid error as front app is not built -->
+			</properties>
+		</profile>
+
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+						<configuration>
+							<excludes>
+								<exclude>**/**IntegrationTest.java</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>TCS</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<scm.connexion>scm:git:ssh://git@bitbucket.org/alti-suisse/pareo.git</scm.connexion>
+				<scm.developerConnection>scm:git:ssh://git@bitbucket.org/alti-suisse/pareo.git</scm.developerConnection>
+				<scm.url>https://bitbucket.org/alti-suisse/pareo</scm.url>
+				<scm.tag>HEAD</scm.tag>
+
+				<prepare.goals>clean install verify</prepare.goals>
+				<release.goals>deploy</release.goals>
+				<release.profiles>TCS,not</release.profiles>
+				<release.arguments>-B -P release -Dmaven.javadoc.skip=true</release.arguments>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>DGNSI</id>
+			<activation>
+				<property>
+					<name>dgnsi.stable</name>
+					<value>dgnsi-stable</value>
+				</property>
+			</activation>
+			<properties>
+				<scm.connexion />
+				<scm.developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/formation/pareo.git</scm.developerConnection>
+				<scm.url />
+				<scm.tag>HEAD</scm.tag>
+
+				<devex.profiles>devex.release,devex.in</devex.profiles>
+				<prepare.goals>clean verify</prepare.goals>
+				<release.goals>clean deploy</release.goals>
+				<release.profiles>DGNSI,not,nexus,${devex.profiles}</release.profiles>
+				<release.arguments/>
+			</properties>
+			<distributionManagement>
+				<repository>
+					<id>nexus.releases</id>
+					<name>Nexus releases</name>
+					<url>${nexus.url.stable}</url>
+				</repository>
+				<snapshotRepository>
+					<id>nexus.snapshots</id>
+					<name>Nexus snapshots</name>
+					<url>${nexus.url.snapshots}</url>
+					<uniqueVersion>false</uniqueVersion>
+				</snapshotRepository>
+			</distributionManagement>
+		</profile>
+
+		<profile>
+			<id>not</id>
+			<!-- NOTests -->
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+	</profiles>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>pareo-rest</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-antrun-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>3.0.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>3.1.1</version>
+					<configuration>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.12.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.11.0</version>
+					<configuration>
+						<source>${jdk.version}</source>
+						<target>${jdk.version}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${maven-failsafe-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+					<configuration>
+						<environmentVariables>
+							<SkipSlowTests>${skip.slow.tests}</SkipSlowTests>
+						</environmentVariables>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>sql-maven-plugin</artifactId>
+					<version>1.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[3.1,)</versionRange>
+										<goals>
+											<goal>copy</goal>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.jacoco</groupId>
+										<artifactId>jacoco-maven-plugin</artifactId>
+										<version>0.8.11</version>
+										<goals>
+											<goal>prepare-agent</goal>
+										</goals>
+									</pluginExecutionFilter>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.7</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.8.1</version>
+					<configuration>
+						<connectionType>developerConnection</connectionType>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>1.6.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${sonar-maven-plugin.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<goals>${release.goals}</goals>
+					<preparationGoals>${prepare.goals}</preparationGoals>
+					<releaseProfiles>${release.profiles}</releaseProfiles>
+					<tagNameFormat>@{project.version}</tagNameFormat>
+					<arguments>${release.arguments}</arguments>
+					<pushChanges>true</pushChanges>
+					<localCheckout>true</localCheckout>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>enforce-maven</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<dependencyConvergence /> <!-- Check dependencies conflicts during build -->
+								<requireMavenVersion>
+									<version>3.0</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<inherited>false</inherited>
+				<configuration>
+					<processPluginDependenciesInPluginManagement>false</processPluginDependenciesInPluginManagement>
+					<processPluginDependencies>false</processPluginDependencies>
+					<processDependencyManagement>false</processDependencyManagement>
+					<outputFile>pareo-rest/target/outdated-dependencies-master.txt</outputFile>
+					<rulesUri>file:///${project.basedir}/maven-versions-rules.xml</rulesUri>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>check-dependencies</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<ant antfile="${basedir}/build.xml">
+									<target name="checkDependencies" />
+								</ant>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.11</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>pareo-front</module>
+		<module>pareo-rest</module>
+		<module>domain</module>
+		<module>repository</module>
+		<module>repository-impl</module>
+		<module>service</module>
+		<module>service-impl</module>
+		<module>common</module>
+		<module>infra</module>
+		<module>infra-impl</module>
+		<module>build-report</module>
+		<module>packaging</module>
+	</modules>
+</project>

@@ -1,0 +1,370 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- ###### PARENT SPRING BOOT ###### -->
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.13.RELEASE</version>
+        <relativePath />
+    </parent>
+
+    <!-- ###### INFORMATIONS ###### -->
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ch.vd.fiscalite</groupId>
+    <artifactId>tao-boot-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>4.0.11-SNAPSHOT</version>
+    <name>TAO Boot Module parent</name>
+
+    <!-- ###### PROPERTIES ###### -->
+
+    <properties>
+
+        <!-- use UTF-8 for everything -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.encoding>UTF-8</project.encoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- JDK -->
+        <jdk.version>1.11</jdk.version>
+        <maven.compiler.target>1.11</maven.compiler.target>
+        <maven.compiler.source>1.11</maven.compiler.source>
+        <maven.compiler.release>11</maven.compiler.release>
+        <java.version>1.11</java.version>
+
+        <!-- ### plugins ### -->
+        <!-- ### TODO utiliser les versions spring boot et surcharger que si nécessaire -->
+        <!-- ### TODO il est préférable de mettre à jour spring boot plutôt que la dépendance uniquement -->
+        <!-- ### https://github.com/spring-projects/spring-boot/blob/v2.2.13.RELEASE/spring-boot-project/spring-boot-dependencies/pom.xml -->
+        <cei-maven-plugin.version>1.1.0</cei-maven-plugin.version>
+        <maven-plugin-plugin.version>3.6.3</maven-plugin-plugin.version>
+        <maven-release-plugin.version>3.0.0-M6</maven-release-plugin.version>
+        <maven-surefire-report-plugin.version>3.0.0-M7</maven-surefire-report-plugin.version>
+        <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+        <maven-scm-plugin.version>1.11.3</maven-scm-plugin.version>
+        <gwt-maven-plugin.version>2.8.2</gwt-maven-plugin.version>
+        <vaadin-maven-plugin.version>14.1.2</vaadin-maven-plugin.version>
+
+        <!-- ### Présent dans spring boot -->
+        <!--		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version> -->
+        <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
+        <!--        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version> -->
+        <!--        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>-->
+        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
+        <maven-install-plugin.version>3.0.1</maven-install-plugin.version>
+        <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+        <!--        <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>-->
+        <!--        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>-->
+        <!--        <maven-site-plugin.version>3.8.2</maven-site-plugin.version>-->
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
+        <!--        <maven-war-plugin.version>3.2.3</maven-war-plugin.version>-->
+        <!--        <build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>-->
+        <!--        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>-->
+
+        <!-- ### Spring Boot version ### -->
+        <spring-boot.version>2.2.13.RELEASE</spring-boot.version>
+
+        <!-- ### Distribution ### -->
+        <dist.classifier>distribution</dist.classifier>
+        <dist.build.dir>${project.build.directory}/dist</dist.build.dir>
+        <dist.final.name.doc>documentation</dist.final.name.doc>
+        <dist.final.name.cfg>config</dist.final.name.cfg>
+        <dist.final.name.dep>deployment</dist.final.name.dep>
+        <dist.final.name.ext.db>-modeleDeDonnees</dist.final.name.ext.db>
+        <remote.server.deployment.oneInstance>false</remote.server.deployment.oneInstance>
+        <skip.war.deployment>true</skip.war.deployment>
+
+    </properties>
+
+
+    <!-- ###### BUILD ###### -->
+    <build>
+        <!-- ### TODO utiliser les définitions spring boot et surcharger que si nécessaire -->
+        <!-- ### https://github.com/spring-projects/spring-boot/blob/v2.2.13.RELEASE/spring-boot-project/spring-boot-dependencies/pom.xml -->
+        <pluginManagement>
+            <plugins>
+
+                <!-- Plugin pour upload zip vers CEI -->
+                <plugin>
+                    <groupId>cei.aew.web</groupId>
+                    <artifactId>cei-maven-plugin</artifactId>
+                    <version>${cei-maven-plugin.version}</version>
+                    <configuration>
+                        <webresourceurl>http://exploitation.etat-de-vaud.ch/outils/web/ws/rest</webresourceurl>
+                        <to>WEB</to>
+                    </configuration>
+                </plugin>
+
+                <!-- This plugin provides the ability to run Ant tasks from within Maven -->
+                <plugin>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
+                    <executions>
+                        <!-- Affiche des informations sur le build, utilisé par Hudson pour renseigner la description des builds. -->
+                        <execution>
+                            <id>print-build-desc</id>
+                            <phase>validate</phase>
+                            <configuration>
+                                <target>
+                                    <echo message="Building : ${project.artifactId}" />
+                                    <echo message="BuildDesc: ${project.version}" />
+                                </target>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- The Assembly Plugin for Maven is primarily intended to allow users to aggregate the project output along with its dependencies, modules, site documentation, and other files into a single distributable archive. -->
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+
+                <!-- The Clean Plugin is used when you want to remove files generated at build-time in a project's directory -->
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+
+                <!-- The Compiler Plugin is used to compile the sources of your project -->
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.encoding}</encoding>
+                        <release>${maven.compiler.release}</release>
+                        <compilerArgs>
+                            <arg>--add-opens=java.xml/jdk.xml.internal=ALL-UNNAMED</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+
+                <!-- The dependency plugin provides the capability to manipulate artifacts. It can copy and/or unpack artifacts from local or remote repositories to a specified location -->
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+
+                <!-- The deploy plugin is primarily used during the deploy phase, to add your artifact(s) to a remote repository for sharing with other developers and projects -->
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+
+                <!-- The Install Plugin is used during the install phase to add artifact(s) to the local repository -->
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+
+                <!-- This plugin provides the capability to build jars -->
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                </plugin>
+
+                <!-- The Javadoc Plugin uses the Javadoc tool to generate javadocs for the specified project -->
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+
+                <!-- The Surefire Report Plugin parses the generated TEST-*.xml files under ${basedir}/target/surefire-reports and renders them using DOXIA, which creates the web interface version of the test results -->
+                <plugin>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
+                    <version>${maven-surefire-report-plugin.version}</version>
+                </plugin>
+
+                <!-- The Maven Plugin Plugin is used to create a Maven plugin descriptor for any Mojo's found in the source tree, to include in the JAR. It is also used to generate report files for the Mojos as well as for updating the plugin registry, the artifact metadata and generating a generic help goal -->
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${maven-plugin-plugin.version}</version>
+                </plugin>
+
+                <!-- This plugin is used to release a project with Maven, saving a lot of repetitive, manual work. Releasing a project is made in two steps: prepare and perform -->
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>${maven-release-plugin.version}</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <!-- goal execute par la phase perform, au moment de construire la release. -->
+                        <goals>deploy -Denv=int</goals>
+                        <releaseProfiles>deploy-on-tomcat,deploy-war-nexus</releaseProfiles>
+                    </configuration>
+                </plugin>
+
+                <!-- The Resources Plugin handles the copying of project resources to the output directory -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                    <configuration>
+                        <encoding>${project.encoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- The Site Plugin is used to generate a site for the project -->
+                <plugin>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                </plugin>
+
+                <!-- The Source Plugin creates a jar archive of the source files of the current project -->
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <!-- Génération du jar contenant les sources à chaque packaging des artifacts. -->
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- The Surefire Plugin is used during the test phase of the build lifecycle to execute the unit tests of an application -->
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>
+                            --add-opens=java.xml/jdk.xml.internal=ALL-UNNAMED
+                            --illegal-access=permit
+                        </argLine>
+                    </configuration>
+                </plugin>
+
+                <!-- The Failsafe Plugin is designed to run integration tests while the Surefire Plugin is designed to run unit tests -->
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <configuration>
+                        <argLine>
+                            --add-opens=java.xml/jdk.xml.internal=ALL-UNNAMED
+                            --illegal-access=permit
+                        </argLine>
+                    </configuration>
+                </plugin>
+
+                <!-- The JaCoCo Maven plug-in provides the JaCoCo runtime agent to your tests and allows basic report creation -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+
+                <!-- The WAR Plugin is responsible for collecting all artifact dependencies, classes and resources of the web application and packaging them into a web application archive -->
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                </plugin>
+
+                <!-- The SCM Plugin offers vendor independent access to common scm commands by offering a set of command mappings for the configured scm. -->
+                <plugin>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>${maven-scm-plugin.version}</version>
+                </plugin>
+
+                <!-- This plugin contains various small independent goals to assist with the Maven build lifecycle. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>add-source-xdoclet</id>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <sources>
+                                    <source>${source.xdoclet.outputDirectory}</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- plugin gwt -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>${gwt-maven-plugin.version}</version>
+                </plugin>
+
+                <!-- plugin vaadin -->
+                <plugin>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-maven-plugin</artifactId>
+                    <version>${vaadin-maven-plugin.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- ###### DISTRIBUTION MANAGEMENT ###### -->
+    <!-- Permet de définir les urls pour Nexus -->
+
+    <distributionManagement>
+        <repository>
+            <id>nexus.releases</id>
+            <name>Nexus releases</name>
+            <url>${nexus.url.releases}</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>nexus.snapshots</id>
+            <name>Nexus snaphots</name>
+            <url>${nexus.url.snapshots}</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    <!-- ###### SCM ###### -->
+    <scm>
+        <connection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-boot-parent.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.etat-de-vaud.ch/fisc/tao-boot-parent.git</developerConnection>
+        <url>https://portail.etat-de-vaud.ch/outils/git/projects/FISC/repos/tao-boot-parent</url>
+        <tag>${project.artifactId}-${project.version}</tag>
+    </scm>
+
+
+    <!-- ###### PROFILES ###### -->
+
+    <profiles>
+        <profile>
+            <id>deploy-war-nexus</id>
+            <properties>
+                <skip.war.deployment>false</skip.war.deployment>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration-continue</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>print-build-desc</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

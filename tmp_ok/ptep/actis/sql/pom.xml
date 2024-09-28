@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<!-- POM for engine -->
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>actis-sql</artifactId>
+	<packaging>pom</packaging>
+
+	<name>Actis - sql</name>
+	<description>Actis - Camac</description>
+
+	<parent>
+        <groupId>ch.vd.ptep</groupId>
+        <artifactId>actis-base</artifactId>
+		<!-- BEGIN_LVERSION -->
+		<version>18.1-SNAPSHOT</version>
+		<!-- END_LVERSION -->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+</project>

@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.sipf</groupId>
+        <artifactId>sipf</artifactId>
+        <version>5.37.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>ch.vd.sipf</groupId>
+    <artifactId>interfacereceptionfrais</artifactId>
+    <packaging>jar</packaging>
+    <name>interfacereceptionfrais</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>commun</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>interfacethemis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>interfacedperm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>commun</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.vd.sipf</groupId>
+            <artifactId>interfaceesb</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-xjc-plugin</artifactId>
+                <version>${cxf-xjc-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>xsdtojava</goal>
+                        </goals>
+                        <configuration>
+                            <sourceRoot>${basedir}/target/generated-sources/src/main/java</sourceRoot>
+                            <xsdOptions>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/xsd/themisInvoice_V1.0.xsd</xsd>
+                                    <packagename>ch.vd.sipf.interfacereceptionfrais.invoice</packagename>
+                                </xsdOption>
+                                <xsdOption>
+                                    <xsd>${basedir}/src/main/resources/xsd/themisInvoiceCancellation_V1.1.xsd</xsd>
+                                    <bindingFile>${basedir}/src/main/resources/xsd/bindings.xml</bindingFile>
+                                    <packagename>ch.vd.sipf.interfacereceptionfrais.invoicecancellation</packagename>
+                                </xsdOption>
+                            </xsdOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

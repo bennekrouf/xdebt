@@ -5,29 +5,28 @@ pub fn compare_versions(current: &str, required: &str) -> bool {
     let (cur_major, cur_minor, _) = parse_version(current);
     let (req_major, req_minor, _) = parse_version(required);
 
-    // Handle wildcard 'x' in the required version (e.g., '1.x')
+    // Handle wildcard 'x' in the required version (e.g., '5.x')
     if required.contains('x') {
         if req_major == 0 {
             return true; // Major version 'x' matches any major version
         }
 
-        if cur_major != req_major {
-            return cur_major > req_major; // Compare only major versions if not equal
-        }
-
-        // If major versions are equal, check if the minor version is a wildcard
-        if let Some(req_minor) = req_minor {
-            if required.contains("x") {
-                return true; // Minor version 'x' matches any minor version
+        if cur_major > req_major {
+            return true; // Current major version is higher than required
+        } else if cur_major == req_major {
+            // If the major version matches, check minor version
+            if let Some(req_minor) = req_minor {
+                // Check if the required minor version is specified as one
+                if req_minor == 1 && current.contains('.') {
+                    return true; // Accept any valid version for minor '1.x'
+                }
+                return true; // Accept any current version if minor is unspecified or wildcard
             }
-            if let Some(cur_minor) = cur_minor {
-                return cur_minor >= req_minor;
-            }
+            return true; // If no minor version in required, only match major version
         }
-        return true; // If no minor version in required, only match major version
     }
 
-    // Compare numerical values for versions
+    // Compare numerical values for versions without wildcards
     if cur_major > req_major {
         return true;
     }
@@ -35,7 +34,7 @@ pub fn compare_versions(current: &str, required: &str) -> bool {
     if cur_major == req_major {
         if let Some(req_minor) = req_minor {
             if let Some(cur_minor) = cur_minor {
-                return cur_minor >= req_minor;
+                return cur_minor >= req_minor; // Current minor must meet or exceed required
             }
         }
         return true; // If no minor version in required, match major version only

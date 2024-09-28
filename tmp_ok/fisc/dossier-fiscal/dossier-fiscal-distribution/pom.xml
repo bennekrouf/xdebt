@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ch.vd.dfin.tao.dossier-fiscal</groupId>
+        <artifactId>dossier-fiscal</artifactId>
+        <version>25R1.A.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dossier-fiscal-distribution</artifactId>
+    <packaging>pom</packaging>
+    <name>dossier-fiscal-distribution</name>
+
+    <properties>
+        <assembly.finalName>${project.artifactId}-${project.version}</assembly.finalName>
+
+        <devex.deployEnv>IN</devex.deployEnv>
+        <devex.configTag>master</devex.configTag>
+        <devex.releaseVersion>${project.version}</devex.releaseVersion>
+        <devex.deployTarget>Tomcat9RHEL8</devex.deployTarget>
+    </properties>
+
+    <modules>
+        <module>dossier-fiscal-distribution-alimentation</module>
+        <module>dossier-fiscal-distribution-bo</module>
+        <module>dossier-fiscal-distribution-admin</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies-distribution</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <descriptors>
+                            <descriptor>src/main/assembly/release.xml</descriptor>
+                        </descriptors>
+                        <finalName>${assembly.finalName}</finalName>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <tarLongFileMode>posix</tarLongFileMode>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>ch.vd.devex</groupId>
+                    <artifactId>devex-maven-plugin</artifactId>
+                    <version>${devex-maven-plugin.version}</version>
+                    <configuration>
+                        <deployUnit>${devex.deployUnit}</deployUnit>
+                        <deployTarget>${devex.deployTarget}</deployTarget>
+                        <configTag>${devex.configTag}</configTag>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>release</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>create-release</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>deploy</id>
+                            <phase>deploy</phase>
+                            <goals>
+                                <goal>deploy</goal>
+                            </goals>
+                            <configuration>
+                                <releaseVersion>${devex.releaseVersion}</releaseVersion>
+                                <environment>${devex.deployEnv}</environment>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

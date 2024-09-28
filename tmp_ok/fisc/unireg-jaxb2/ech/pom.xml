@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>unireg-jaxb2-ech</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>ch.vd.unireg</groupId>
+		<artifactId>unireg-jaxb2</artifactId>
+		<!-- BEGIN_LVERSION -->
+		<version>7.30-SNAPSHOT</version>
+		<!-- END_LVERSION -->
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<name>Unireg - ECH Beans JAXB2</name>
+	<description>Beans JAXB2 pour les eCH utilisés dans Unireg.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>unireg-jaxb2-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>${maven-jaxb2-plugin.version}</version>
+				<configuration>
+					<schemaDirectory>src/main/resources</schemaDirectory>
+					<strict>false</strict>
+					<catalog>src/main/resources/catalog.xml</catalog>
+					<schemaIncludes>
+						<include>main.xsd</include>
+					</schemaIncludes>
+					<bindingDirectory>src/main/resources</bindingDirectory>
+					<bindingIncludes>
+						<include>bindings.xml</include>
+						<include>enum-bindings.xml</include>
+					</bindingIncludes>
+					<args>
+						<arg>-extension</arg>
+						<arg>-Xpretty-classname</arg>
+						<arg>-Xnamespace-prefix</arg>
+						<arg>-Xts</arg>
+						<arg>-Xts:style:ch.vd.unireg.UniregToStringStyle.STYLE</arg>
+						<arg>-Xvalue-constructor</arg>
+						<arg>-Xinheritance</arg>
+					</args>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<excludes>
+						<!-- on exclut les répertoires des beans qui correspondent aux XSDs du projet unireg-jaxb2-common, car ils ont déjà été compilés dans ceux-ci -->
+						<exclude>ch/vd/unireg/xml/common/**</exclude>
+						<exclude>ch/vd/unireg/xml/exception/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<encoding>${project.resources.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
