@@ -43,3 +43,26 @@ pub fn compare_versions(current: &str, required: &str) -> bool {
     false
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_compare_versions() {
+        // Test case 1: "1.x" and "2.x"
+        assert_eq!(compare_versions("1.x", "2.x"), false, "1.x should not be compatible with 2.x");
+
+        // Test case 2: "1.2" and "1.x"
+        assert_eq!(compare_versions("1.2", "1.x"), true, "1.2 should be compatible with 1.x");
+
+        // Test case 3: "1.3" and "5.x"
+        assert_eq!(compare_versions("1.3", "5.x"), false, "1.3 should not be compatible with 5.x");
+
+        // Test case 4: "1.2" and "5.3.4"
+        assert_eq!(compare_versions("1.2", "5.3.4"), false, "1.2 should not be compatible with 5.3.4");
+
+        // Test case 5: "5.3.4" and "4.2"
+        assert_eq!(compare_versions("5.3.4", "4.2"), true, "5.3.4 should be compatible with 4.2");
+    }
+}
