@@ -2,6 +2,7 @@
 use std::error::Error;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
+use tracing::info;
 
 pub fn check_jenkins_file_exists(
     config: &AppConfig,
@@ -18,8 +19,12 @@ pub fn check_jenkins_file_exists(
     ];
 
     for file in &groovy_files {
+        info!("Checking : {}", file);
         if let Some(file_url) = check_file_exists(config, project_name, repo_name, file)? {
+            info!("content of jenkins file : {}", file_url);
             return Ok(Some(file_url));
+        } else {
+            info!("nothing returned from check jenkins file");
         }
     }
 

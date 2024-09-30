@@ -16,17 +16,17 @@ pub fn check_file_exists(
     // Construct the Bitbucket API URL to check the file
     let file_url = url_config.raw_file_url(project_name, repo_name, file_path);
 
-    trace!("Checking for file {} at URL: {}", file_path, file_url);
+    info!("Checking for file {} at URL: {}", file_path, file_url);
 
     // Use the run_get_request helper to perform the request and get the raw response body
     let response_body = run_get_request(config, &file_url)?;
 
     // Check if the body contains some kind of "error" message indicating the file doesn't exist
     if response_body.contains("\"error\"") {
-        debug!("{} not found (file does not exist).", file_path);
+        info!("{} not found (file does not exist).", file_path);
         Ok(None)  // File doesn't exist
     } else if response_body.trim().is_empty() {
-        debug!("{} found but the file is empty.", file_path);
+        info!("{} found but the file is empty.", file_path);
         Ok(None)  // Return None if the file is empty
     } else {
         info!("{} found and is not empty.", file_path);

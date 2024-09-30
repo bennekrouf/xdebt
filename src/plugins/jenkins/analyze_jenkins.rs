@@ -15,6 +15,7 @@ pub fn analyze_jenkins(
     repository_name_str: &str,
     analyses: &mut Vec<Analysis>,
 ) -> Result<(), Box<dyn Error>> {
+    info!("Start of jenkins analysis");
     if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repository_name)? {
         info!("Found Jenkins file at: {}", jenkins_file_url);
 

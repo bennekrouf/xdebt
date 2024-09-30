@@ -60,7 +60,7 @@ pub struct RoadmapEntry {
     pub version: String,
     pub start_date: Option<NaiveDate>,
     pub end_date: Option<NaiveDate>,
-    extended_end_date: Option<NaiveDate>,
+    pub extended_end_date: Option<NaiveDate>,
     comment: Option<String>,
     source_name: Option<String>,
     source_entity: Option<String>,

@@ -14,7 +14,7 @@ enable_npm_analysis: true
 enable_docker_analysis: false
 enable_dotnet_analysis: false
 enable_php_analysis: false
-enable_jenkins_analysis: false
+enable_jenkins_analysis: true 
 
 equivalences:
   spring:

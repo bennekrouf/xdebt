@@ -30,7 +30,13 @@ pub fn analyze_package_json_content(
     // Check if package.json exists and get the file URL
     let file_url = match check_package_json_exists(config, project_name, repo_name)? {
         Some(url) => url,
-        None => return Err("No package.json found in the repository".into()),
+        None => {
+            info!("No package.json found in the repository. Skipping analysis.");
+            return Ok(json!({
+                "repository": repo_name,
+                "versions": {}  // Return an empty object or desired default value
+            }));
+        }
     };
 
     info!("Fetching package.json from URL: {}", file_url);

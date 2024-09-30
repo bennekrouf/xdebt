@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{debug, error, trace};  // Import `trace`
+use tracing::{debug, error, trace, info};  // Import `trace`
 use crate::models::AppConfig;
 
 pub fn run_get_request(
@@ -11,7 +11,7 @@ pub fn run_get_request(
     let headers = config.url_config.get_headers()?;  // Get headers from config
 
     // Trace the URL being requested
-    trace!("Sending GET request to URL: {}", url);
+    info!("Sending GET request to URL: {}", url);
 
     // Build the GET request
     let mut request = client.get(url);
@@ -34,7 +34,7 @@ pub fn run_get_request(
                 match resp.text() {
                     Ok(body) => Ok(body),
                     Err(e) => {
-                        error!("Error reading response body: {}", e);
+                        info!("Error reading response body: {}", e);
                         Err(format!("Error reading response body: {}", e).into())
                     }
                 }
