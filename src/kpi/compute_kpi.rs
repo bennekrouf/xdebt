@@ -12,7 +12,7 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
         let mut upgrade_suggestion: Option<&RoadmapEntry> = None;
 
         for entry in &roadmap.entries {
-            trace!("Analyzing roadmap entry: {:?}", entry);
+            info!("Analyzing roadmap entry: {:?}", entry);
 
             // Check if current version matches the roadmap entry's version pattern
             if version_matches(&cycle, &entry.cycle) {
@@ -45,7 +45,7 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
                     });
                 }
             } else {
-                info!("No version match: {} and {}", cycle, &entry.cycle);
+                info!("No version match: {} and {} of {:?}", cycle, &entry.cycle, &entry);
             }
 
             // Suggest upgrade if current version is outdated and this entry is newer
@@ -102,19 +102,20 @@ fn find_upgrade_suggestion(entries: &Vec<RoadmapEntry>, today: NaiveDate) -> Opt
     upgrade_suggestion.map(|entry| entry.cycle.clone())
 }
 
-// Check if versions match (support wildcards like 'x')
-
 fn version_matches(cycle: &str, roadmap_version: &str) -> bool {
-    // Simplistic matching for wildcard versions like "1.x"
     if roadmap_version.ends_with(".x") {
         let base_version = roadmap_version.trim_end_matches(".x");
         return cycle.starts_with(base_version);
     }
-    cycle == roadmap_version
+
+    // Allow matching major.minor versions (like 5.3 matches 5.3.31)
+    let roadmap_parts: Vec<&str> = roadmap_version.split('.').collect();
+    let cycle_parts: Vec<&str> = cycle.split('.').collect();
+
+    // Check if the roadmap major.minor matches cycle major.minor
+    roadmap_parts.iter().zip(cycle_parts.iter()).all(|(rp, cp)| rp == cp)
 }
 
-
-// Check if timeframe is valid for the current date
 fn is_valid_timeframe(release_date: &Option<NaiveDate>, eol: &Option<NaiveDate>, extended_end_date: &Option<NaiveDate>, today: NaiveDate) -> bool {
     if let Some(start) = release_date {
         if today < *start {
@@ -126,9 +127,7 @@ fn is_valid_timeframe(release_date: &Option<NaiveDate>, eol: &Option<NaiveDate>,
         if today > *end {
             // Check extended end date if provided
             if let Some(extended_end) = extended_end_date {
-                if today > *extended_end {
-                    return false; // Today is after extended end date
-                }
+                return today <= *extended_end;  // Valid if today is before the extended date
             } else {
                 return false; // Today is after end date and no extended date
             }
@@ -137,6 +136,7 @@ fn is_valid_timeframe(release_date: &Option<NaiveDate>, eol: &Option<NaiveDate>,
 
     true // The version is valid within the time range
 }
+
 
 // Compare versions to check if the roadmap version is lower than the current version
 fn is_lower_version(cycle: &str, roadmap_version: &str) -> bool {
