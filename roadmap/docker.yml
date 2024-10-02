@@ -1,9 +1,9 @@
 roadmap_list:
-  - dependency: "docker"
+  - product: "docker"
     domain: "migration"
     chapter: "#N/A"
     entries:
-      - version: "N/A"
+      - cycle: "N/A"
         releaseDate: "2024-01-01"
         eol: null
         extended_end_date: null

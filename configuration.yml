@@ -18,9 +18,13 @@ enable_jenkins_analysis: true
 
 equivalences:
   spring:
+   - spring-framework
     - spring-context
     - spring-beans
-    - spring-framework
+ 
+  spring-boot:
+    - spring-boot
+
   angular:
     - "@angular/core"
     - angular
@@ -31,4 +35,5 @@ equivalences:
     - jdk
   node:
     - nodejs
+    - node
 

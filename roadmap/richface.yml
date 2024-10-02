@@ -1,9 +1,9 @@
 roadmap_list:
-  - dependency: "richface"
+  - product: "richface"
     domain: "migration"
     chapter: "#N/A"
     entries:
-      - version: "N/A"
+      - cycle: "N/A"
         eol: "2024-01-01"
         releaseDate: null
         extended_end_date: null

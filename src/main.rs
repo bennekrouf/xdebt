@@ -63,10 +63,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     loop {
         let config = shared_config.lock().unwrap();
-        let db = config.db.as_ref().ok_or("Database is not initialized")?;
 
         if !yaml_processed {
-            process_yaml_files(db, "roadmap")?;
+            process_yaml_files(&config, "roadmap")?;
             yaml_processed = true;
         }
 

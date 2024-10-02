@@ -1,29 +1,29 @@
 roadmap_list:
-  - dependency: "angular"
+  - product: "angular"
     domain: "hors directive"
     chapter: "#N/A"
     entries:
-      - version: "18"
+      - cycle: "18"
         releaseDate: "2024-01-01" # Use YYYY-MM-DD format
         eol: null            # Use null for missing optional field
         extended_end_date: null  # Use null for missing optional field
         source_name: "Benoit Duhr"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"
-      - version: "1.x"
+      - cycle: "1.x"
         releaseDate: null # Use YYYY-MM-DD format
         eol: 2022-01-01            # Use null for missing optional field
         comment: "Il est recommandé de faire une migration hybride et non une refonte"
         source_name: "Benoit Duhr"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"
-      - version: "2.x"
+      - cycle: "2.x"
         releaseDate: null # Use YYYY-MM-DD format
         eol: 2023-01-01            # Use null for missing optional field
         source_name: "Benoit Duhr"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"
-      - version: "14.x"
+      - cycle: "14.x"
         releaseDate: null # Use YYYY-MM-DD format
         eol: 2024-12-01            # Use null for missing optional field
         source_name: "Benoit Duhr"

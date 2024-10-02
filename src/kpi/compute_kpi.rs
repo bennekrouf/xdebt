@@ -64,7 +64,7 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
                 cycle: cycle.clone(),
                 status: KPIStatus::UpgradeNeeded,  // Status without reason in enum
                 reason: format!(
-                    "Version {} is outdated as of {}. Consider upgrading to {}.",
+                    "No direct match. Version {} is outdated as of {}. Consider upgrading to {}.",
                     cycle,
                     today,
                     upgrade_suggestion.cycle

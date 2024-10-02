@@ -61,9 +61,9 @@ pub struct RoadmapEntry {
     pub release_date: Option<NaiveDate>,
     pub eol: Option<NaiveDate>,
     pub extended_end_date: Option<NaiveDate>,
-    comment: Option<String>,
-    source_name: Option<String>,
-    source_entity: Option<String>,
+    pub comment: Option<String>,
+    pub source_name: Option<String>,
+    pub source_entity: Option<String>,
     pub updated_at: Option<NaiveDate>,
 }
 
