@@ -3,12 +3,12 @@ use chrono::{NaiveDate, Utc};
 use tracing::{trace, info};
 use crate::models::{KPIResult, Analysis, KPIStatus, RoadmapEntry};
 
-pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
+pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
     info!("Analyzing KPI for {:?}", analysis.dependency_version);
 
-    if let Some(roadmap) = &analysis.roadmap {
+    if let Some(roadmap) = &mut analysis.roadmap {
         let mut upgrade_suggestion: Option<&RoadmapEntry> = None;
 
         for entry in &roadmap.entries {
@@ -40,7 +40,7 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
                             "Version {} is outdated as of {}. Consider upgrading to {}.",
                             cycle,
                             entry.eol.unwrap_or(today).to_string(),
-                            find_upgrade_suggestion(&roadmap.entries, today).unwrap_or("a higher cycle".to_string())
+                            find_upgrade_suggestion(&mut roadmap.entries, today).unwrap_or("a higher cycle".to_string())
                         ),
                     });
                 }
@@ -78,14 +78,18 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
 }
 
 // Helper function to find the next available version to upgrade to
-fn find_upgrade_suggestion(entries: &Vec<RoadmapEntry>, today: NaiveDate) -> Option<String> {
+fn find_upgrade_suggestion(entries: &mut Vec<RoadmapEntry>, today: NaiveDate) -> Option<String> {
+    // Sort the entries by the cycle in ascending order
+    entries.sort_by(|a, b| compare_versions(&a.cycle, &b.cycle));
+
     let mut upgrade_suggestion: Option<&RoadmapEntry> = None;
 
     for entry in entries {
         // If the version starts in the future, suggest it for upgrade
         if let Some(start) = entry.release_date {
             if today < start {
-                if upgrade_suggestion.is_none() || is_lower_version(&entry.cycle, &upgrade_suggestion.unwrap().cycle) {
+                // Suggest the lowest version that is higher than the current
+                if upgrade_suggestion.is_none() || is_lower_version(&upgrade_suggestion.unwrap().cycle, &entry.cycle) {
                     upgrade_suggestion = Some(entry);
                 }
             }
@@ -93,14 +97,17 @@ fn find_upgrade_suggestion(entries: &Vec<RoadmapEntry>, today: NaiveDate) -> Opt
 
         // Check if the version is within the valid timeframe
         if is_valid_timeframe(&entry.release_date, &entry.eol, &entry.extended_end_date, today) {
-            if upgrade_suggestion.is_none() || is_lower_version(&entry.cycle, &upgrade_suggestion.unwrap().cycle) {
+            // If this version is higher than the current suggestion, use it
+            if upgrade_suggestion.is_none() || is_lower_version(&upgrade_suggestion.unwrap().cycle, &entry.cycle) {
                 upgrade_suggestion = Some(entry);
             }
         }
     }
 
+    // Return the cycle of the highest valid version found
     upgrade_suggestion.map(|entry| entry.cycle.clone())
 }
+
 
 fn version_matches(cycle: &str, roadmap_version: &str) -> bool {
     if roadmap_version.ends_with(".x") {
@@ -138,25 +145,53 @@ fn is_valid_timeframe(release_date: &Option<NaiveDate>, eol: &Option<NaiveDate>,
 }
 
 
-// Compare versions to check if the roadmap version is lower than the current version
-fn is_lower_version(cycle: &str, roadmap_version: &str) -> bool {
-    let current_parts: Vec<&str> = cycle.split('.').collect();
-    let roadmap_parts: Vec<&str> = roadmap_version.split('.').collect();
 
-    for (current_part, roadmap_part) in current_parts.iter().zip(roadmap_parts.iter()) {
-        if roadmap_part == &"x" {
-            continue; // Wildcard match, consider it compatible
+fn compare_versions(v1: &str, v2: &str) -> std::cmp::Ordering {
+    let parts1 = v1.split('.').collect::<Vec<&str>>();
+    let parts2 = v2.split('.').collect::<Vec<&str>>();
+
+    for (p1, p2) in parts1.iter().zip(parts2.iter()) {
+        if *p1 == "x" || *p2 == "x" {
+            continue; // Skip comparison if either part is a wildcard
         }
-        if current_part < roadmap_part {
-            return false; // If roadmap part is greater, it's not lower
-        }
-        if current_part > roadmap_part {
-            return true; // If current part is greater, it's lower
+
+        let num1 = p1.parse::<u32>().unwrap_or(0);
+        let num2 = p2.parse::<u32>().unwrap_or(0);
+
+        match num1.cmp(&num2) {
+            std::cmp::Ordering::Equal => continue, // Keep comparing the next parts
+            non_eq => return non_eq, // Return non-equal result
         }
     }
 
-    false // If we get here, the versions are equal
+    // If all compared parts are equal but one version has more components, handle that
+    parts1.len().cmp(&parts2.len())
 }
+
+fn is_lower_version(v1: &str, v2: &str) -> bool {
+    compare_versions(v1, v2) == std::cmp::Ordering::Less
+}
+
+
+// Compare versions to check if the roadmap version is lower than the current version
+// fn is_lower_version(cycle: &str, roadmap_version: &str) -> bool {
+//     let current_parts: Vec<&str> = cycle.split('.').collect();
+//     let roadmap_parts: Vec<&str> = roadmap_version.split('.').collect();
+//
+//     for (current_part, roadmap_part) in current_parts.iter().zip(roadmap_parts.iter()) {
+//         if roadmap_part == &"x" {
+//             continue; // Wildcard match, consider it compatible
+//         }
+//         if current_part < roadmap_part {
+//             return false; // If roadmap part is greater, it's not lower
+//         }
+//         if current_part > roadmap_part {
+//             return true; // If current part is greater, it's lower
+//         }
+//     }
+//
+//     false // If we get here, the versions are equal
+// }
 
 // Compare two versions and return true if the new version is a better retro-compatible match
 fn is_better_match(current_best: &str, new_version: &str) -> bool {

@@ -10,20 +10,22 @@ force_maven_effective: false
 trace_level: info
 output_folder: tmp
 enable_maven_analysis: true
-enable_npm_analysis: false
-enable_docker_analysis: false
-enable_dotnet_analysis: false
-enable_php_analysis: false
-enable_jenkins_analysis: false 
+enable_npm_analysis: true
+enable_docker_analysis: true
+enable_dotnet_analysis: true
+enable_php_analysis: true
+enable_jenkins_analysis: true 
 
 equivalences:
+  hibernate:
+    - hibernate
   spring:
    - spring-framework
-    - spring-context
-    - spring-beans
+   - spring-context
+   - spring-beans
  
   spring-boot:
-    - spring-boot
+   - spring-boot
 
   angular:
     - "@angular/core"

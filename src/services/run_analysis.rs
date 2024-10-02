@@ -25,13 +25,13 @@ pub fn run_analysis(
 
     // Perform the analysis
     match analyze_one_repo(config, project_name, repo_name) {
-        Ok(analysis_results) => {
+        Ok(mut analysis_results) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
             tracing::debug!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);
 
             // Compute KPIs based on the analysis results
             let kpi_results: Vec<KPIResult> = analysis_results
-                .iter()
+                .iter_mut()
                 .filter_map(|analysis| compute_kpi(analysis)) // Filter out None values
                 .collect();
 
