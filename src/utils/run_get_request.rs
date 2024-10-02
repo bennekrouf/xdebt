@@ -6,12 +6,12 @@ use crate::models::AppConfig;
 pub fn run_get_request(
     config: &AppConfig,  // Use the config to get headers and client
     url: &str,           // URL to request
-) -> Result<String, Box<dyn Error>> {
+) -> Result<Option<String>, Box<dyn Error>> {  // Return `Option<String>`
     let client = &config.client;
     let headers = config.url_config.get_headers()?;  // Get headers from config
 
     // Trace the URL being requested
-    info!("Sending GET request to URL: {}", url);
+    trace!("Sending GET request to URL: {}", url);
 
     // Build the GET request
     let mut request = client.get(url);
@@ -27,19 +27,22 @@ pub fn run_get_request(
     // Process the response
     match response {
         Ok(resp) => {
-            debug!("Received response with status: {}", resp.status());
+            trace!("Received response with status: {}", resp.status());
 
             if resp.status().is_success() {
                 // Return the raw response body as text
                 match resp.text() {
-                    Ok(body) => Ok(body),
+                    Ok(body) => Ok(Some(body)),  // Wrap in `Some` for successful responses
                     Err(e) => {
                         info!("Error reading response body: {}", e);
                         Err(format!("Error reading response body: {}", e).into())
                     }
                 }
+            } else if resp.status().as_u16() == 404 {
+                info!("Received 404 Not Found for URL: {}", url);
+                Ok(None)  // Return `None` for 404
             } else {
-                trace!("Failed to fetch data in {}, status: {}", url, resp.status());
+                error!("Failed to fetch data from {}, status: {}", url, resp.status());
                 Err(format!("Failed to fetch data, status: {}", resp.status()).into())
             }
         }

@@ -49,7 +49,7 @@ pub struct RoadmapList {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Roadmap {
-    pub dependency: String,
+    pub product: String,
     pub domain: Option<String>,
     pub chapter: Option<String>,
     pub entries: Vec<RoadmapEntry>,
@@ -57,9 +57,9 @@ pub struct Roadmap {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RoadmapEntry {
-    pub version: String,
-    pub start_date: Option<NaiveDate>,
-    pub end_date: Option<NaiveDate>,
+    pub cycle: String,
+    pub release_date: Option<NaiveDate>,
+    pub eol: Option<NaiveDate>,
     pub extended_end_date: Option<NaiveDate>,
     comment: Option<String>,
     source_name: Option<String>,
@@ -69,8 +69,8 @@ pub struct RoadmapEntry {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DependencyVersion {
-    pub current_version: String,
-    pub dependency_name: String,
+    pub cycle: String,
+    pub product: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -82,15 +82,16 @@ pub struct Analysis {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum KPIStatus {
-    Compliant(String),           // Compliant with reason
-    NonCompliant(String),        // Non-compliant with reason
-    UpgradeNeeded(String),       // Upgrade needed with reason
-    NoActionNeeded(String),      // No action needed with reason
+    Compliant,           // Compliant status
+    NonCompliant,        // Non-compliant status
+    UpgradeNeeded,       // Upgrade needed status
+    NoActionNeeded,      // No action needed status
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct KPIResult {
-    pub dependency_name: String,
-    pub current_version: String,
+    pub product: String,
+    pub cycle: String,
     pub status: KPIStatus,
+    pub reason: String,  // New field for the reason
 }

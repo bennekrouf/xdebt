@@ -2,10 +2,10 @@ roadmap_list:
   - dependency: "java"
     entries:
       - version: "21"
-        start_date: "2024-01-01"
-        end_date: null
+        releaseDate: "2024-01-01"
+        eol: null
       - version: "8"
-        start_date: null
-        end_date: "2023-01-01"
+        releaseDate: null
+        eol: "2023-01-01"
 
 

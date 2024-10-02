@@ -25,13 +25,13 @@ pub fn analyze_npm(
 
     if let Some(versions) = versions {
         // Map the versions into Analysis objects
-        for (dependency, version_value) in versions {
+        for (product, version_value) in versions {
             let version_str = version_value.as_str().unwrap_or_default();
 
             // Construct DependencyVersion
             let dependency_version = DependencyVersion {
-                dependency_name: dependency.to_string(),
-                current_version: version_str.to_string(),
+                product: product.to_string(),
+                cycle: version_str.to_string(),
             };
 
             // Create the Analysis object
@@ -42,8 +42,8 @@ pub fn analyze_npm(
             };
 
             info!(
-                "Created analysis for dependency: {}, version: {}",
-                dependency, version_str
+                "Created analysis for product: {}, cycle: {}",
+                product, version_str
             );
             analyses.push(analysis);
         }

@@ -4,8 +4,8 @@ roadmap_list:
     chapter: "#N/A"
     entries:
       - version: "N/A"
-        start_date: "2024-01-01"
-        end_date: null
+        eol: "2024-01-01"
+        releaseDate: null
         extended_end_date: null
         comment: "Migration all richface component to prime face "
         source_name: "Benoit Duhr"

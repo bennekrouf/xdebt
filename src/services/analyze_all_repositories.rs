@@ -1,18 +1,17 @@
+
 use std::error::Error;
 
 use crate::models::AppConfig;
 use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
-//use serde_jsn::Value;
-//use tracing::{debug, error, info}; // Add tracing macros // Ensure Value is imported
-
 use crate::utils::fetch_repositories::fetch_repositories;
+use crate::utils::append_json_to_file::append_json_to_file; // Ensure this is imported
+
 pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), Box<dyn Error>> {
+    // Fetch projects
     let projects = get_projects(config)?;
 
     for project in projects {
-        //info!("Project raw is : {}", project);
-
         // Determine the platform
         let platform = &config.platform; // Assuming platform is stored in the config
 
@@ -27,17 +26,24 @@ pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), Box<dyn Error>
             _ => return Err("Unsupported platform".into()),
         };
 
-        // For GitHub, run analysis directly without fetching repositories
         if platform == "github" {
-            run_analysis(config, project_name, project_name)?;
+            // For GitHub, run analysis directly without fetching repositories
+            if let Some(json_data) = run_analysis(config, project_name, project_name)? {
+                append_json_to_file(config, project_name, &json_data)?;  // Save the JSON
+            }
         } else {
             // For Bitbucket, fetch repositories and run analysis
             let all_repos = fetch_repositories(config, project_name)?;
             for repo in all_repos {
                 let repo_name = repo["name"].as_str().ok_or("Missing repo name")?;
-                run_analysis(config, project_name, repo_name)?;
+
+                // Run the analysis and check if valid JSON is returned
+                if let Some(json_data) = run_analysis(config, project_name, repo_name)? {
+                    append_json_to_file(config, project_name, &json_data)?;  // Save the JSON
+                }
             }
         }
     }
     Ok(())
 }
+

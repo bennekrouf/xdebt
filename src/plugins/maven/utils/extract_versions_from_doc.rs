@@ -16,8 +16,8 @@ pub fn extract_versions_from_doc(
         info!("Analyzing keyword: '{}'", keyword);
 
         // Check for dependencies
-        for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
-            trace!("Analyzing dependency node");
+        for dep in doc.descendants().filter(|node| node.tag_name().name() == "product") {
+            trace!("Analyzing product node");
 
             // Check equivalences for keywords
             for (equiv_keyword, references) in equivalences {
@@ -30,9 +30,9 @@ pub fn extract_versions_from_doc(
 
                             // Extract the version number
                             if let Some(caps) = version_regex.captures(dep.text().unwrap_or("")) {
-                                let version = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");
-                                versions.insert(keyword.to_string(), version.to_string());
-                                info!("Found version '{}' for keyword '{}'", version, keyword);
+                                let cycle = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");
+                                versions.insert(keyword.to_string(), cycle.to_string());
+                                info!("Found version '{}' for keyword '{}'", cycle, keyword);
                             }
                         }
                     }
@@ -49,9 +49,9 @@ pub fn extract_versions_from_doc(
                 if artifact_id_text == Some(*keyword) {
                     info!("Found matching artifactId '{}' for keyword '{}'", artifact_id_text.unwrap(), keyword);
 
-                    if let Some(version_node) = dep.descendants().find(|node| node.tag_name().name() == "version") {
-                        if let Some(version) = version_node.text() {
-                            let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
+                    if let Some(version_node) = dep.descendants().find(|node| node.tag_name().name() == "cycle") {
+                        if let Some(cycle) = version_node.text() {
+                            let cleaned_version = cycle.trim_start_matches('~').trim_start_matches('^');
                             versions.insert(keyword.to_string(), cleaned_version.to_string());
                             info!("Found version '{}' for artifactId '{}'", cleaned_version, artifact_id_text.unwrap());
                         }
@@ -60,12 +60,12 @@ pub fn extract_versions_from_doc(
             }
         }
 
-        let version_key = format!("{}.version", keyword);
+        let version_key = format!("{}.cycle", keyword);
         trace!("Checking for basic version string in properties with key '{}'", version_key);
 
         if let Some(version_node) = doc.descendants().find(|node| node.tag_name().name() == &version_key) {
-            if let Some(version) = version_node.text() {
-                let cleaned_version = version.trim_start_matches('~').trim_start_matches('^');
+            if let Some(cycle) = version_node.text() {
+                let cleaned_version = cycle.trim_start_matches('~').trim_start_matches('^');
                 versions.insert(keyword.to_string(), cleaned_version.to_string());
                 info!("Found version '{}' for keyword '{}'", cleaned_version, keyword);
             }

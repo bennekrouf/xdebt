@@ -15,8 +15,8 @@ pub fn check_php(
         analyses.push(Analysis {
             repository_name: repository_name_str.to_string(),
             dependency_version: DependencyVersion {
-                dependency_name: "PHP".to_string(),
-                current_version: "exists".to_string(),
+                product: "PHP".to_string(),
+                cycle: "exists".to_string(),
             },
             roadmap: None,
         });

@@ -12,7 +12,7 @@ pub fn check_php_files(
 
     // List of PHP-related files to check
     let php_files = [
-        "composer.json", // Composer dependency file
+        "composer.json", // Composer product file
         "php.ini",       // PHP configuration file
         "index.php",     // Common entry point
         "*.php"          // PHP source files

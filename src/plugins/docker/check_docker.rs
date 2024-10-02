@@ -15,8 +15,8 @@ pub fn check_docker(
         analyses.push(Analysis {
             repository_name: repository_name_str.to_string(),
             dependency_version: DependencyVersion {
-                dependency_name: "Docker".to_string(),
-                current_version: "exists".to_string(),
+                product: "Docker".to_string(),
+                cycle: "exists".to_string(),
             },
             roadmap: None,
         });

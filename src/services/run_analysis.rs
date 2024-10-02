@@ -1,23 +1,27 @@
 
 use std::error::Error;
+use std::time::{Instant, Duration};
 use serde_json::{Value, json, Map};
-
 use crate::plugins::analyze_one_repo::analyze_one_repo;
 use crate::models::AppConfig;
 use crate::kpi::compute_kpi::compute_kpi;
 use crate::models::KPIResult;
 use crate::utils::remove_null_values::remove_null_values;
-use crate::utils::append_json_to_file::append_json_to_file;
 
+static mut TOTAL_DURATION: Duration = Duration::new(0, 0);  // Static variable to hold total duration
 
 pub fn run_analysis(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<Option<Value>, Box<dyn Error>> {
+    // Skip certain repositories
     if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
-        return Ok(());
+        return Ok(None);  // Return None for skipped repos
     }
+
+    // Start timing the analysis
+    let start_time = Instant::now();
 
     // Perform the analysis
     match analyze_one_repo(config, project_name, repo_name) {
@@ -44,13 +48,50 @@ pub fn run_analysis(
                 grouped_results.insert("debt".to_string(), json!(kpi_results));
 
                 let mut json_data = Value::Object(grouped_results);
-                remove_null_values(&mut json_data); // Remove null entries
+                remove_null_values(&mut json_data);  // Remove null entries
 
                 tracing::info!("Json result: {}", &json_data);
-                // Append the grouped KPI JSON to the file
-                append_json_to_file(config, project_name, &json_data)?;
+
+                // Log the duration of this analysis
+                let duration = start_time.elapsed();
+                tracing::info!(
+                    "Analysis completed for project: {}, repo: {} in {:?}",
+                    project_name,
+                    repo_name,
+                    duration
+                );
+
+                // Accumulate total duration
+                unsafe {
+                    TOTAL_DURATION += duration;
+                }
+
+                // Log the total accumulated time
+                tracing::info!("Total time so far: {:?}", unsafe { TOTAL_DURATION });
+
+                // Return the JSON data
+                return Ok(Some(json_data));
             } else {
                 tracing::info!("No KPIs to record for project: {}, repo: {}", project_name, repo_name);
+
+                // Log the duration of this analysis
+                let duration = start_time.elapsed();
+                tracing::info!(
+                    "Analysis completed for project: {}, repo: {} in {:?} with no KPIs",
+                    project_name,
+                    repo_name,
+                    duration
+                );
+
+                // Accumulate total duration
+                unsafe {
+                    TOTAL_DURATION += duration;
+                }
+
+                // Log the total accumulated time
+                tracing::info!("Total time so far: {:?}", unsafe { TOTAL_DURATION });
+
+                return Ok(None);  // Return None if no KPIs
             }
         }
         Err(e) => {
@@ -58,6 +99,23 @@ pub fn run_analysis(
         }
     }
 
-    Ok(())
+    // Log the duration in case of failure
+    let duration = start_time.elapsed();
+    tracing::info!(
+        "Analysis failed for project: {}, repo: {} in {:?}",
+        project_name,
+        repo_name,
+        duration
+    );
+
+    // Accumulate total duration
+    unsafe {
+        TOTAL_DURATION += duration;
+    }
+
+    // Log the total accumulated time
+    tracing::info!("Total time so far: {:?}", unsafe { TOTAL_DURATION });
+
+    Ok(None)
 }
 

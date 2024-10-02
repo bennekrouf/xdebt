@@ -3,12 +3,23 @@ roadmap_list:
     domain: "rs directive"
     chapter: "#N/A"
     entries:
-      - version: "5.x"
-        start_date: "2012-01-01" # Use YYYY-MM-DD format
-        end_date: null            # Use null for missing optional field
+      - version: "5.2"
+        releaseDate: null
+        eol: "2026-12-31"            # Use null for missing optional field
         extended_end_date: null  # Use null for missing optional field
         comment: "La version majeure ne doit pas être plus ancienne que 6 mois à la date de livraison par le fournisseur pour les tests de recette finaux"
         source_name: "Jean-Eric Cuendet"
         source_entity: "ACT-INT"
         updated_at: "2023-10-06"
-
+      - version: "4.x"
+        eol: "2012-01-01" # Use YYYY-MM-DD format
+        releaseDate: null
+      - version: "3.x"
+        eol: "2012-01-01" # Use YYYY-MM-DD format
+        releaseDate: null
+      - version: "6.0"
+        eol: "2025-12-31" # Use YYYY-MM-DD format
+        releaseDate: null
+      - version: "6.1"
+        eol: "2026-12-31" # Use YYYY-MM-DD format
+        releaseDate: null

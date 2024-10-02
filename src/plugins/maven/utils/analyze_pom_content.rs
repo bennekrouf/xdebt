@@ -18,7 +18,7 @@ pub fn analyze_pom_content(
     let equivalences = config.equivalences.clone();
     info!("Analyzing POM content for app: '{}' and keywords : {:?}", app_name, version_keywords);
 
-    let version_regex = Regex::new(r"<version>([^<]+)</version>")?;
+    let version_regex = Regex::new(r"<cycle>([^<]+)</cycle>")?;
     info!("Initialized version extraction regex");
 
     let mut versions = HashMap::new();

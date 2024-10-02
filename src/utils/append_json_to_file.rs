@@ -1,9 +1,8 @@
 
 use std::fs::{OpenOptions, create_dir_all};
 use std::io::Write;
-use serde_json::Value;
+use serde_json::{json, Value};
 use std::error::Error;
-use serde_json::json;
 use std::path::Path;
 use tracing::{info, error, debug};
 use crate::models::AppConfig;
@@ -28,12 +27,13 @@ pub fn append_json_to_file<'a>(
 
     // Create the file path for the project JSON file
     let file_path = format!("{}/{}.json", &output_folder, project_name);
-    info!("Appending JSON data to file: {}", file_path);
+    info!("Overwriting JSON data to file: {}", file_path);
 
-    // Try to create or open the file
+    // Try to create or open the file, with truncation enabled
     let mut file = match OpenOptions::new()
         .create(true)
-        .append(true)
+        .write(true)  // Enable write mode
+        .truncate(true)  // Truncate the file, i.e., overwrite its content
         .open(&file_path)
     {
         Ok(f) => f,
@@ -43,7 +43,7 @@ pub fn append_json_to_file<'a>(
         }
     };
 
-    // Prepare the JSON data to append
+    // Prepare the JSON data to write
     let json_entry = json!(json_data);
     debug!("Prepared JSON data for writing: {}", serde_json::to_string_pretty(&json_entry)?);
 
@@ -53,7 +53,7 @@ pub fn append_json_to_file<'a>(
         return Err(format!("Error writing to file {}: {}", file_path, e).into());
     }
 
-    info!("Successfully appended JSON data to {}", file_path);
+    info!("Successfully wrote JSON data to {}", file_path);
 
     Ok(())
 }

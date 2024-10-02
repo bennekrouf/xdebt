@@ -17,7 +17,7 @@ fn get_dependency_version(
     dependencies.get(package_name)
         .or_else(|| dev_dependencies.get(package_name))
         .and_then(|v| v.as_str())
-        .map(|version| version.trim_start_matches(['~', '^']).to_string())
+        .map(|cycle| cycle.trim_start_matches(['~', '^']).to_string())
 }
 
 
@@ -25,7 +25,7 @@ pub fn analyze_package_json_content(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-    dependencies_list: &[&str],  // List of dependency names
+    dependencies_list: &[&str],  // List of product names
 ) -> Result<Value, Box<dyn Error>> {
     // Check if package.json exists and get the file URL
     let file_url = match check_package_json_exists(config, project_name, repo_name)? {
@@ -58,24 +58,24 @@ pub fn analyze_package_json_content(
     debug!("Found dependencies: {:?}", dependencies);
     debug!("Found devDependencies: {:?}", dev_dependencies);
 
-    // Loop through each dependency in the dependencies_list
-    for dependency in dependencies_list {
-        // Start with the dependency itself
-        let mut keywords_to_check = vec![dependency.to_string()];
+    // Loop through each product in the dependencies_list
+    for product in dependencies_list {
+        // Start with the product itself
+        let mut keywords_to_check = vec![product.to_string()];
 
-        // Check if the config has equivalences for this dependency
-        if let Some(equivalences) = config.equivalences.get(*dependency) {
+        // Check if the config has equivalences for this product
+        if let Some(equivalences) = config.equivalences.get(*product) {
             // Extend with equivalences if they exist
             keywords_to_check.extend(equivalences.clone());
         }
 
         // Log the keywords that are being checked
         info!(
-            "Checking for keywords for dependency '{}': {:?}",
-            dependency, keywords_to_check
+            "Checking for keywords for product '{}': {:?}",
+            product, keywords_to_check
         );
 
-        // Iterate over each keyword (dependency + equivalences)
+        // Iterate over each keyword (product + equivalences)
         for kw in &keywords_to_check {
             // Log the search for each keyword in dependencies and devDependencies
             info!("Looking for keyword '{}' in 'dependencies'", kw);
@@ -89,12 +89,12 @@ pub fn analyze_package_json_content(
             }
 
             // Check in both dependencies and devDependencies
-            if let Some(version) = get_dependency_version(dependencies, dev_dependencies, kw) {
+            if let Some(cycle) = get_dependency_version(dependencies, dev_dependencies, kw) {
                 info!(
                     "Found version '{}' for keyword '{}' in 'dependencies' or 'devDependencies'",
-                    version, kw
+                    cycle, kw
                 );
-                versions.insert(dependency.to_string(), version);  // Use the original dependency name for insertion
+                versions.insert(product.to_string(), cycle);  // Use the original product name for insertion
                 break; // Stop searching once a version is found
             } else {
                 info!(

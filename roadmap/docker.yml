@@ -4,8 +4,8 @@ roadmap_list:
     chapter: "#N/A"
     entries:
       - version: "N/A"
-        start_date: "2024-01-01"
-        end_date: null
+        releaseDate: "2024-01-01"
+        eol: null
         extended_end_date: null
         comment: "If no Dockerfile is found in the repository, a migration to Docker is required."
         source_name: "Migration Policy"
