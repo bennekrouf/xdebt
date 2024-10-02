@@ -1,7 +1,7 @@
 
 use serde_json::Value;
 use std::error::Error;
-use tracing::{error, trace, info};
+use tracing::{error, trace};
 use crate::models::AppConfig;
 use crate::utils::run_get_request::run_get_request;
 use serde_json::json;  // For creating empty JSON objects

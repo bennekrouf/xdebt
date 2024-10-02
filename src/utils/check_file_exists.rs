@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{debug, trace, info};
+use tracing::info;
 
 use crate::models::AppConfig;
 use crate::utils::run_get_request::run_get_request;

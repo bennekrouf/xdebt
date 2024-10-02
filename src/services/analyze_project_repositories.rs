@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use dialoguer::Input;
-use serde_json::{json, Value}; // Ensure this is imported
+use serde_json::json; // Ensure this is imported
 use crate::utils::fetch_repositories::fetch_repositories;
 use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;

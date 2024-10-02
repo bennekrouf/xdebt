@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{info, debug};
+use tracing::info;
 
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
 use crate::services::get_distinct_dependencies::get_distinct_dependencies;

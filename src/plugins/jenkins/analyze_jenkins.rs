@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{info, debug};
+use tracing::info;
 
 use crate::plugins::jenkins::check_jenkins_file_exists::check_jenkins_file_exists;
 use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_groovy;

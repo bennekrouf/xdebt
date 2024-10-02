@@ -1,6 +1,6 @@
 
 use std::error::Error;
-use tracing::{debug, error, trace, info};  // Import `trace`
+use tracing::{error, trace, info};  // Import `trace`
 use crate::models::AppConfig;
 
 pub fn run_get_request(

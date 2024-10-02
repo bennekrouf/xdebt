@@ -1,6 +1,6 @@
 
 use std::collections::HashMap;
-use tracing::{info, trace};
+use tracing::info;
 use crate::models::AppConfig;
 
 pub fn extract_version_from_groovy(
