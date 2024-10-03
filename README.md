@@ -35,32 +35,29 @@ docker run -it -p 9000:9000 xdebt
 
 2. Build the project:
 
+```bash
 cargo build --release
-
+```
 3. Run the project:
-
+```bash
 cargo run --release
-
-
+```
 ### Using Docker
 
 1. Build the Docker image:
-
+```bash
 docker build -t xdebt .
-
+```
 
 2. Run the Docker container:
 
-
-
+```bash
 docker run -v $(pwd)/config:/app/config -t xdebt
-
+```
 
 Ensure your configuration YAML is correctly mounted in the /app/config folder.
 
-
 # Configuration
-
 
 xdebt relies on a YAML configuration file to control its behavior. Here is an example of the configuration:
 
