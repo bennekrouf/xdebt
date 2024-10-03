@@ -27,7 +27,7 @@ pub fn append_json_to_file<'a>(
 
     // Create the file path for the project JSON file
     let file_path = format!("{}/{}.json", &output_folder, project_name);
-    info!("Overwriting JSON data to file: {}", file_path);
+    debug!("Overwriting JSON data to file: {}", file_path);
 
     // Try to create or open the file, with truncation enabled
     let mut file = match OpenOptions::new()
@@ -53,7 +53,7 @@ pub fn append_json_to_file<'a>(
         return Err(format!("Error writing to file {}: {}", file_path, e).into());
     }
 
-    info!("Successfully wrote JSON data to {}", file_path);
+    debug!("Successfully wrote JSON data to {}", file_path);
 
     Ok(())
 }

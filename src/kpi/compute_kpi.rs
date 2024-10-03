@@ -10,6 +10,7 @@ use crate::kpi::find_upgrade_suggestion::find_upgrade_suggestion;
 use crate::kpi::is_lower_version::is_lower_version;
 use crate::kpi::utils::is_better_match::is_better_match;
 
+
 pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
@@ -27,7 +28,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
 
                 // Check if the current version is within valid timeframe
                 if is_valid_timeframe(&entry.release_date, &entry.eol, &entry.extended_end_date, today) {
-                    let reason = if let Some(valid_until) = entry.eol {
+                    let mut reason = if let Some(valid_until) = entry.eol {
                         format!(
                             "Version {} is valid as of {}. Valid until {}.",
                             cycle, today, valid_until
@@ -35,6 +36,14 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     } else {
                         format!("Version {} is valid as of {}.", cycle, today)
                     };
+
+                    // If there is an upgrade suggestion, append it to the reason
+                    if let Some(upgrade_entry) = upgrade_suggestion {
+                        reason.push_str(&format!(
+                            " However, consider upgrading to {} for better support.",
+                            upgrade_entry.cycle
+                        ));
+                    }
 
                     return Some(KPIResult {
                         product: analysis.dependency_version.product.clone(),
