@@ -5,7 +5,7 @@ use std::path::Path;
 use serde_json::{Value, Map};
 use std::error::Error;
 use std::env;
-use tracing::{info, debug};
+use tracing::debug;
 
 use crate::models::AppConfig;
 use crate::plugins::maven::utils::generate_maven_effective_pom::generate_maven_effective_pom;
