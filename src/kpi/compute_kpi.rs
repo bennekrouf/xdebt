@@ -35,7 +35,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     return Some(KPIResult {
                         product: analysis.dependency_version.product.clone(),
                         cycle: cycle.clone(),
-                        status: KPIStatus::UpgradeNeeded,  // Status without reason in enum
+                        status: KPIStatus::Outdated,  // Status without reason in enum
                         reason: format!(
                             "Version {} is outdated as of {}. Consider upgrading to {}.",
                             cycle,
@@ -62,7 +62,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
             return Some(KPIResult {
                 product: analysis.dependency_version.product.clone(),
                 cycle: cycle.clone(),
-                status: KPIStatus::UpgradeNeeded,  // Status without reason in enum
+                status: KPIStatus::Outdated,  // Status without reason in enum
                 reason: format!(
                     "No direct match. Version {} is outdated as of {}. Consider upgrading to {}.",
                     cycle,

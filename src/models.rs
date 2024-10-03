@@ -84,7 +84,7 @@ pub struct Analysis {
 pub enum KPIStatus {
     Compliant,           // Compliant status
     NonCompliant,        // Non-compliant status
-    UpgradeNeeded,       // Upgrade needed status
+    Outdated,       // Upgrade needed status
     NoActionNeeded,      // No action needed status
 }
 
