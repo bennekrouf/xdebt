@@ -3,7 +3,7 @@ use roxmltree::Document;
 use std::collections::HashMap;
 use std::error::Error;
 use regex::Regex;
-use tracing::{info, trace};
+use tracing::{info, trace, debug};
 
 pub fn extract_versions_from_doc(
     doc: &Document,
@@ -35,17 +35,17 @@ pub fn extract_versions_from_doc(
                     if equiv_keyword == keyword {
                         for reference in references {
                             if group_id_text.contains(reference) || artifact_id_text.contains(reference) {
-                                info!("Found matching reference '{}' for keyword '{}'", reference, keyword);
+                                debug!("Found matching reference '{}' for keyword '{}'", reference, keyword);
 
                                 // Use regex to extract version if applicable
                                 if let Some(caps) = version_regex.captures(version_text) {
                                     let extracted_version = caps.get(1).map(|m| m.as_str()).unwrap_or("unknown");
                                     versions.insert(keyword.to_string(), extracted_version.to_string());
-                                    info!("Extracted version '{}' for keyword '{}'", extracted_version, keyword);
+                                    debug!("Extracted version '{}' for keyword '{}'", extracted_version, keyword);
                                 } else {
                                     // Store the raw version text if no regex applies
                                     versions.insert(keyword.to_string(), version_text.to_string());
-                                    info!("Stored version '{}' for keyword '{}'", version_text, keyword);
+                                    debug!("Stored version '{}' for keyword '{}'", version_text, keyword);
                                 }
                             }
                         }
@@ -56,7 +56,7 @@ pub fn extract_versions_from_doc(
                 if artifact_id_text == *keyword {
                     let cleaned_version = version_text.trim_start_matches('~').trim_start_matches('^');
                     versions.insert(keyword.to_string(), cleaned_version.to_string());
-                    info!("Directly matched and found version '{}' for artifactId '{}'", cleaned_version, artifact_id_text);
+                    debug!("Directly matched and found version '{}' for artifactId '{}'", cleaned_version, artifact_id_text);
                 }
             }
         }

@@ -1,22 +1,22 @@
 
 use chrono::{NaiveDate, Utc};
-use tracing::{trace, info};
+use tracing::{info, debug};
 use crate::models::{KPIResult, Analysis, KPIStatus, RoadmapEntry};
 
 pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
-    info!("Analyzing KPI for {:?}", analysis.dependency_version);
+    debug!("Analyzing KPI for {:?}", analysis.dependency_version);
 
     if let Some(roadmap) = &mut analysis.roadmap {
         let mut upgrade_suggestion: Option<&RoadmapEntry> = None;
 
         for entry in &roadmap.entries {
-            info!("Analyzing roadmap entry: {:?}", entry);
+            debug!("Analyzing roadmap entry: {:?}", entry);
 
             // Check if current version matches the roadmap entry's version pattern
             if version_matches(&cycle, &entry.cycle) {
-                info!("Version matches: {} with {}", cycle, &entry.cycle);
+                debug!("Version matches: {} with {}", cycle, &entry.cycle);
 
                 // Check if the current version is within valid timeframe
                 if is_valid_timeframe(&entry.release_date, &entry.eol, &entry.extended_end_date, today) {
@@ -45,7 +45,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     });
                 }
             } else {
-                info!("No version match: {} and {} of {:?}", cycle, &entry.cycle, &entry);
+                debug!("No version match: {} and {} of {:?}", cycle, &entry.cycle, &entry);
             }
 
             // Suggest upgrade if current version is outdated and this entry is newer

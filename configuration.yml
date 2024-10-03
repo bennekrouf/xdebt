@@ -11,10 +11,10 @@ trace_level: info
 output_folder: tmp
 enable_maven_analysis: true
 enable_npm_analysis: true
-enable_docker_analysis: true
-enable_dotnet_analysis: true
-enable_php_analysis: true
-enable_jenkins_analysis: true 
+enable_docker_analysis: false
+enable_dotnet_analysis: false
+enable_php_analysis: false
+enable_jenkins_analysis: false
 
 equivalences:
   hibernate:

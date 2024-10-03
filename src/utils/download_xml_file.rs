@@ -37,7 +37,7 @@ pub fn download_xml_file(
     let body = match run_get_request(config, url)? {
         Some(content) => content,
         None => {
-            error!("Failed to fetch XML from '{}'.", url);
+            debug!("Failed to fetch XML from '{}'.", url);
             return Ok(String::new());  // Return empty string if no content
         }
     };
