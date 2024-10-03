@@ -3,7 +3,7 @@ use roxmltree::Document;
 use std::collections::HashMap;
 use std::error::Error;
 use regex::Regex;
-use tracing::{info, trace, debug};
+use tracing::{trace, debug};
 
 pub fn extract_versions_from_doc(
     doc: &Document,
@@ -13,7 +13,7 @@ pub fn extract_versions_from_doc(
     versions: &mut HashMap<String, String>,
 ) -> Result<(), Box<dyn Error>> {
     for keyword in version_keywords {
-        info!("Analyzing keyword: '{}'", keyword);
+        debug!("Analyzing keyword: '{}'", keyword);
 
         // 1. Handle <dependency> blocks with groupId, artifactId, and version
         for dep in doc.descendants().filter(|node| node.tag_name().name() == "dependency") {
@@ -72,7 +72,7 @@ pub fn extract_versions_from_doc(
                 if let Some(cycle) = node.text() {
                     let cleaned_version = cycle.trim_start_matches('~').trim_start_matches('^');
                     versions.insert(keyword.to_string(), cleaned_version.to_string());
-                    info!("Found version '{}' for keyword '{}'", cleaned_version, keyword);
+                    debug!("Found version '{}' for keyword '{}'", cleaned_version, keyword);
                 }
             }
         }
@@ -88,7 +88,7 @@ pub fn extract_versions_from_doc(
                 if let Some(version_text) = prop.text() {
                     let cleaned_version = version_text.trim_start_matches('~').trim_start_matches('^');
                     versions.insert(keyword.to_string(), cleaned_version.to_string());
-                    info!("Found version '{}' for keyword '{}' in properties", cleaned_version, keyword);
+                    debug!("Found version '{}' for keyword '{}' in properties", cleaned_version, keyword);
                 }
             }
         }

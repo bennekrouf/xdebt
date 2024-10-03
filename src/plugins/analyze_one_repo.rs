@@ -59,7 +59,7 @@ pub fn analyze_one_repo<'a>(
         analyze_jenkins(config, project_name, repository_name_str, &versions_keywords, &repository_name, &mut analyses)?;
     }
 
-    info!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repository_name, analyses);
+    debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repository_name, analyses);
 
     let enriched_analyses = enrich_versions_with_roadmap(db, analyses)?;
     Ok(enriched_analyses)

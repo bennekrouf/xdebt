@@ -49,7 +49,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
             }
 
             // Suggest upgrade if current version is outdated and this entry is newer
-            info!("Checking if lower version: {} and {}", cycle, &entry.cycle);
+            debug!("Checking if lower version: {} and {}", cycle, &entry.cycle);
             if is_lower_version(&cycle, &entry.cycle) {
                 if upgrade_suggestion.is_none() || is_better_match(&upgrade_suggestion.unwrap().cycle, &entry.cycle) {
                     upgrade_suggestion = Some(entry);

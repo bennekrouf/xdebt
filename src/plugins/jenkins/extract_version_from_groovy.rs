@@ -1,6 +1,6 @@
 
 use std::collections::HashMap;
-use tracing::info;
+use tracing::{debug, info};
 use crate::models::AppConfig;
 
 pub fn extract_version_from_groovy(
@@ -30,7 +30,7 @@ pub fn extract_version_from_groovy(
         // Attempt to find a version for the keyword in the properties
         if let Some(cycle) = properties.get(kw) {
             let version_str = cycle.trim(); // Optionally trim whitespace
-            info!("Found version '{}' for keyword: {}", version_str, kw);
+            debug!("Found version '{}' for keyword: {}", version_str, kw);
             return Some(version_str.to_string());
         } else {
             info!("No version found for keyword: {}", kw);

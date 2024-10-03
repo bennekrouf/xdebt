@@ -23,27 +23,27 @@ pub fn generate_and_analyze_effective_pom(
 
     // Log the current working directory
     let current_dir = env::current_dir()?;
-    info!("Current working directory: {}", current_dir.display());
+    debug!("Current working directory: {}", current_dir.display());
 
     // Log the absolute path of the effective POM file
     let absolute_effective_pom_file = current_dir.join(&effective_pom_file);
-    info!("Effective POM file absolute path: {}", absolute_effective_pom_file.display());
+    debug!("Effective POM file absolute path: {}", absolute_effective_pom_file.display());
 
     let mut pom_versions = Map::new();
 
     if !effective_pom_file.exists() || config.force_maven_effective {
-        info!(
+        debug!(
             "2 - Effective POM file '{}' does not exist or force_effective is true, generating effective POM.",
             effective_pom_file.display()
         );
 
         let _ = generate_maven_effective_pom(&pom_file_path.to_string_lossy())?;
-        
+
         if !absolute_effective_pom_file.exists() {
             return Err(format!("1 - Effective POM file '{}' does not exist.", absolute_effective_pom_file.display()).into());
         }
     } else {
-        info!(
+        debug!(
             "3 - Effective POM file '{}' already exists, skipping generation.",
             effective_pom_file.display()
         );

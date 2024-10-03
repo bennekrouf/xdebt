@@ -50,7 +50,7 @@ pub fn run_analysis(
                 let mut json_data = Value::Object(grouped_results);
                 remove_null_values(&mut json_data);  // Remove null entries
 
-                tracing::info!("Json result: {}", &json_data);
+                tracing::debug!("Json result: {}", &json_data);
 
                 // Log the duration of this analysis
                 let duration = start_time.elapsed();

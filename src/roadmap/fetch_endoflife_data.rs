@@ -2,11 +2,11 @@
 use reqwest::blocking::Client;
 use serde_json::Value;
 use std::error::Error;
-use tracing::{info, trace};
+use tracing::{info, trace, debug};
 
 // Fetch data from the End of Life API for a specific product
 pub fn fetch_endoflife_data(product: &str) -> Result<Vec<Value>, Box<dyn Error>> {
-    info!("Fetching end-of-life data for product: {}", product);
+    debug!("Fetching end-of-life data for product: {}", product);
 
     let url = format!("https://endoflife.date/api/{}.json", product);
     let client = Client::new();

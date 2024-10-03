@@ -33,7 +33,7 @@ pub fn process_pom(
                 .map_err(|e| format!("Failed to create directory for module '{}': {}", module, e))?;
 
             let module_pom_url = config.url_config.raw_file_url(project_name, repo_name, &format!("{}/pom.xml", &module));
-            info!("Submodule downloading pom file from {}", module_pom_url);
+            debug!("Submodule downloading pom file from {}", module_pom_url);
 
             download_xml_file(
                 config,
@@ -48,7 +48,7 @@ pub fn process_pom(
 
     // Step 3: Generate and analyze the effective POM
     let pom_file_path = Path::new(output_folder).join("pom.xml");
-    info!("output_folder {}", output_folder);
+    debug!("output_folder {}", output_folder);
 
     generate_and_analyze_effective_pom(config, versions_keywords, &pom_file_path, repo_name, output_folder)
 }

@@ -78,19 +78,19 @@ pub fn analyze_package_json_content(
         // Iterate over each keyword (product + equivalences)
         for kw in &keywords_to_check {
             // Log the search for each keyword in dependencies and devDependencies
-            info!("Looking for keyword '{}' in 'dependencies'", kw);
+            debug!("Looking for keyword '{}' in 'dependencies'", kw);
             if dependencies.get(kw).is_some() {
                 info!("Found keyword '{}' in 'dependencies'", kw);
             }
 
-            info!("Looking for keyword '{}' in 'devDependencies'", kw);
+            debug!("Looking for keyword '{}' in 'devDependencies'", kw);
             if dev_dependencies.get(kw).is_some() {
-                info!("Found keyword '{}' in 'devDependencies'", kw);
+                debug!("Found keyword '{}' in 'devDependencies'", kw);
             }
 
             // Check in both dependencies and devDependencies
             if let Some(cycle) = get_dependency_version(dependencies, dev_dependencies, kw) {
-                info!(
+                debug!(
                     "Found version '{}' for keyword '{}' in 'dependencies' or 'devDependencies'",
                     cycle, kw
                 );

@@ -2,7 +2,7 @@
 use std::error::Error;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
-use tracing::info;
+use tracing::{debug, info};
 
 pub fn check_package_json_exists(
     config: &AppConfig,
@@ -31,11 +31,11 @@ pub fn check_package_json_exists(
                 return Ok(Some(file_url));  // Return the first valid package.json URL
             }
             Ok(None) => {
-                info!("No package.json found at path: {}", file);
+                debug!("No package.json found at path: {}", file);
             }
             Err(e) if e.to_string().contains("404") => {
                 // Log the 404 error and continue to the next path
-                info!("404 Not Found at path: {}. Continuing to the next path.", file);
+                debug!("404 Not Found at path: {}. Continuing to the next path.", file);
             }
             Err(e) => {
                 // For other errors, return them
