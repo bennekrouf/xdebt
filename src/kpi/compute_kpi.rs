@@ -3,12 +3,12 @@ use chrono::Utc;
 use tracing::{info, debug};
 
 use crate::models::{KPIResult, Analysis, KPIStatus, RoadmapEntry};
-use crate::kpi::sanitize_version::sanitize_version;
-use crate::kpi::version_matches::version_matches;
-use crate::kpi::is_valid_timeframe::is_valid_timeframe;
+use crate::kpi::utils::sanitize_version::sanitize_version;
+use crate::kpi::utils::version_matches::version_matches;
+use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
 use crate::kpi::find_upgrade_suggestion::find_upgrade_suggestion;
 use crate::kpi::is_lower_version::is_lower_version;
-use crate::kpi::is_better_match::is_better_match;
+use crate::kpi::utils::is_better_match::is_better_match;
 
 pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);

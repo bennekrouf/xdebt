@@ -1,9 +1,9 @@
 
 use chrono::NaiveDate;
 use crate::models::RoadmapEntry;
-use crate::kpi::is_valid_timeframe::is_valid_timeframe;
+use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
 use crate::kpi::is_lower_version::is_lower_version;
-use crate::kpi::compare_versions::compare_versions;
+use crate::kpi::utils::compare_versions::compare_versions;
 
 pub fn find_upgrade_suggestion(entries: &mut Vec<RoadmapEntry>, today: NaiveDate) -> Option<String> {
     entries.sort_by(|a, b| compare_versions(&a.cycle, &b.cycle));

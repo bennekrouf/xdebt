@@ -64,9 +64,7 @@ Ensure your configuration YAML is correctly mounted in the /app/config folder.
 
 xdebt relies on a YAML configuration file to control its behavior. Here is an example of the configuration:
 
-```
 ```yaml
-
 platform: bitbucket
 base_url: https://dsigit.etat-de-vaud.ch/outils/git
 # platform: github
@@ -117,9 +115,7 @@ roadmap_list:
       - cycle: "8"
         releaseDate: null
         eol: "2023-01-01"
-
 ```
-
 
 - platform: The platform to fetch repositories from (github or bitbucket).
 - base_url: The API base URL for the platform.
@@ -136,17 +132,16 @@ roadmap_list:
 
 To analyze repositories for a project, configure the YAML file for your platform and run the application. For Bitbucket, the project names are extracted using the key field, while for GitHub, the full_name field is used.
 
-##JSON Output
+## JSON Output
 
 The application generates two types of JSON files:
 
-    Per-Project JSON: Each project generates a file with all analyzed repositories.
-    Consolidated all_projects.json: This file contains results for all projects, with repositories nested under each project.
+- Per-Project JSON: Each project generates a file with all analyzed repositories.
+- Consolidated all_projects.json: This file contains results for all projects, with repositories nested under each project.
 
 Here is an example of the all_projects.json structure:
 
 ```json
-
 {
   "FINANCE": [
     {
@@ -171,15 +166,23 @@ Here is an example of the all_projects.json structure:
     }
   ]
 }
-
 ```
-
 
 ## External Version Data
 
 In addition to your custom roadmap_list, the application can fetch version information from external APIs (e.g., End of Life APIs) to compare versions and check compliance.
 
 # Development
+
+## Rules
+1. One function per file.
+2. Same name for function and file name.
+3. Functions that relies only on external libraries are moved in a utils folder.
+4. All structs and enum are moved in a models.rs file.
+5. LLM generated code should be prefered over human manual code.
+6. Never leave a variable or a function semantically wrong. Rename as much as needed in all the code base.
+7. Parameters are moved in yml files. Yaml files are loading during system bootstrap.
+
 ## Running Tests
 
 Run the test suite using:
