@@ -37,7 +37,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     // If there is an upgrade suggestion, append it to the reason
                     if let Some(upgrade_entry) = upgrade_suggestion {
                         reason.push_str(&format!(
-                            "Consider upgrading to {} for better support.",
+                            " Consider upgrading to {} for better support.",
                             upgrade_entry.cycle
                         ));
                     }
