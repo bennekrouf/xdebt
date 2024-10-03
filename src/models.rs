@@ -13,6 +13,7 @@ pub struct ConfigFile {
     pub user: Option<String>, // Only for GitHub
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
+    pub force_sled_db_sourcing: bool,
     pub trace_level: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,
@@ -30,7 +31,7 @@ pub struct AppConfig {
     pub url_config: Box<dyn UrlConfig>,
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
-    // pub trace_level: Level,
+    pub force_sled_db_sourcing: bool,
     pub platform: String,
     pub output_folder: String,
     pub equivalences: HashMap<String, Vec<String>>,

@@ -45,6 +45,7 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         url_config,
         force_git_pull: config.force_git_pull,
         force_maven_effective: config.force_maven_effective,
+        force_sled_db_sourcing: config.force_sled_db_sourcing,
         equivalences: config.equivalences,
         enable_maven_analysis: config.enable_maven_analysis,
         enable_npm_analysis: config.enable_npm_analysis,

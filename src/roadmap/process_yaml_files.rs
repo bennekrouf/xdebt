@@ -1,5 +1,4 @@
 
-// use sled;
 use std::error::Error;
 use std::fs;
 use tracing::info;
@@ -11,7 +10,23 @@ use crate::models::AppConfig;
 // Process all YAML files in the roadmap directory
 pub fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), Box<dyn Error>> {
     let db = config.db.as_ref().ok_or("Database is not initialized")?;
-    // Iterate over each file in the directory
+
+    // Check if the flag `force_sled_db_sourcing` is set to true
+    if config.force_sled_db_sourcing {
+        // If true, flush the database (clear all existing data)
+        info!("Force sourcing enabled. Flushing the database.");
+        db.clear()?;
+    } else {
+        // If not force sourcing, check if the database is empty
+        if db.is_empty() {
+            info!("Database is empty. Proceeding to load data.");
+        } else {
+            info!("Database is not empty. Skipping loading data.");
+            return Ok(()); // Skip processing if the DB is not empty
+        }
+    }
+
+    // Iterate over each file in the directory and process YAML files
     for entry in fs::read_dir(dir_path)? {
         let entry = entry?;
         let path = entry.path();
@@ -22,10 +37,11 @@ pub fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), Box<
                 // Read and process the YAML file
                 let roadmap_yaml = read_yaml(&config, path_str)?;
                 persist_to_sled(db, &roadmap_yaml)?;
-                info!("Processed file: {}", path_str); // Use trace for logging
+                info!("Processed file: {}", path_str);
             }
         }
     }
+
     Ok(())
 }
 

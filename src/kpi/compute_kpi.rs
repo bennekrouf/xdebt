@@ -29,10 +29,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                 // Check if the current version is within valid timeframe
                 if is_valid_timeframe(&entry.release_date, &entry.eol, &entry.extended_end_date, today) {
                     let mut reason = if let Some(valid_until) = entry.eol {
-                        format!(
-                            "Version {} is valid as of {}. Valid until {}.",
-                            cycle, today, valid_until
-                        )
+                        format!("Valid until {}.", valid_until)
                     } else {
                         format!("Version {} is valid as of {}.", cycle, today)
                     };
@@ -40,7 +37,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     // If there is an upgrade suggestion, append it to the reason
                     if let Some(upgrade_entry) = upgrade_suggestion {
                         reason.push_str(&format!(
-                            " However, consider upgrading to {} for better support.",
+                            "Consider upgrading to {} for better support.",
                             upgrade_entry.cycle
                         ));
                     }
