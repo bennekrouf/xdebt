@@ -3,7 +3,7 @@ use chrono::NaiveDate;
 use std::error::Error;
 use std::fs;
 use crate::models::{RoadmapList, RoadmapEntry};
-use tracing::{info, trace};
+use tracing::{info, trace, debug};
 use crate::roadmap::fetch_endoflife_data::fetch_endoflife_data;
 use crate::models::AppConfig;
 
@@ -50,7 +50,7 @@ pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<RoadmapList, Box
                     roadmap.entries.extend(eol_roadmap_entries);
                 }
                 Err(err) => {
-                    info!("Failed to fetch end-of-life data for product {}: {:?}", product_name, err);
+                    debug!("Failed to fetch end-of-life data for product {}: {:?}", product_name, err);
                 }
             }
         }
