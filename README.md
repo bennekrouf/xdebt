@@ -212,15 +212,15 @@ cargo fmt
 
 Contributions are welcome! To contribute:
 
-    Fork the repository.
-    Create a new branch.
-    Make your changes.
-    Submit a pull request.
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Submit a pull request.
 
 # License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-#Contact
+# Contact
 
 For questions or feedback, reach out to the maintainers at mb@mayorana.ch
