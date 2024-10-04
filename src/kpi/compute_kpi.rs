@@ -7,6 +7,7 @@ use crate::kpi::utils::version_matches::version_matches;
 use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
 use crate::kpi::find_upgrade_suggestions::find_upgrade_suggestions;
 
+
 pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
@@ -31,6 +32,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     cycle: cycle.clone(),
                     status: KPIStatus::Outdated,
                     reason,
+                    source: Some(source_name.clone()),  // Assign the source here
                 }
             })
         },
@@ -90,6 +92,7 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     KPIStatus::Outdated
                 },
                 reason,
+                source: latest_suggestion.as_ref().map(|(_, source_name)| source_name.clone()), // Set the source when available
             })
         }
     )
