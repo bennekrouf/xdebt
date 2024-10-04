@@ -2,7 +2,7 @@
 use chrono::Utc;
 use tracing::{info, debug};
 
-use crate::models::{KPIResult, Analysis, KPIStatus, RoadmapEntry};
+use crate::models::{KPIResult, Analysis, KPIStatus};
 use crate::kpi::utils::sanitize_version::sanitize_version;
 use crate::kpi::utils::version_matches::version_matches;
 use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
