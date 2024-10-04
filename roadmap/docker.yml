@@ -8,7 +8,7 @@ roadmap_list:
         eol: null
         extended_end_date: null
         comment: "If no Dockerfile is found in the repository, a migration to Docker is required."
-        source_name: "Migration Policy"
+        source_name: "ACT-INT"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"
 

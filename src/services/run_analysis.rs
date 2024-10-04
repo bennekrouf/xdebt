@@ -1,7 +1,7 @@
 
 use std::error::Error;
 use std::time::{Instant, Duration};
-use serde_json::{Value, json, Map};
+use serde_json::{Value, json};
 use crate::plugins::analyze_one_repo::analyze_one_repo;
 use crate::models::AppConfig;
 use crate::kpi::compute_kpi::compute_kpi;
@@ -42,15 +42,22 @@ pub fn run_analysis(
 
             // Only proceed if kpi_results is not empty
             if !kpi_results.is_empty() {
-                // Group the KPI results under the repository name
-                let mut grouped_results = Map::new();
-                grouped_results.insert("repository_name".to_string(), json!(repo_name));
-                grouped_results.insert("debt".to_string(), json!(kpi_results));
+                // Use a Vec to enforce field order
+                let json_data = vec![
+                    ("application", json!(repo_name)),  // Add the repo name first
+                    ("debt", json!(kpi_results))            // Then the debt (KPI results)
+                ];
 
-                let mut json_data = Value::Object(grouped_results);
-                remove_null_values(&mut json_data);  // Remove null entries
+                // Convert the Vec to a Value::Object by converting tuples to key-value pairs
+                let mut flattened_json = serde_json::Map::new();
+                for (key, value) in json_data {
+                    flattened_json.insert(key.to_string(), value);
+                }
 
-                tracing::debug!("Json result: {}", &json_data);
+                let mut final_json = Value::Object(flattened_json);
+                remove_null_values(&mut final_json);  // Remove null entries
+
+                tracing::debug!("Json result: {}", &final_json);
 
                 // Log the duration of this analysis
                 let duration = start_time.elapsed();
@@ -69,8 +76,8 @@ pub fn run_analysis(
                 // Log the total accumulated time
                 tracing::info!("Total time so far: {:?}", unsafe { TOTAL_DURATION });
 
-                // Return the JSON data
-                return Ok(Some(json_data));
+                // Return the final JSON data
+                return Ok(Some(final_json));
             } else {
                 tracing::info!("No KPIs to record for project: {}, repo: {}", project_name, repo_name);
 

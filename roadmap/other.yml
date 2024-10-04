@@ -4,26 +4,39 @@ roadmap_list:
       - cycle: "4.x"
         releaseDate: null
         eol: "2020-01-31"
+        source_name: "ACT-INT"
       - cycle: "5.x"
         releaseDate: null
         eol: "2026-12-31"
+        source_name: "ACT-INT"
+
       - cycle: "6.x"
         releaseDate: null
         eol: "2026-12-31"
+        source_name: "ACT-INT"
+
   - product: "esb-client"
     entries:
       - cycle: "3.x"
         releaseDate: null
         eol: "2020-01-31"
+        source_name: "ACT-INT"
+
       - cycle: "4.x"
         releaseDate: null
         eol: "2020-01-31"
+        source_name: "ACT-INT"
+
       - cycle: "5.7"
         releaseDate: null
         eol: "2024-01-04"
+        source_name: "ACT-INT"
+
       - cycle: "6.x"
         releaseDate: null
         eol: "2026-12-31"
+        source_name: "ACT-INT"
+
   - product: "spring-boot"
     entries:
   - product: "spring-framework"
@@ -36,9 +49,14 @@ roadmap_list:
         source_name: "Jean-Eric Cuendet"
         source_entity: "ACT-INT"
         updated_at: "2023-10-06"
+
       - cycle: "4.x"
         eol: "2012-01-01" # Use YYYY-MM-DD format
         releaseDate: null
+        source_name: "ACT-INT"
+
       - cycle: "3.x"
         eol: "2012-01-01" # Use YYYY-MM-DD format
         releaseDate: null
+        source_name: "ACT-INT"
+

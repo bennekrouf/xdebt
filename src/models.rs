@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 use reqwest::blocking::Client;
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize, Serializer, ser::SerializeStruct};
 use sled::Db;
 use std::collections::HashMap;
 // use tracing::Level;
@@ -74,11 +74,28 @@ pub struct DependencyVersion {
     pub product: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Analysis {
     pub repository_name: String,
     pub dependency_version: DependencyVersion,
     pub roadmap: Option<Roadmap>,
+}
+
+impl Serialize for Analysis {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // Define the number of fields to serialize
+        let mut state = serializer.serialize_struct("Analysis", 3)?;
+
+        // Serialize the fields in the custom order
+        state.serialize_field("repository_name", &self.repository_name)?;
+        state.serialize_field("dependency_version", &self.dependency_version)?;
+        state.serialize_field("roadmap", &self.roadmap)?;
+
+        state.end()
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]

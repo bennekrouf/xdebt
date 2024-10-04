@@ -3,7 +3,7 @@ roadmap_list:
     domain: "migration"
     chapter: "#N/A"
     entries:
-      - cycle: "N/A"
+      - cycle: "4.5.17"
         eol: "2024-01-01"
         releaseDate: null
         extended_end_date: null
