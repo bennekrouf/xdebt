@@ -39,6 +39,7 @@ equivalences:
   node:
     - nodejs
     - node
+    - nodeVersion
   richface:
     - richfaces
     - richface

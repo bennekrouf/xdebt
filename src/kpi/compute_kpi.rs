@@ -1,79 +1,97 @@
 
 use chrono::Utc;
 use tracing::{info, debug};
-
 use crate::models::{KPIResult, Analysis, KPIStatus};
 use crate::kpi::utils::sanitize_version::sanitize_version;
 use crate::kpi::utils::version_matches::version_matches;
 use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
 use crate::kpi::find_upgrade_suggestions::find_upgrade_suggestions;
 
-
 pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
     debug!("Analyzing KPI for {:?}", analysis.dependency_version);
 
-    if let Some(roadmap) = &mut analysis.roadmap {
-        let (oldest_suggestion, latest_suggestion) = find_upgrade_suggestions(&mut roadmap.entries, today);
+    let (oldest_suggestion, latest_suggestion) = analysis.roadmap.as_mut()
+        .map(|roadmap| find_upgrade_suggestions(&mut roadmap.entries, today))
+        .unwrap_or((None, None));
 
-        if let Some(matching_entry) = roadmap.entries.iter().find(|entry| version_matches(&cycle, &entry.cycle)) {
-            debug!("Version matches: {} with {}", cycle, &matching_entry.cycle);
-
-            if is_valid_timeframe(&matching_entry.release_date, &matching_entry.eol, &matching_entry.extended_end_date, today) {
-                let mut reason = format!("Version {} is valid as of {}.", cycle, today);
-
-                // Append upgrade suggestions if present, with source name in parentheses
-                if let Some((latest, source_name)) = latest_suggestion {
-                    reason.push_str(&format!(" Latest valid version is {} (source: {})", latest, source_name));
-                }
-                if let Some((oldest, source_name)) = oldest_suggestion {
-                    reason.push_str(&format!(" Minimum valid version is {} (source: {})", oldest, source_name));
-                }
-
-                return Some(KPIResult {
-                    product: analysis.dependency_version.product.clone(),
-                    cycle: cycle.clone(),
-                    status: KPIStatus::Compliant,
-                    reason,
-                });
-            } else {
+    analysis.roadmap.as_ref().and_then(|roadmap| {
+        roadmap.entries.iter().find(|entry| version_matches(&cycle, &entry.cycle))
+    }).map_or_else(
+        || {
+            // No match case
+            latest_suggestion.clone().map(|(latest, source_name)| {
                 let reason = format!(
-                    "Version {} is outdated as of {}. Consider upgrading to {}.",
-                    cycle,
-                    matching_entry.eol.unwrap_or(today).to_string(),
-                    latest_suggestion.map(|(latest, source_name)| format!("{} (source: {})", latest, source_name)).unwrap_or("a higher cycle".to_string())
+                    "No direct match. Version {} is outdated as of {}. Consider upgrading to {} (source: {}).",
+                    cycle, today, latest, source_name
                 );
-
-                return Some(KPIResult {
+                KPIResult {
                     product: analysis.dependency_version.product.clone(),
                     cycle: cycle.clone(),
                     status: KPIStatus::Outdated,
                     reason,
-                });
-            }
-        }
+                }
+            })
+        },
+        |matching_entry| {
+            // Match case
+            let timeframe_valid = is_valid_timeframe(&matching_entry.release_date, &matching_entry.eol, &matching_entry.extended_end_date, today);
+            let reason = match (timeframe_valid, latest_suggestion.as_ref(), oldest_suggestion.as_ref()) {
+                // Case: UpToDate
+                (true, Some((latest, source_name)), _) if *latest == cycle => {
+                    format!("Version {} is up to date as of {} (source: {}).", cycle, today, source_name)
+                },
+                // Case: Compliant with both latest and oldest suggestion
+                (true, Some((latest, source_name)), Some((oldest, source_name_oldest))) => {
+                    format!(
+                        "Version {} is valid as of {}. Latest valid version is {} (source: {}). Minimum valid version is {} (source: {}).",
+                        cycle, today, latest, source_name, oldest, source_name_oldest
+                    )
+                },
+                // Case: Compliant with only latest suggestion
+                (true, Some((latest, source_name)), None) => {
+                    format!(
+                        "Version {} is valid as of {}. Latest valid version is {} (source: {}).",
+                        cycle, today, latest, source_name
+                    )
+                },
+                // Case: Outdated with suggestion
+                (false, Some((latest, source_name)), _) => {
+                    format!(
+                        "Version {} is outdated as of {}. Consider upgrading to {} (source: {}).",
+                        cycle, matching_entry.eol.unwrap_or(today), latest, source_name
+                    )
+                },
+                // Case: Outdated without suggestion
+                (false, None, _) => {
+                    format!(
+                        "Version {} is outdated as of {}. No upgrade suggestion available.",
+                        cycle, matching_entry.eol.unwrap_or(today)
+                    )
+                },
+                // Case: Compliant without any suggestion
+                (true, None, _) => {
+                    format!(
+                        "Version {} is valid as of {}.",
+                        cycle, today
+                    )
+                }
+            };
 
-        // Handle case where no direct match is found
-        if let Some((latest, source_name)) = latest_suggestion {
-            let reason = format!(
-                "No direct match. Version {} is outdated as of {}. Consider upgrading to {} (source: {}).",
-                cycle,
-                today,
-                latest,
-                source_name
-            );
-
-            return Some(KPIResult {
+            Some(KPIResult {
                 product: analysis.dependency_version.product.clone(),
                 cycle: cycle.clone(),
-                status: KPIStatus::Outdated,
+                status: if timeframe_valid && latest_suggestion.as_ref().map_or(false, |(latest, _)| latest == &cycle) {
+                    KPIStatus::UpToDate
+                } else if timeframe_valid {
+                    KPIStatus::Compliant
+                } else {
+                    KPIStatus::Outdated
+                },
                 reason,
-            });
+            })
         }
-    }
-
-    info!("Returning no suggestion for: {:?}", analysis.dependency_version.product);
-    None
+    )
 }
 

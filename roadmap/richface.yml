@@ -8,7 +8,7 @@ roadmap_list:
         releaseDate: null
         extended_end_date: null
         comment: "Migration all richface component to prime face "
-        source_name: "Benoit Duhr"
+        source_name: "Roadmap"
         source_entity: "ACT-INT"
         updated_at: "2023-09-08"
 

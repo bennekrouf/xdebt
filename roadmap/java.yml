@@ -4,9 +4,20 @@ roadmap_list:
       - cycle: "21"
         releaseDate: "2024-01-01"
         eol: null
-        source_name: "ACT-INT"
+        source_name: "Roadmap"
       - cycle: "8"
         releaseDate: null
         eol: "2023-01-01"
-        source_name: "ACT-INT"
-
+        source_name: "Roadmap"
+      - cycle: "21"
+        releaseDate: "2024-01-01"
+        eol: null
+        source_name: "Roadmap"
+      - cycle: "1.7"
+        releaseDate: null
+        eol: 2019.03.01
+        source_name: "Roadmap"
+      - cycle: "1.8"
+        releaseDate: null
+        eol: 2021.04.01
+        source_name: "Roadmap"
