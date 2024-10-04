@@ -24,8 +24,8 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
             // No match case
             latest_suggestion.clone().map(|(latest, source_name)| {
                 let reason = format!(
-                    "No direct match. Version {} is outdated as of {}. Consider upgrading to {} (source: {}).",
-                    cycle, today, latest, source_name
+                    "No direct match. Version {} is outdated as of {}. Consider upgrading to {}.",
+                    cycle, today, latest,
                 );
                 KPIResult {
                     product: analysis.dependency_version.product.clone(),
@@ -47,22 +47,22 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                 // Case: Compliant with both latest and oldest suggestion
                 (true, Some((latest, source_name)), Some((oldest, source_name_oldest))) => {
                     format!(
-                        "Version {} is valid as of {}. Latest valid version is {} (source: {}). Minimum valid version is {} (source: {}).",
-                        cycle, today, latest, source_name, oldest, source_name_oldest
+                        "Version {} is valid as of {}. Latest valid version is {}. Minimum valid version is {} (source: {}).",
+                        cycle, today, latest, source_name, oldest,
                     )
                 },
                 // Case: Compliant with only latest suggestion
                 (true, Some((latest, source_name)), None) => {
                     format!(
-                        "Version {} is valid as of {}. Latest valid version is {} (source: {}).",
-                        cycle, today, latest, source_name
+                        "Version {} is valid as of {}. Latest valid version is {}.",
+                        cycle, today, latest,
                     )
                 },
                 // Case: Outdated with suggestion
                 (false, Some((latest, source_name)), _) => {
                     format!(
-                        "Version {} is outdated as of {}. Consider upgrading to {} (source: {}).",
-                        cycle, matching_entry.eol.unwrap_or(today), latest, source_name
+                        "Version {} is outdated as of {}. Consider upgrading to {}.",
+                        cycle, matching_entry.eol.unwrap_or(today), latest,
                     )
                 },
                 // Case: Outdated without suggestion
