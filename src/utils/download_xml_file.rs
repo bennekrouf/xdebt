@@ -46,7 +46,7 @@ pub fn download_xml_file(
     let file_content = match Document::parse(&body) {
         Ok(parsed) => parsed,
         Err(e) => {
-            error!("Error parsing XML: {}", e);
+            error!("Error parsing XML: {} related to folder : {}", e, &output_folder);
             return Ok(String::new());  // Return empty string if parsing fails
         }
     };

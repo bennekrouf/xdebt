@@ -36,7 +36,7 @@ pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<RoadmapList, Box
                     let eol_roadmap_entries: Vec<RoadmapEntry> = eol_data.iter().map(|entry| {
                         RoadmapEntry {
                             cycle: entry["cycle"].as_str().unwrap_or_default().to_string(),
-                            release_date: entry["releaseDate"].as_str().map(|d| NaiveDate::parse_from_str(d, "%Y-%m-%d").ok()).flatten(),
+                            release_date: entry["release_date"].as_str().map(|d| NaiveDate::parse_from_str(d, "%Y-%m-%d").ok()).flatten(),
                             eol: entry["eol"].as_str().map(|d| NaiveDate::parse_from_str(d, "%Y-%m-%d").ok()).flatten(),
                             extended_end_date: None, // API does not provide extended end date
                             comment: Some("Source: End-of-life API".to_string()),

@@ -3,7 +3,6 @@ use reqwest::blocking::Client;
 use serde::{Serialize, Deserialize, Serializer, ser::SerializeStruct};
 use sled::Db;
 use std::collections::HashMap;
-// use tracing::Level;
 use crate::url::UrlConfig;
 
 #[derive(Debug, Deserialize)]
@@ -100,11 +99,11 @@ impl Serialize for Analysis {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum KPIStatus {
-    Compliant,           // Compliant status
-    NonCompliant,        // Non-compliant status
-    UpToDate,                    // UpToDate
-    Outdated,       // Upgrade needed status
-    NoActionNeeded,      // No action needed status
+    Compliant,
+    NonCompliant,
+    UpToDate,
+    Outdated,
+    NoActionNeeded,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -114,4 +113,5 @@ pub struct KPIResult {
     pub status: KPIStatus,
     pub reason: String,  // New field for the reason
     pub source: Option<String>,
+    pub days: Option<i64>,
 }

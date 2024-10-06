@@ -2,11 +2,11 @@ roadmap_list:
   - product: "node"
     entries:
       - cycle: "20"
-        releaseDate: "2024-01-01"
+        release_date: "2024-01-01"
         eol: null
         source_name: "Roadmap"
       - cycle: "8"
-        releaseDate: null
+        release_date: null
         eol: "2023-01-01"
         source_name: "Roadmap"
 

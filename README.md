@@ -107,10 +107,10 @@ roadmap_list:
   - product: "java"
     entries:
       - cycle: "21"
-        releaseDate: "2024-01-01"
+        release_date: "2024-01-01"
         eol: null
       - cycle: "8"
-        releaseDate: null
+        release_date: null
         eol: "2023-01-01"
 ```
 

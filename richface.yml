@@ -1,11 +1,9 @@
 roadmap_list:
   - product: "richface"
-    domain: "migration"
-    chapter: "#N/A"
     entries:
       - cycle: "4.5.17"
         eol: "2024-01-01"
-        releaseDate: null
+        release_date: null
         extended_end_date: null
         comment: "Migration all richface component to prime face "
         source_name: "Roadmap"

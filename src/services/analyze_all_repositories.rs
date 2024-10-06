@@ -6,7 +6,7 @@ use serde_json::{Value, json};
 use crate::models::AppConfig;
 use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
-use crate::utils::fetch_repositories::fetch_repositories;
+use crate::fetch_repositories::fetch_repositories;
 use crate::utils::append_json_to_file::append_json_to_file;
 
 pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), Box<dyn Error>> {
