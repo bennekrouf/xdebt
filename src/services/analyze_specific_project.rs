@@ -7,7 +7,7 @@ use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
 
-pub fn analyze_project_repositories(
+pub fn analyze_specific_project(
     config: &AppConfig,
 ) -> Result<(), Box<dyn Error>> {
 

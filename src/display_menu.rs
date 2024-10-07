@@ -3,7 +3,7 @@ use std::error::Error;
 
 use crate::models::AppConfig;
 use crate::services::analyze_all_repositories::analyze_all_repositories;
-use crate::services::analyze_project_repositories::analyze_project_repositories;
+use crate::services::analyze_specific_project::analyze_specific_project;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::services::search_dependency_in_sled::search_dependency_in_sled;
 
@@ -31,7 +31,7 @@ pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error>> {
             analyze_specific_repository(config, None)?;
         }
         "2" => {
-            analyze_project_repositories(config)?;
+            analyze_specific_project(config)?;
         }
         "3" => {
             analyze_all_repositories(config)?;
