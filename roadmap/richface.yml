@@ -3,10 +3,6 @@ roadmap_list:
     entries:
       - cycle: "4.5.17"
         eol: "2024-01-01"
-        release_date: null
-        extended_end_date: null
         comment: "Migration all richface component to prime face "
         source_name: "Roadmap"
-        source_entity: "ACT-INT"
-        updated_at: "2023-09-08"
 

@@ -5,7 +5,7 @@ use std::process::Command;
 use std::fs;
 use tracing::{debug, trace, error};
 
-pub fn generate_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Error>> {
+pub fn generate_maven_effective_pom(pom_file: &str, repo_name: &str) -> Result<String, Box<dyn Error>> {
     let effective_pom_file = format!("effective_pom.xml");
     let output_option = format!("-Doutput={}", effective_pom_file);
     let pom_file = format!("{}", &pom_file);
@@ -52,7 +52,7 @@ pub fn generate_maven_effective_pom(pom_file: &str) -> Result<String, Box<dyn Er
     } else {
         let status_code = output.status.code().unwrap_or(-1);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        error!("Maven command failed with status code: {}", status_code);
+        error!("Maven command failed for repo {} with status code: {}", repo_name, status_code);
         error!("stderr: {}", stderr);
         Err(Box::new(std::io::Error::new(ErrorKind::Other, "Maven command failed")))
     }

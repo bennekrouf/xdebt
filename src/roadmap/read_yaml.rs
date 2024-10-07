@@ -2,20 +2,20 @@
 use chrono::NaiveDate;
 use std::error::Error;
 use std::fs;
-use crate::models::{RoadmapList, RoadmapEntry};
+use crate::models::{Roadmaps, RoadmapEntry};
 use tracing::{info, trace, debug};
 use crate::roadmap::fetch_endoflife_data::fetch_endoflife_data;
 use crate::models::AppConfig;
 
 // Read and deserialize YAML from a file and enrich it with data from the End of Life API
-pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<RoadmapList, Box<dyn Error>> {
+pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, Box<dyn Error>> {
     trace!("Reading YAML file from path: {}", file_path);
 
     // Read YAML content
     let file_content = fs::read_to_string(file_path)?;
     trace!("YAML content read successfully");
 
-    let mut roadmap_list: RoadmapList = serde_yaml::from_str(&file_content)?;
+    let mut roadmap_list: Roadmaps = serde_yaml::from_str(&file_content)?;
     trace!("YAML content deserialized successfully");
 
     // Iterate over each product in the roadmap list and enrich it with End of Life data
@@ -41,8 +41,6 @@ pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<RoadmapList, Box
                             extended_end_date: None, // API does not provide extended end date
                             comment: Some("Source: End-of-life API".to_string()),
                             source_name: Some("end-of-life".to_string()),
-                            source_entity: Some("End-of-life API".to_string()),
-                            updated_at: None,
                         }
                     }).collect();
 

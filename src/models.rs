@@ -43,7 +43,7 @@ pub struct AppConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct RoadmapList {
+pub struct Roadmaps {
     pub roadmap_list: Vec<Roadmap>,
 }
 
@@ -63,8 +63,6 @@ pub struct RoadmapEntry {
     pub extended_end_date: Option<NaiveDate>,
     pub comment: Option<String>,
     pub source_name: Option<String>,
-    pub source_entity: Option<String>,
-    pub updated_at: Option<NaiveDate>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -111,7 +109,8 @@ pub struct KPIResult {
     pub product: String,
     pub cycle: String,
     pub status: KPIStatus,
-    pub reason: String,  // New field for the reason
+    pub reason: String,
     pub source: Option<String>,
-    pub days: Option<i64>,
+    pub validity: Option<String>,
 }
+

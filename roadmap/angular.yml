@@ -8,7 +8,6 @@ roadmap_list:
         eol: null            # Use null for missing optional field
         extended_end_date: null  # Use null for missing optional field
         source_name: "Roadmap"
-        updated_at: "2023-09-08"
       - cycle: "1.x"
         release_date: null # Use YYYY-MM-DD format
         eol: 2022-01-01            # Use null for missing optional field
@@ -22,5 +21,4 @@ roadmap_list:
         release_date: null # Use YYYY-MM-DD format
         eol: "2024-12-01"            # Use null for missing optional field
         source_name: "Roadmap"
-        updated_at: "2023-09-08"
 

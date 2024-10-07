@@ -37,7 +37,7 @@ pub fn generate_and_analyze_effective_pom(
             effective_pom_file.display()
         );
 
-        let _ = generate_maven_effective_pom(&pom_file_path.to_string_lossy())?;
+        let _ = generate_maven_effective_pom(&pom_file_path.to_string_lossy(), repo_name)?;
 
         if !absolute_effective_pom_file.exists() {
             return Err(format!("1 - Effective POM file '{}' does not exist.", absolute_effective_pom_file.display()).into());

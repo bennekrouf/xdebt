@@ -28,47 +28,48 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     cycle, today, latest,
                 );
 
-                // Adding days calculation (no EOL, so days is 0 here)
-                let days = 0;
+                let days = 0; // No EOL, set days to 0 in no match case
 
                 KPIResult {
                     product: analysis.dependency_version.product.clone(),
                     cycle: cycle.clone(),
                     status: KPIStatus::Outdated,
                     reason,
-                    source: Some(source_name.clone()),  // Assign the source here
-                    days: Some(days), // Set days to 0 since no specific EOL here
+                    source: Some(source_name.clone()),
+                    validity: Some(days.to_string()),
                 }
             })
         },
         |matching_entry| {
-            // Match case
-            let timeframe_valid = is_valid_timeframe(&matching_entry.release_date, &matching_entry.eol, &matching_entry.extended_end_date, today);
+            let timeframe_valid = is_valid_timeframe(
+                &matching_entry.release_date, 
+                &matching_entry.eol, 
+                &matching_entry.extended_end_date, 
+                today
+            );
 
-            // Compute days difference for outdated cases
-            let days = if let Some(eol_date) = matching_entry.eol {
-                eol_date.signed_duration_since(today).num_days()
-            } else {
-                0 // Default to 0 if no EOL date is present
-            };
+            // Calculate the number of days difference until the `eol` or `extended_end_date`
+            let valid_until = matching_entry.eol.or(matching_entry.extended_end_date).unwrap_or(today);
+            let days = valid_until.signed_duration_since(today).num_days().max(0); // Positive number of days
 
             let reason = match (timeframe_valid, latest_suggestion.as_ref(), oldest_suggestion.as_ref()) {
-                // Case: UpToDate
-                (true, Some((latest, source_name)), _) if *latest == cycle => {
-                    format!("Version {} is up to date as of {} (source: {}).", cycle, today, source_name)
+                // Case: UpToDate - no newer versions available
+                (true, None, _) => {
+                    debug!("Version {} is up to date until {} (source: roadmap).", cycle, valid_until);
+                    format!("Version {} is valid until {}.", cycle, valid_until)
                 },
                 // Case: Compliant with both latest and oldest suggestion
                 (true, Some((latest, _)), Some((oldest, _))) => {
                     format!(
-                        "Version {} is valid as of {}. Latest valid version is {}. Minimum valid version is {}.",
-                        cycle, today, latest, oldest,
+                        "Version {} is valid until {}. Latest valid version is {}. Minimum valid version is {}.",
+                        cycle, valid_until, latest, oldest,
                     )
                 },
                 // Case: Compliant with only latest suggestion
                 (true, Some((latest, _)), None) => {
                     format!(
-                        "Version {} is valid as of {}. Latest valid version is {}.",
-                        cycle, today, latest,
+                        "Version {} is valid until {}. Latest valid version is {}.",
+                        cycle, valid_until, latest,
                     )
                 },
                 // Case: Outdated with suggestion
@@ -84,20 +85,14 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                         "Version {} is outdated as of {}. No upgrade suggestion available.",
                         cycle, matching_entry.eol.unwrap_or(today)
                     )
-                },
-                // Case: Compliant without any suggestion
-                (true, None, _) => {
-                    format!(
-                        "Version {} is valid as of {}.",
-                        cycle, today
-                    )
                 }
             };
 
             Some(KPIResult {
                 product: analysis.dependency_version.product.clone(),
                 cycle: cycle.clone(),
-                status: if timeframe_valid && latest_suggestion.as_ref().map_or(false, |(latest, _)| latest == &cycle) {
+                status: if timeframe_valid && latest_suggestion.is_none() {
+                    // Return UpToDate if the version is valid and there are no newer versions
                     KPIStatus::UpToDate
                 } else if timeframe_valid {
                     KPIStatus::Compliant
@@ -105,8 +100,8 @@ pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
                     KPIStatus::Outdated
                 },
                 reason,
-                source: latest_suggestion.as_ref().map(|(_, source_name)| source_name.clone()), // Set the source when available
-                days: if !timeframe_valid { Some(days) } else { None }, // Set days only for outdated cases
+                source: latest_suggestion.as_ref().map(|(_, source_name)| source_name.clone()), // Set the source if available
+                validity: Some(days.to_string()), // Always set `days` for valid and outdated cases
             })
         }
     )

@@ -15,9 +15,9 @@ roadmap_list:
         source_name: "Roadmap"
       - cycle: "1.7"
         release_date: null
-        eol: "2019.03.01"
+        eol: "2019-03-01"
         source_name: "Roadmap"
-      # - cycle: "1.8"
-      #   release_date: null
-      #   eol: "2021.04.01"
-      #   source_name: "Roadmap"
+      - cycle: "1.8"
+        release_date: null
+        eol: "2021.04.01"
+        source_name: "Roadmap"
