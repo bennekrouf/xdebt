@@ -25,23 +25,13 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         _ => return Err("Unsupported platform".into()),
     };
 
-    // Convert trace level to uppercase to ensure case-insensitive matching
-    // let trace_level_input = config.trace.to_uppercase();
-    // let trace_level: tracing::Level = match trace_level_input.as_str() {
-    //     "TRACE" => tracing::Level::TRACE,
-    //     "INFO" => tracing::Level::INFO,
-    //     "DEBUG" => tracing::Level::DEBUG,
-    //     "ERROR" => tracing::Level::ERROR,
-    //     "WARN" => tracing::Level::WARN,
-    //     _ => tracing::Level::ERROR, // default if not matched
-    // };
-
     Ok(AppConfig {
         client,
         db: None, // Initialized later on
         // trace_level,
         platform: config.platform,
         output_folder: config.output_folder,
+        roadmap_folder: config.roadmap_folder,
         url_config,
         force_git_pull: config.force_git_pull,
         force_maven_effective: config.force_maven_effective,

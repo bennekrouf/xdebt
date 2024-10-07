@@ -50,7 +50,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let config = shared_config.lock().unwrap();
 
         if !yaml_processed {
-            process_yaml_files(&config, "roadmap")?;
+            process_yaml_files(&config, &config.roadmap_folder)?;
             yaml_processed = true;
         }
 
