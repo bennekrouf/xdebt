@@ -28,7 +28,6 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
     Ok(AppConfig {
         client,
         db: None, // Initialized later on
-        // trace_level,
         platform: config.platform,
         output_folder: config.output_folder,
         roadmap_folder: config.roadmap_folder,
@@ -37,6 +36,7 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         force_maven_effective: config.force_maven_effective,
         force_sled_db_sourcing: config.force_sled_db_sourcing,
         equivalences: config.equivalences,
+        sources_priorities: config.sources_priorities,
         enable_maven_analysis: config.enable_maven_analysis,
         enable_npm_analysis: config.enable_npm_analysis,
         enable_docker_analysis: config.enable_docker_analysis,

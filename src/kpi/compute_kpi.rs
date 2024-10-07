@@ -2,19 +2,19 @@
 // use chrono::Duration;
 use chrono::Utc;
 use tracing::debug;
-use crate::models::{KPIResult, Analysis, KPIStatus};
+use crate::models::{KPIResult, Analysis, KPIStatus , AppConfig};
 use crate::kpi::utils::sanitize_version::sanitize_version;
 use crate::kpi::utils::version_matches::version_matches;
 use crate::kpi::utils::is_valid_timeframe::is_valid_timeframe;
 use crate::kpi::find_upgrade_suggestions::find_upgrade_suggestions;
 
-pub fn compute_kpi<'a>(analysis: &'a mut Analysis) -> Option<KPIResult> {
+pub fn compute_kpi<'a>(config: &AppConfig, analysis: &'a mut Analysis) -> Option<KPIResult> {
     let cycle = sanitize_version(&analysis.dependency_version.cycle);
     let today = Utc::now().date_naive();
     debug!("Analyzing KPI for {:?}", analysis.dependency_version);
 
     let (oldest_suggestion, latest_suggestion) = analysis.roadmap.as_mut()
-        .map(|roadmap| find_upgrade_suggestions(&mut roadmap.entries, today))
+        .map(|roadmap| find_upgrade_suggestions(&config, &mut roadmap.entries))
         .unwrap_or((None, None));
 
     analysis.roadmap.as_ref().and_then(|roadmap| {

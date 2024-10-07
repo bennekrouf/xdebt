@@ -32,7 +32,7 @@ pub fn run_analysis(
             // Compute KPIs based on the analysis results
             let kpi_results: Vec<KPIResult> = analysis_results
                 .iter_mut()
-                .filter_map(|analysis| compute_kpi(analysis)) // Filter out None values
+                .filter_map(|analysis| compute_kpi(&config, analysis)) // Filter out None values
                 .collect();
 
             // Log KPIs
