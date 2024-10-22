@@ -1,6 +1,5 @@
 
-use std::error::Error;
-
+use crate::types::MyError;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 
@@ -8,7 +7,7 @@ pub fn check_php_files(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<bool, Box<dyn Error>> {
+) -> Result<bool, MyError> {
 
     // List of PHP-related files to check
     let php_files = [

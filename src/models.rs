@@ -3,9 +3,11 @@ use reqwest::blocking::Client;
 use serde::{Serialize, Deserialize, Serializer, ser::SerializeStruct};
 use sled::Db;
 use std::collections::HashMap;
+
+use crate::url::bitbucket::BitbucketConfig;
 use crate::url::UrlConfig;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ConfigFile {
     pub platform: String,
     pub base_url: String,
@@ -26,10 +28,19 @@ pub struct ConfigFile {
     pub enable_jenkins_analysis: bool,
 }
 
+// Custom deserialization function for `url_config`
+fn default_url_config() -> Box<dyn UrlConfig> {
+    Box::new(BitbucketConfig {
+        base_url: "https://bitbucket.org".to_string(),
+    })
+}
+
+use std::sync::Arc;
+#[derive(Debug, Clone)]
 pub struct AppConfig {
     pub client: Client,
     pub db: Option<Db>,
-    pub url_config: Box<dyn UrlConfig>,
+    pub url_config: Arc<dyn UrlConfig>,
     pub force_git_pull: bool,
     pub force_maven_effective: bool,
     pub force_sled_db_sourcing: bool,
@@ -44,6 +55,31 @@ pub struct AppConfig {
     pub enable_dotnet_analysis: bool,
     pub enable_php_analysis: bool,
     pub enable_jenkins_analysis: bool,
+}
+
+// Manually implement Default for AppConfig
+impl Default for AppConfig {
+    fn default() -> Self {
+        AppConfig {
+            client: Client::new(),           // Initialize with appropriate default
+            db: None,                        // Default to None
+            url_config: default_url_config().into(), // Use the custom default URL config
+            force_git_pull: false,
+            force_maven_effective: false,
+            force_sled_db_sourcing: false,
+            platform: "bitbucket".to_string(), // Default platform
+            output_folder: "tmp".to_string(),      // Default output folder
+            roadmap_folder: "roadmap".to_string(),    // Default roadmap folder
+            sources_priorities: None,
+            equivalences: HashMap::new(),
+            enable_maven_analysis: false,
+            enable_npm_analysis: false,
+            enable_docker_analysis: false,
+            enable_dotnet_analysis: false,
+            enable_php_analysis: false,
+            enable_jenkins_analysis: false,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -117,4 +153,5 @@ pub struct KPIResult {
     pub source: Option<String>,
     pub validity: Option<String>,
 }
+
 

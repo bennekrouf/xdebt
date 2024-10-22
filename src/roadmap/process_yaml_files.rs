@@ -1,14 +1,14 @@
 
-use std::error::Error;
 use std::fs;
 use tracing::info;
 
 use crate::roadmap::read_yaml::read_yaml;
 use crate::roadmap::persist_to_sled::persist_to_sled;
 use crate::models::AppConfig;
+use crate::types::MyError;
 
 // Process all YAML files in the roadmap directory
-pub fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), Box<dyn Error>> {
+pub fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), MyError> {
     let db = config.db.as_ref().ok_or("Database is not initialized")?;
 
     // Check if the flag `force_sled_db_sourcing` is set to true

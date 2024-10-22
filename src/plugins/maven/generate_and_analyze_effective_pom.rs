@@ -3,13 +3,13 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use serde_json::{Value, Map};
-use std::error::Error;
 use std::env;
 use tracing::debug;
 
 use crate::models::AppConfig;
 use crate::plugins::maven::utils::generate_maven_effective_pom::generate_maven_effective_pom;
 use crate::plugins::maven::utils::analyze_pom_content::analyze_pom_content;
+use crate::types::MyError;
 
 pub fn generate_and_analyze_effective_pom(
     config: &AppConfig,
@@ -17,7 +17,7 @@ pub fn generate_and_analyze_effective_pom(
     pom_file_path: &Path,
     repo_name: &str,
     output_folder: &str,
-) -> Result<Map<String, Value>, Box<dyn Error>> {
+) -> Result<Map<String, Value>, MyError> {
     // Effective POM file path (relative)
     let effective_pom_file = Path::new(output_folder).join("effective_pom.xml");
 

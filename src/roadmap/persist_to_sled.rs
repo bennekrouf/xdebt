@@ -1,13 +1,13 @@
 
 use serde_json;
 use sled;
-use std::error::Error;
 use tracing::trace;
 
 use crate::models::Roadmaps;
+use crate::types::MyError;
 
 // Persist each product version to sled DB (case-insensitive)
-pub fn persist_to_sled(db: &sled::Db, roadmap_yaml: &Roadmaps) -> Result<(), Box<dyn Error>> {
+pub fn persist_to_sled(db: &sled::Db, roadmap_yaml: &Roadmaps) -> Result<(), MyError> {
     for roadmap in &roadmap_yaml.roadmap_list {
         trace!("Persisting : {:?}", roadmap);
         let serialized_product = serde_json::to_vec(&roadmap)?;

@@ -1,11 +1,11 @@
 use serde_json::Value;
-use std::error::Error;
 use tracing::info;
 
 use crate::models::AppConfig;
 use crate::utils::run_json_get_query::run_json_get_query;
+use crate::types::MyError;
 
-pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, Box<dyn Error>> {
+pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, MyError> {
     let url_config = &*config.url_config; // Dereference the Box
 
     // Get the base URL for the API to fetch the list of projects

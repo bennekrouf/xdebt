@@ -1,15 +1,15 @@
 
-use std::error::Error;
 use dialoguer::Input;
 use serde_json::json; // Ensure this is imported
 use crate::fetch_repositories::fetch_repositories;
 use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
+use crate::types::MyError;
 
 pub fn analyze_specific_project(
     config: &AppConfig,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), MyError> {
 
     // Prompt for the project name
     let project_name: String = Input::new()

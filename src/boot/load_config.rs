@@ -1,13 +1,12 @@
-use std::error::Error;
-
 use crate::boot::read_yaml::read_yaml;
 use crate::models::{AppConfig, ConfigFile};
 use crate::url::{bitbucket::BitbucketConfig, github::GithubConfig};
 use crate::utils::create_client_with_auth::create_client_with_auth;
 use crate::url::UrlConfig;
 use crate::boot::init_tracing::init_tracing;
+use crate::types::MyError;
 
-pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> {
+pub fn load_config(config_file_path: &str) -> Result<AppConfig, MyError> {
     let config: ConfigFile = read_yaml(config_file_path)?;
     let _ = init_tracing(&config.trace_level.to_string())?;
 
@@ -31,7 +30,7 @@ pub fn load_config(config_file_path: &str) -> Result<AppConfig, Box<dyn Error>> 
         platform: config.platform,
         output_folder: config.output_folder,
         roadmap_folder: config.roadmap_folder,
-        url_config,
+        url_config: url_config.into(),
         force_git_pull: config.force_git_pull,
         force_maven_effective: config.force_maven_effective,
         force_sled_db_sourcing: config.force_sled_db_sourcing,

@@ -1,6 +1,6 @@
 
 use std::collections::HashMap;
-use std::error::Error;
+use crate::types::MyError;
 use serde_json::{json, Value};
 use tracing::{debug, info};
 
@@ -26,7 +26,7 @@ pub fn analyze_package_json_content(
     project_name: &str,
     repo_name: &str,
     dependencies_list: &[&str],  // List of product names
-) -> Result<Value, Box<dyn Error>> {
+) -> Result<Value, MyError> {
     // Check if package.json exists and get the file URL
     let file_url = match check_package_json_exists(config, project_name, repo_name)? {
         Some(url) => url,

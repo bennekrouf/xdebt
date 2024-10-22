@@ -1,16 +1,16 @@
 
-use std::error::Error;
 use tracing::info;
 
 use crate::models::AppConfig;
 use crate::utils::run_get_request::run_get_request;
+use crate::types::MyError;
 
 pub fn check_file_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
     file_path: &str,  // file_path is the full path of the file in the repository
-) -> Result<Option<String>, Box<dyn Error>> {
+) -> Result<Option<String>, MyError> {
     let url_config = &*config.url_config;
 
     // Construct the Bitbucket API URL to check the file

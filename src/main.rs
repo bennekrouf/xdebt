@@ -9,36 +9,59 @@ mod services;
 mod url;
 mod utils;
 mod fetch_repositories;
+mod grpc_server;
+mod types;
 
 use std::env;
-use std::error::Error;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 use crate::boot::load_config::load_config;
-use crate::boot::watch_config_for_reload::watch_config_for_reload;
 use crate::display_menu::display_menu;
 use crate::roadmap::process_yaml_files::process_yaml_files;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
+use crate::grpc_server::start_grpc_server;
+use types::MyError;
+// use models::AppConfig;
+use tokio::task::spawn_blocking;
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), MyError> {
+    // Load configuration
     let config_file_path = "configuration.yml";
-    let mut config = load_config(config_file_path)?;
+    let config_result = spawn_blocking(move || {
+        load_config(config_file_path).unwrap()
+    }).await;
 
-    let db = sled::open("roadmap_db")?;
-    config.db = Some(db);
+    let shared_config = Arc::new(Mutex::new(config_result?));
 
-    let shared_config = Arc::new(Mutex::new(config));
+    // Initialize the database
+    let db = tokio::task::spawn_blocking(|| sled::open("roadmap_db")).await??;
+    {
+        let mut config = shared_config.lock().await; // Lock the Mutex to get a mutable reference
+        config.db = Some(db); // Set the database
+    }
 
     // Start watching the config file for changes
-    watch_config_for_reload(Arc::clone(&shared_config))?;
+    // watch_config_for_reload(Arc::clone(&shared_config))?;
+
+    // Start the gRPC server in a non-blocking async task
+    let grpc_config = Arc::clone(&shared_config);
+    let grpc_handle = tokio::spawn(async move {
+        let config = grpc_config.lock().await;
+        let config_clone = Arc::new(Mutex::new(config.clone()));
+        if let Err(e) = start_grpc_server(config_clone).await {
+            eprintln!("gRPC server failed: {}", e);
+        }
+    });
 
     // Check command-line arguments
     let args: Vec<String> = env::args().collect();
 
     if args.len() > 1 {
-        // If an argument is passed (like "gpecs"), trigger specific analysis
+        // If an argument is passed, trigger specific analysis asynchronously
         let repo_name = &args[1];
-        let config = shared_config.lock().unwrap();
+        let config = shared_config.lock().await;
         analyze_specific_repository(&config, Some(repo_name))?;
         return Ok(());
     }
@@ -46,17 +69,41 @@ fn main() -> Result<(), Box<dyn Error>> {
     // If no argument is passed, proceed with showing the menu
     let mut yaml_processed = false;
 
-    loop {
-        let config = shared_config.lock().unwrap();
+    let menu_handle = tokio::spawn(async move {
+        loop {
+            let config_clone = Arc::clone(&shared_config);  // Clone the Arc for process_yaml_files task
 
-        if !yaml_processed {
-            process_yaml_files(&config, &config.roadmap_folder)?;
-            yaml_processed = true;
-        }
+            if !yaml_processed {
+                // Wrap blocking code in `spawn_blocking` and return a `Result`
+                let _ = tokio::spawn(async move {
+                    let config = config_clone.lock().await;
+                    process_yaml_files(&config, &config.roadmap_folder)
+                }).await; // Properly unwrap Result
+                yaml_processed = true;
+            }
 
-        if let Err(e) = display_menu(&config) {
-            tracing::error!("Error in menu execution: {}", e);
+            let config_clone = Arc::clone(&shared_config);  // Clone the Arc for display_menu task
+
+            let _ = tokio::spawn(async move {
+                let config = config_clone.lock().await;
+                display_menu(&config)
+            }).await;
+
+            // Yield control back to the async runtime to avoid blocking
+            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
         }
-    }
+    });
+
+    // Wait for all tasks to complete to prevent premature shutdown
+    let _ = tokio::select! {
+        _ = grpc_handle => {
+            println!("gRPC server task finished.");
+        }
+        _ = menu_handle => {
+            println!("Menu task finished.");
+        }
+    };
+
+    Ok(())
 }
 

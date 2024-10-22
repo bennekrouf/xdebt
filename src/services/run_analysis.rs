@@ -1,5 +1,4 @@
 
-use std::error::Error;
 use std::time::{Instant, Duration};
 use serde_json::{Value, json};
 use crate::plugins::analyze_one_repo::analyze_one_repo;
@@ -7,6 +6,7 @@ use crate::models::AppConfig;
 use crate::kpi::compute_kpi::compute_kpi;
 use crate::models::KPIResult;
 use crate::utils::remove_null_values::remove_null_values;
+use crate::types::MyError;
 
 static mut TOTAL_DURATION: Duration = Duration::new(0, 0);  // Static variable to hold total duration
 
@@ -14,7 +14,7 @@ pub fn run_analysis(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<Option<Value>, Box<dyn Error>> {
+) -> Result<Option<Value>, MyError> {
     // Skip certain repositories
     if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
         return Ok(None);  // Return None for skipped repos

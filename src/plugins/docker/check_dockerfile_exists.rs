@@ -1,5 +1,5 @@
 
-use std::error::Error;
+use crate::types::MyError;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 
@@ -7,7 +7,7 @@ pub fn check_dockerfile_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<bool, Box<dyn Error>> {
+) -> Result<bool, MyError> {
 
     // List of Docker-related files to check
     let docker_files = ["Dockerfile", "docker-compose.yml", ".dockerignore"];

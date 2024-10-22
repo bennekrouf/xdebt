@@ -1,7 +1,7 @@
 
 use roxmltree::Document;
 use std::collections::HashMap;
-use std::error::Error;
+use crate::types::MyError;
 use regex::Regex;
 use tracing::{trace, debug};
 
@@ -11,7 +11,7 @@ pub fn extract_versions_from_doc(
     version_keywords: &[&str],
     version_regex: &Regex,
     versions: &mut HashMap<String, String>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), MyError> {
     for keyword in version_keywords {
         debug!("Analyzing keyword: '{}'", keyword);
 

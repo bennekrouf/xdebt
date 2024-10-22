@@ -1,5 +1,4 @@
 
-use std::error::Error;
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
@@ -8,13 +7,14 @@ use roxmltree::Document;
 
 use crate::utils::run_get_request::run_get_request;
 use crate::models::AppConfig;
+use crate::types::MyError;
 
 pub fn download_xml_file(
     config: &AppConfig,
     url: &str,
     output_folder: &str,
     file_name: &str,
-) -> Result<String, Box<dyn Error>> {
+) -> Result<String, MyError> {
     let output_folder = &output_folder.to_lowercase();
 
     // Ensure the target folder exists

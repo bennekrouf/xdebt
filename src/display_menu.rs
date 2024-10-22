@@ -7,7 +7,7 @@ use crate::services::analyze_specific_project::analyze_specific_project;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::services::search_dependency_in_sled::search_dependency_in_sled;
 
-pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error>> {
+pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error + Send + Sync>> {
     let db = &config.db.as_ref().expect("Db should be initialized");
 
     // Define the menu text and options

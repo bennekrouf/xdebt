@@ -3,7 +3,7 @@ use roxmltree::Document;
 use std::collections::HashMap;
 use serde_json::json;
 use serde_json::Value;
-use std::error::Error;
+use crate::types::MyError;
 use regex::Regex;
 use tracing::{debug, info, trace};
 use crate::models::AppConfig;
@@ -14,7 +14,7 @@ pub fn analyze_pom_content(
     app_name: &str, 
     content: &str, 
     version_keywords: &[&str],
-) -> Result<Value, Box<dyn Error>> {
+) -> Result<Value, MyError> {
     let equivalences = config.equivalences.clone();
     info!("Analyzing POM content for app: '{}' and keywords : {:?}", app_name, version_keywords);
 

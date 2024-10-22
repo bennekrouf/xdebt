@@ -1,5 +1,5 @@
 
-use std::error::Error;
+use crate::types::MyError;
 use serde_json::Value;
 use tracing::info;
 
@@ -12,7 +12,7 @@ pub fn analyze_npm(
     repository_name: &str,
     versions_keywords: &[&str],
     analyses: &mut Vec<Analysis>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), MyError> {
     info!("Analyzing package.json for repository: {}", repository_name);
 
     // Analyze the package.json content

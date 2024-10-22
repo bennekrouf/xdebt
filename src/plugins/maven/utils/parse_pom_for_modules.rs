@@ -1,8 +1,8 @@
 
-use std::error::Error;
+use crate::types::MyError;
 use tracing::trace;
 
-pub fn parse_pom_for_modules(pom_content: &str) -> Result<Vec<String>, Box<dyn Error>> {
+pub fn parse_pom_for_modules(pom_content: &str) -> Result<Vec<String>, MyError> {
     trace!("Parsing POM content for modules");
     let doc = roxmltree::Document::parse(pom_content)
         .map_err(|e| format!("Failed to parse POM XML: {}", e))?;

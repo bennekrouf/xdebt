@@ -4,8 +4,10 @@ use base64::{engine::general_purpose, Engine as _};
 use dotenv::dotenv;
 use reqwest::header::{HeaderName, HeaderValue, AUTHORIZATION};
 use std::env;
-use std::error::Error;
+use crate::types::MyError;
+use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct BitbucketConfig {
     pub base_url: String,
 }
@@ -38,7 +40,7 @@ impl UrlConfig for BitbucketConfig {
     }
 
     // Function for getting headers
-    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>> {
+    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, MyError> {
         dotenv().ok(); // Load environment variables
 
         let username = env::var("BITBUCKET_USERNAME")

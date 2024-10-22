@@ -1,5 +1,4 @@
 
-use std::error::Error;
 use tracing::info;
 
 use crate::plugins::jenkins::check_jenkins_file_exists::check_jenkins_file_exists;
@@ -7,6 +6,7 @@ use crate::plugins::jenkins::extract_version_from_groovy::extract_version_from_g
 use crate::models::{AppConfig, Analysis, DependencyVersion};
 use crate::utils::run_get_request::run_get_request;
 use crate::plugins::jenkins::parse_groovy_properties::parse_groovy_properties;
+use crate::types::MyError;
 
 pub fn analyze_jenkins(
     config: &AppConfig,
@@ -15,7 +15,7 @@ pub fn analyze_jenkins(
     versions_keywords: &[&str],
     repository_name_str: &str,
     analyses: &mut Vec<Analysis>,
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), MyError> {
     info!("Start of Jenkins analysis");
 
     if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repository_name)? {

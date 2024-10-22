@@ -1,13 +1,13 @@
 
 use serde_json;
 use sled;
-use std::error::Error;
+use crate::types::MyError;
 use std::collections::HashSet;
 
 use crate::models::Roadmap;
 
 // Get distinct list of dependencies from sled DB
-pub fn get_distinct_dependencies(db: &sled::Db) -> Result<Vec<String>, Box<dyn Error>> {
+pub fn get_distinct_dependencies(db: &sled::Db) -> Result<Vec<String>, MyError> {
     let mut dependency_set = HashSet::new();
 
     for item in db.iter() {

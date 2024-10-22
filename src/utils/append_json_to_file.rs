@@ -2,15 +2,15 @@
 use std::fs::{OpenOptions, create_dir_all};
 use std::io::Write;
 use serde_json::{json, Value};
-use std::error::Error;
 use std::path::Path;
 use tracing::{info, error, debug};
 use crate::models::AppConfig;
+use crate::types::MyError;
 
 pub fn append_json_to_file<'a>(
     config: &'a AppConfig,
     project_name: &str,
-    json_data: &Value) -> Result<(), Box<dyn Error>> {
+    json_data: &Value) -> Result<(), MyError> {
     // Get the target folder from the environment, default to "tmp" if not set
     let output_folder = &config.output_folder;
     let project_name = project_name.to_lowercase();

@@ -2,7 +2,7 @@
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
-use std::error::Error;
+use crate::types::MyError;
 use tracing::debug;
 
 use crate::utils::download_xml_file::download_xml_file;
@@ -14,7 +14,7 @@ pub fn download_and_read_pom(
     output_folder: &str,
     pom_url: &str,
     repo_name: &str,
-) -> Result<String, Box<dyn Error>> {
+) -> Result<String, MyError> {
     let pom_file_path: PathBuf = Path::new(output_folder).join("pom.xml");
 
     if pom_file_path.exists() && !config.force_git_pull {

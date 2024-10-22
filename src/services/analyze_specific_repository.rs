@@ -1,5 +1,4 @@
 
-use std::error::Error;
 use dialoguer::Input;
 use serde_json::json;
 
@@ -8,11 +7,12 @@ use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
+use crate::types::MyError;
 
 pub fn analyze_specific_repository(
     config: &AppConfig,
     repo_name_arg: Option<&str>, // Accept repository name as an optional argument
-) -> Result<(), Box<dyn Error>> {
+) -> Result<(), MyError> {
     // Determine the repository name: use the argument if provided, otherwise prompt the user
     let repo_name = match repo_name_arg {
         Some(name) => name.to_string(), // Use the argument

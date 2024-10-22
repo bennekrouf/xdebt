@@ -1,5 +1,5 @@
 
-use std::error::Error;
+use crate::types::MyError;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 use tracing::{debug, info};
@@ -8,12 +8,12 @@ pub fn check_package_json_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<Option<String>, Box<dyn Error>> {
+) -> Result<Option<String>, MyError> {
     // List of package.json locations to check
     let package_json_paths = [
         "package.json",
         "front/package.json",
-        "ui/package.json",  // add more paths as necessary
+        "app/front/package.json",  // add more paths as necessary
     ];
 
     // Loop through the possible file paths

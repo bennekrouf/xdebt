@@ -25,7 +25,8 @@ impl fmt::Display for ConfigError {
 
 impl Error for ConfigError {}
 
-pub fn read_yaml(file_path: &str) -> Result<ConfigFile, Box<dyn Error>> {
+use crate::types::MyError;
+pub fn read_yaml(file_path: &str) -> Result<ConfigFile, MyError> {
     let mut file = File::open(&file_path)
         .map_err(|e| ConfigError::FileOpenError(format!("{}: {}", file_path, e)))?;
 

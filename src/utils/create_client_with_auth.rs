@@ -2,12 +2,13 @@ use base64::{engine::general_purpose, Engine as _};
 use dotenv::dotenv;
 use reqwest::blocking::Client;
 use reqwest::header::{HeaderName, HeaderValue, AUTHORIZATION, USER_AGENT};
-use std::{env, error::Error};
+use std::env;
+use crate::types::MyError;
 
 /// Function to create an HTTP client and authorization header for Bitbucket or GitHub
 pub fn create_client_with_auth(
     platform: String,
-) -> Result<(Client, (HeaderName, HeaderValue), (HeaderName, HeaderValue)), Box<dyn Error>> {
+) -> Result<(Client, (HeaderName, HeaderValue), (HeaderName, HeaderValue)), MyError> {
     dotenv().ok(); // Load environment variables from .env file
 
     // Create the HTTP client

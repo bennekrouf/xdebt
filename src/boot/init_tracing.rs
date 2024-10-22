@@ -2,9 +2,9 @@
 // use tracing_subscriber::fmt::Subscriber;
 use tracing_subscriber::filter::LevelFilter;
 use tracing_subscriber::EnvFilter;
-use std::error::Error;
+use crate::types::MyError;
 
-pub fn init_tracing(level: &str) -> Result<(), Box<dyn Error>> {
+pub fn init_tracing(level: &str) -> Result<(), MyError> {
     // Convert trace level input to uppercase to handle case insensitivity
     let trace_level_input = level.to_uppercase();
 

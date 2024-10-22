@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+package analyze;
+
+// The request message containing the repository name.
+message AnalyzeRequest {
+    string repo_name = 1;
+}
+
+// The response message containing the result of the analysis.
+message AnalyzeResponse {
+    string message = 1;
+}
+
+// The service definition for repository analysis.
+service Analyze {
+    // RPC method to analyze a specific repository.
+    rpc AnalyzeRepository (AnalyzeRequest) returns (AnalyzeResponse);
+}

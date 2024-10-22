@@ -1,12 +1,12 @@
 
-use std::error::Error;
 use tracing::{error, trace, info};  // Import `trace`
 use crate::models::AppConfig;
+use crate::types::MyError;
 
 pub fn run_get_request(
     config: &AppConfig,  // Use the config to get headers and client
     url: &str,           // URL to request
-) -> Result<Option<String>, Box<dyn Error>> {  // Return `Option<String>`
+) -> Result<Option<String>, MyError> {  // Return `Option<String>`
     let client = &config.client;
     let headers = config.url_config.get_headers()?;  // Get headers from config
 

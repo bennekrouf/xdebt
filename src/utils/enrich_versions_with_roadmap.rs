@@ -1,14 +1,14 @@
 
 use sled::Db;
-use std::error::Error;
 use tracing::{info, trace};
 use crate::services::get_roadmap::get_roadmap;
 use crate::models::{Roadmap, Analysis};
+use crate::types::MyError;
 
 pub fn enrich_versions_with_roadmap(
      db: &Db,
      analyses: Vec<Analysis>,
- ) -> Result<Vec<Analysis>, Box<dyn Error>> {
+ ) -> Result<Vec<Analysis>, MyError> {
     let mut enriched_analyses = analyses;
     // Iterate over the mutable reference of analyses to enrich them
     for analysis in enriched_analyses.iter_mut() {

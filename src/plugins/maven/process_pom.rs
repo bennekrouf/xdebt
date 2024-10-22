@@ -1,7 +1,7 @@
 
 use std::path::Path;
 use serde_json::{Value, Map};
-use std::error::Error;
+use crate::types::MyError;
 use tracing::{info, debug};
 
 use crate::utils::download_xml_file::download_xml_file;
@@ -18,7 +18,7 @@ pub fn process_pom(
     output_folder: &str,
     pom_url: &str,
     versions_keywords: &[&str],
-) -> Result<Map<String, Value>, Box<dyn Error>> {
+) -> Result<Map<String, Value>, MyError> {
     // Step 1: Download and read the POM
     let main_pom_content = download_and_read_pom(config, output_folder, pom_url, repo_name)?;
 

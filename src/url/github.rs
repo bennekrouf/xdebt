@@ -1,10 +1,13 @@
 
-use crate::url::{UrlMode, UrlConfig};
 use dotenv::dotenv;
 use reqwest::header::{HeaderName, HeaderValue, AUTHORIZATION, USER_AGENT};
 use std::env;
-use std::error::Error;
+use crate::types::MyError;
+use serde::{Deserialize, Serialize};
 
+use crate::url::{UrlMode, UrlConfig};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GithubConfig {
     pub base_url: String,
     pub user: String,
@@ -32,7 +35,7 @@ impl UrlConfig for GithubConfig {
     }
 
     // Method to get necessary headers, including GitHub token and user agent
-    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, Box<dyn Error>> {
+    fn get_headers(&self) -> Result<Vec<(HeaderName, HeaderValue)>, MyError> {
         dotenv().ok(); // Load environment variables
 
         let github_token = env::var("GITHUB_TOKEN")
@@ -47,10 +50,3 @@ impl UrlConfig for GithubConfig {
         ])
     }
 }
-
-// Enum to distinguish URL modes (if necessary)
-// pub enum UrlMode {
-//     Raw,
-//     Browse,
-// }
-

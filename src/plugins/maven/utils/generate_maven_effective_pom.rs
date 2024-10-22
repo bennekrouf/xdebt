@@ -1,11 +1,11 @@
 
-use std::io::ErrorKind;
-use std::error::Error;
+use crate::types::MyError;
 use std::process::Command;
 use std::fs;
 use tracing::{debug, trace, error};
+use std::io::ErrorKind;
 
-pub fn generate_maven_effective_pom(pom_file: &str, repo_name: &str) -> Result<String, Box<dyn Error>> {
+pub fn generate_maven_effective_pom(pom_file: &str, repo_name: &str) -> Result<String, MyError> {
     let effective_pom_file = format!("effective_pom.xml");
     let output_option = format!("-Doutput={}", effective_pom_file);
     let pom_file = format!("{}", &pom_file);

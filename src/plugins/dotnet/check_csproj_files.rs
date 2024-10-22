@@ -1,5 +1,5 @@
 
-use std::error::Error;
+use crate::types::MyError;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 
@@ -7,7 +7,7 @@ pub fn check_csproj_files(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<bool, Box<dyn Error>> {
+) -> Result<bool, MyError> {
     // List of .NET project files to check
     let csproj_files = ["*.csproj"]; // Adapt as needed
 

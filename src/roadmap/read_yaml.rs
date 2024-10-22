@@ -1,14 +1,14 @@
 
 use chrono::NaiveDate;
-use std::error::Error;
 use std::fs;
 use crate::models::{Roadmaps, RoadmapEntry};
 use tracing::{info, trace, debug};
 use crate::roadmap::fetch_endoflife_data::fetch_endoflife_data;
 use crate::models::AppConfig;
+use crate::types::MyError;
 
 // Read and deserialize YAML from a file and enrich it with data from the End of Life API
-pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, Box<dyn Error>> {
+pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, MyError> {
     trace!("Reading YAML file from path: {}", file_path);
 
     // Read YAML content

@@ -1,12 +1,12 @@
 
 use serde_json;
 use sled;
-use std::error::Error;
 use tracing::trace;
 use crate::models::Roadmap;
+use crate::types::MyError;
 
 // Get a product version from sled DB (case-insensitive)
-pub fn get_roadmap(db: &sled::Db, product: &str) -> Result<Option<Roadmap>, Box<dyn Error>> {
+pub fn get_roadmap(db: &sled::Db, product: &str) -> Result<Option<Roadmap>, MyError> {
     // Convert the product key to lowercase for case-insensitive search
     let dependency_lower = product.to_lowercase();
 

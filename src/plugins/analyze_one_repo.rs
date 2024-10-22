@@ -1,5 +1,4 @@
 
-use std::error::Error;
 use tracing::debug;
 
 use crate::utils::enrich_versions_with_roadmap::enrich_versions_with_roadmap;
@@ -12,12 +11,13 @@ use crate::plugins::npm::analyze_npm::analyze_npm;
 use crate::plugins::docker::check_docker::check_docker;
 use crate::plugins::dotnet::check_dotnet::check_dotnet;
 use crate::plugins::jenkins::analyze_jenkins::analyze_jenkins;
+use crate::types::MyError;
 
 pub fn analyze_one_repo<'a>(
     config: &'a AppConfig,
     project_name: &'a str,
     repository_name_str: &'a str,
-) -> Result<Vec<Analysis>, Box<dyn Error>> {
+) -> Result<Vec<Analysis>, MyError> {
     let repository_name = repository_name_str.to_string();
     let db = config.db.as_ref().expect("Db should be initialized");
 

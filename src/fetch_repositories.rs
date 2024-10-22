@@ -1,14 +1,14 @@
 
 use serde_json::Value;
-use std::error::Error;
 
 use crate::models::AppConfig;
 use crate::utils::run_json_get_query::run_json_get_query;
+use crate::types::MyError;
 
 pub fn fetch_repositories(
     config: &AppConfig,
     project_name: &str,
-) -> Result<Vec<Value>, Box<dyn Error>> {
+) -> Result<Vec<Value>, MyError> {
     let url_config = &*config.url_config; // Dereference the Box
 
     // Use UrlConfig to get the URL for repositories

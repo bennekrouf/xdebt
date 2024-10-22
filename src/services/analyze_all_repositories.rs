@@ -1,6 +1,5 @@
 
 use std::collections::HashMap;
-use std::error::Error;
 use serde_json::{Value, json};
 
 use crate::models::AppConfig;
@@ -8,8 +7,9 @@ use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
 use crate::fetch_repositories::fetch_repositories;
 use crate::utils::append_json_to_file::append_json_to_file;
+use crate::types::MyError;
 
-pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), Box<dyn Error>> {
+pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), MyError> {
     // Fetch projects
     let projects = get_projects(config)?;
 
