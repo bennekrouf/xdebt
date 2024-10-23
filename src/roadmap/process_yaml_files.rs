@@ -9,7 +9,6 @@ use crate::types::{CustomError, MyError};
 
 // Process all YAML files in the roadmap directory
 pub async fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), MyError> {
-    info!("In process_yaml_files");
     if config.db.is_none() {
         info!("Database not initialized");
         return Err(CustomError::new("Database is not initialized"));  // Custom error for clarity

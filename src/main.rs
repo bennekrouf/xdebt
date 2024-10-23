@@ -102,17 +102,6 @@ async fn main() -> Result<(), MyError> {
 
     let menu_handle = tokio::spawn(async move {
         loop {
-            // let config_clone = Arc::clone(&shared_config);  // Clone the Arc for process_yaml_files task
-
-            // if !yaml_processed {
-            //     // Wrap blocking code in `spawn_blocking` and return a `Result`
-            //     let _ = tokio::spawn(async move {
-            //         let config = config_clone.lock().await;
-            //         process_yaml_files(&config, &config.roadmap_folder);
-            //     }).await; // Properly unwrap Result
-            //     yaml_processed = true;
-            // }
-
             let config_clone = Arc::clone(&shared_config);  // Clone the Arc for display_menu task
 
             let _ = tokio::spawn(async move {
@@ -127,14 +116,14 @@ async fn main() -> Result<(), MyError> {
     });
 
     // Wait for all tasks to complete to prevent premature shutdown
-    // let _ = tokio::select! {
+    let _ = tokio::select! {
         // _ = grpc_handle => {
         //     println!("gRPC server task finished.");
         // }
-        // _ = menu_handle => {
-        //     println!("Menu task finished.");
-        // }
-    // };
+        _ = menu_handle => {
+            println!("Menu task finished.");
+        }
+    };
 
     Ok(())
 }
