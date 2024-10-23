@@ -9,7 +9,7 @@ mod services;
 mod url;
 mod utils;
 mod fetch_repositories;
-mod grpc_server;
+// mod grpc_server;
 mod types;
 
 use std::env;
@@ -20,7 +20,7 @@ use crate::boot::load_config::load_config;
 use crate::display_menu::display_menu;
 use crate::roadmap::process_yaml_files::process_yaml_files;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
-use crate::grpc_server::start_grpc_server;
+// use crate::grpc_server::start_grpc_server;
 use types::{CustomError, MyError};
 // use models::AppConfig;
 use tokio::task::spawn_blocking;
@@ -77,7 +77,7 @@ async fn main() -> Result<(), MyError> {
     // watch_config_for_reload(Arc::clone(&shared_config))?;
 
     // Start the gRPC server in a non-blocking async task
-    let grpc_config = Arc::clone(&shared_config);
+    // let grpc_config = Arc::clone(&shared_config);
     // let grpc_handle = tokio::spawn(async move {
     //     let config = grpc_config.lock().await;
     //     let config_clone = Arc::new(Mutex::new(config.clone()));

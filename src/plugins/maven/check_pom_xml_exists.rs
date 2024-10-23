@@ -1,14 +1,14 @@
 
-use std::error::Error;
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 use tracing::{debug, info};
+use crate::types::MyError;
 
 pub async fn check_pom_xml_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
-) -> Result<Option<String>, Box<dyn Error>> {
+) -> Result<Option<String>, MyError> {
     // List of pom.xml locations to check
     let pom_xml_paths = [
         "pom.xml",

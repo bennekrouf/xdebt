@@ -4,6 +4,7 @@ use tracing::warn;
 use crate::plugins::maven::process_pom::process_pom;
 use crate::models::{AppConfig, Analysis, DependencyVersion};
 use crate::plugins::maven::check_pom_xml_exists::check_pom_xml_exists;
+use crate::types::{CustomError, MyError};
 
 pub async fn analyze_maven(
     config: &AppConfig,
@@ -12,7 +13,7 @@ pub async fn analyze_maven(
     output_folder: &str,
     versions_keywords: &[&str],
     analyses: &mut Vec<Analysis>,
-) {
+) -> Result<(), MyError> {
     // Check for pom.xml in various possible locations
     match check_pom_xml_exists(config, project_name, repo_name).await {
         Ok(Some(pom_url)) => {
@@ -27,14 +28,25 @@ pub async fn analyze_maven(
                         },
                         roadmap: None,
                     }));
+                    Ok(())
                 }
-                Err(e) => warn!("Failed to generate POM analysis for project '{}', repo '{}': {}", project_name, repo_name, e),
+                Err(e) => {
+                    let msg = format!("Failed to generate POM analysis for project '{}', repo '{}': {}", project_name, repo_name, e);
+                    warn!(msg);
+                    Err(CustomError::new(&msg))
+                },
             }
         }
         Ok(None) => {
-            warn!("No pom.xml found for project '{}', repo '{}'. Skipping.", project_name, repo_name);
+            let msg = format!("No pom.xml found for project '{}', repo '{}'. Skipping.", project_name, repo_name);
+            warn!(msg);
+            Ok(())
         }
-        Err(e) => warn!("Error while checking for pom.xml: {}", e),
+        Err(e) => {
+            let msg = format!("Error while checking for pom.xml: {}", e);
+            warn!(msg);
+            Err(CustomError::new(&msg))
+        },
     }
 }
 
