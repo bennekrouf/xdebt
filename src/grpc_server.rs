@@ -31,7 +31,7 @@ impl analyze::analyze_server::Analyze for AnalyzeService {
         info!(repo_name = %repo_name, "Received request to analyze repository");
 
         let config = self.config.lock().await;
-        match analyze_specific_repository(&config, Some(&repo_name)) {
+        match analyze_specific_repository(&config, Some(&repo_name)).await {
             Ok(_) => {
                 info!(repo_name = %repo_name, "Repository analysis successful");
                 Ok(Response::new(analyze::AnalyzeResponse {

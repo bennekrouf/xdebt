@@ -5,7 +5,7 @@ use crate::models::AppConfig;
 use crate::utils::run_get_request::run_get_request;
 use crate::types::MyError;
 
-pub fn check_file_exists(
+pub async fn check_file_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -19,7 +19,7 @@ pub fn check_file_exists(
     info!("Checking for file {} at URL: {}", file_path, file_url);
 
     // Use the run_get_request helper to perform the request and get the raw response body
-    match run_get_request(config, &file_url)? {
+    match run_get_request(config, &file_url).await? {
         Some(response_body) => {
             // Check if the body contains some kind of "error" message indicating the file doesn't exist
             if response_body.contains("\"error\"") {

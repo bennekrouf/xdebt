@@ -5,7 +5,7 @@ use crate::models::AppConfig;
 use crate::utils::run_json_get_query::run_json_get_query;
 use crate::types::MyError;
 
-pub fn fetch_repositories(
+pub async fn fetch_repositories(
     config: &AppConfig,
     project_name: &str,
 ) -> Result<Vec<Value>, MyError> {
@@ -25,7 +25,7 @@ pub fn fetch_repositories(
             repos_url, start, limit
         );
 
-        let repos_json = run_json_get_query(config, &paginated_repos_url)?;
+        let repos_json = run_json_get_query(config, &paginated_repos_url).await?;
 
         let repos = repos_json["values"]
             .as_array()

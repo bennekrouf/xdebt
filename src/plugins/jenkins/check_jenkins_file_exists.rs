@@ -1,10 +1,10 @@
+use tracing::info;
 
 use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
-use tracing::info;
 use crate::types::MyError;
 
-pub fn check_jenkins_file_exists(
+pub async fn check_jenkins_file_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -20,7 +20,7 @@ pub fn check_jenkins_file_exists(
 
     for file in &groovy_files {
         info!("Checking : {}", file);
-        if let Some(file_url) = check_file_exists(config, project_name, repo_name, file)? {
+        if let Some(file_url) = check_file_exists(config, project_name, repo_name, file).await? {
             info!("content of jenkins file : {}", file_url);
             return Ok(Some(file_url));
         } else {

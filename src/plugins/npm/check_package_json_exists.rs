@@ -4,7 +4,7 @@ use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
 use tracing::{debug, info};
 
-pub fn check_package_json_exists(
+pub async fn check_package_json_exists(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -25,7 +25,7 @@ pub fn check_package_json_exists(
         );
 
         // Call the function to check if the file exists
-        match check_file_exists(config, project_name, repo_name, file) {
+        match check_file_exists(config, project_name, repo_name, file).await {
             Ok(Some(file_url)) => {
                 info!("Found package.json at: {}", file_url);
                 return Ok(Some(file_url));  // Return the first valid package.json URL

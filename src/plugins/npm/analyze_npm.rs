@@ -6,7 +6,7 @@ use tracing::info;
 use crate::plugins::npm::analyze_package_json_content::analyze_package_json_content;
 use crate::models::{AppConfig, Analysis, DependencyVersion};
 
-pub fn analyze_npm(
+pub async fn analyze_npm(
     config: &AppConfig,
     project_name: &str,
     repository_name: &str,
@@ -16,7 +16,7 @@ pub fn analyze_npm(
     info!("Analyzing package.json for repository: {}", repository_name);
 
     // Analyze the package.json content
-    let package_json_analysis_result = analyze_package_json_content(config, project_name, repository_name, versions_keywords)?;
+    let package_json_analysis_result = analyze_package_json_content(config, project_name, repository_name, versions_keywords).await?;
 
     info!("package_json_analysis_result : {:?}", package_json_analysis_result);
 

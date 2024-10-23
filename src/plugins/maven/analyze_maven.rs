@@ -5,7 +5,7 @@ use crate::plugins::maven::process_pom::process_pom;
 use crate::models::{AppConfig, Analysis, DependencyVersion};
 use crate::plugins::maven::check_pom_xml_exists::check_pom_xml_exists;
 
-pub fn analyze_maven(
+pub async fn analyze_maven(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -14,10 +14,10 @@ pub fn analyze_maven(
     analyses: &mut Vec<Analysis>,
 ) {
     // Check for pom.xml in various possible locations
-    match check_pom_xml_exists(config, project_name, repo_name) {
+    match check_pom_xml_exists(config, project_name, repo_name).await {
         Ok(Some(pom_url)) => {
             // If a valid pom.xml is found, process it
-            match process_pom(config, project_name, repo_name, output_folder, &pom_url, versions_keywords) {
+            match process_pom(config, project_name, repo_name, output_folder, &pom_url, versions_keywords).await {
                 Ok(versions_map) => {
                     analyses.extend(versions_map.iter().map(|(product, value)| Analysis {
                         repository_name: repo_name.to_string(),

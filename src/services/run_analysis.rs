@@ -10,7 +10,7 @@ use crate::types::MyError;
 
 static mut TOTAL_DURATION: Duration = Duration::new(0, 0);  // Static variable to hold total duration
 
-pub fn run_analysis(
+pub async fn run_analysis(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -24,7 +24,7 @@ pub fn run_analysis(
     let start_time = Instant::now();
 
     // Perform the analysis
-    match analyze_one_repo(config, project_name, repo_name) {
+    match analyze_one_repo(config, project_name, repo_name).await {
         Ok(mut analysis_results) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
             tracing::debug!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);

@@ -1,5 +1,5 @@
 
-use dialoguer::Input;
+// use dialoguer::Input;
 use serde_json::json;
 
 use crate::fetch_repositories::fetch_repositories;
@@ -8,8 +8,10 @@ use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
 use crate::types::MyError;
+use tokio::io::{self, BufReader};
+use tokio::io::AsyncBufReadExt;
 
-pub fn analyze_specific_repository(
+pub async fn analyze_specific_repository(
     config: &AppConfig,
     repo_name_arg: Option<&str>, // Accept repository name as an optional argument
 ) -> Result<(), MyError> {
@@ -17,15 +19,19 @@ pub fn analyze_specific_repository(
     let repo_name = match repo_name_arg {
         Some(name) => name.to_string(), // Use the argument
         None => {
+            let mut input = String::new();
+            let mut stdin = BufReader::new(io::stdin());
             // Prompt the user if no argument was provided
-            Input::new()
-                .with_prompt("Enter the repository name (e.g., xcad)")
-                .interact()?
+            // Input::new()
+            //     .with_prompt("Enter the repository name (e.g., xcad)")
+            //     .interact()?
+            stdin.read_line(&mut input).await.unwrap();
+                input.trim().to_string()
         }
     };
 
     // Fetch all projects
-    let projects = get_projects(config)?;
+    let projects = get_projects(config).await?;
     for project in projects {
         let project_name = project["key"].as_str().ok_or("Failed to get project name")?;
 
@@ -33,14 +39,14 @@ pub fn analyze_specific_repository(
         let mut project_analysis_results = Vec::new();
 
         // Fetch all repositories for the project
-        let all_repos = fetch_repositories(config, project_name)?;
+        let all_repos = fetch_repositories(config, project_name).await?;
         for repo in all_repos {
             let repo_actual_name = repo["name"].as_str().ok_or("Missing repo name")?;
 
             // Check if the repository matches the desired repository
             if repo_actual_name == repo_name {
                 // Run the analysis and store the result
-                if let Some(json_data) = run_analysis(config, &project_name, &repo_name)? {
+                if let Some(json_data) = run_analysis(config, &project_name, &repo_name).await? {
                     project_analysis_results.push(json_data);
                 }
 

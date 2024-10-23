@@ -3,7 +3,7 @@ use tracing::{error, trace, info};  // Import `trace`
 use crate::models::AppConfig;
 use crate::types::MyError;
 
-pub fn run_get_request(
+pub async fn run_get_request(
     config: &AppConfig,  // Use the config to get headers and client
     url: &str,           // URL to request
 ) -> Result<Option<String>, MyError> {  // Return `Option<String>`
@@ -23,15 +23,15 @@ pub fn run_get_request(
 
     // Send the request
     let response = request.send();
-
+    // Ok(Some("".to_string()))
     // Process the response
-    match response {
+    match response.await {
         Ok(resp) => {
             trace!("Received response with status: {}", resp.status());
 
             if resp.status().is_success() {
                 // Return the raw response body as text
-                match resp.text() {
+                match resp.text().await {
                     Ok(body) => Ok(Some(body)),  // Wrap in `Some` for successful responses
                     Err(e) => {
                         info!("Error reading response body: {}", e);

@@ -5,18 +5,18 @@ base_url: https://dsigit.etat-de-vaud.ch/outils/git
 # base_url: https://api.github.com
 # user: bennekrouf
 
-force_git_pull: false
-force_maven_effective: false
+force_git_pull: true
+force_maven_effective: true
 force_sled_db_sourcing: true
 trace_level: info
 output_folder: tmp
 roadmap_folder: roadmap
 enable_maven_analysis: true
-enable_npm_analysis: false
+enable_npm_analysis: true
 enable_docker_analysis: false
 enable_dotnet_analysis: false
 enable_php_analysis: false
-enable_jenkins_analysis: false
+enable_jenkins_analysis: true
 
 
 sources_priorities:

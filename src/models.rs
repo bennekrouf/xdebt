@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
-use reqwest::blocking::Client;
+// use reqwest::blocking::Client;
+use reqwest::Client;
 use serde::{Serialize, Deserialize, Serializer, ser::SerializeStruct};
 use sled::Db;
 use std::collections::HashMap;

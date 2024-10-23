@@ -9,7 +9,7 @@ use crate::utils::download_xml_file::download_xml_file;
 use crate::models::AppConfig;
 
 /// Download and read the POM file, returning its content as a string.
-pub fn download_and_read_pom(
+pub async fn download_and_read_pom(
     config: &AppConfig,
     output_folder: &str,
     pom_url: &str,
@@ -21,7 +21,7 @@ pub fn download_and_read_pom(
         debug!("POM file '{}' already exists, skipping download.", pom_file_path.display());
     } else {
         debug!("Downloading POM file from '{}'", pom_url);
-        let result = download_xml_file(config, pom_url, output_folder, "pom.xml");
+        let result = download_xml_file(config, pom_url, output_folder, "pom.xml").await;
 
         if let Err(e) = result {
             if e.to_string().contains("404 Not Found") {

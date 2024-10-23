@@ -21,14 +21,14 @@ fn get_dependency_version(
 }
 
 
-pub fn analyze_package_json_content(
+pub async fn analyze_package_json_content(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
     dependencies_list: &[&str],  // List of product names
 ) -> Result<Value, MyError> {
     // Check if package.json exists and get the file URL
-    let file_url = match check_package_json_exists(config, project_name, repo_name)? {
+    let file_url = match check_package_json_exists(config, project_name, repo_name).await? {
         Some(url) => url,
         None => {
             info!("No package.json found in the repository. Skipping analysis.");
@@ -42,7 +42,7 @@ pub fn analyze_package_json_content(
     info!("Fetching package.json from URL: {}", file_url);
 
     // Fetch package.json content using the file URL
-    let package_json: Value = run_json_get_query(config, &file_url)?;
+    let package_json: Value = run_json_get_query(config, &file_url).await?;
 
     let mut versions = HashMap::new();
 

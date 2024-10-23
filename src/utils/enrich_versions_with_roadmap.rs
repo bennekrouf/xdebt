@@ -5,7 +5,7 @@ use crate::services::get_roadmap::get_roadmap;
 use crate::models::{Roadmap, Analysis};
 use crate::types::MyError;
 
-pub fn enrich_versions_with_roadmap(
+pub async fn enrich_versions_with_roadmap(
      db: &Db,
      analyses: Vec<Analysis>,
  ) -> Result<Vec<Analysis>, MyError> {

@@ -5,7 +5,7 @@ use crate::models::AppConfig;
 use crate::utils::run_json_get_query::run_json_get_query;
 use crate::types::MyError;
 
-pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, MyError> {
+pub async fn get_projects(config: &AppConfig) -> Result<Vec<Value>, MyError> {
     let url_config = &*config.url_config; // Dereference the Box
 
     // Get the base URL for the API to fetch the list of projects
@@ -13,18 +13,18 @@ pub fn get_projects(config: &AppConfig) -> Result<Vec<Value>, MyError> {
     info!("Fetching projects from URL: {}", projects_url);
 
     // Call run_json_get_query to perform the GET request
-    let response_json = run_json_get_query(config, &projects_url)?;
+    let response_json = run_json_get_query(config, &projects_url).await?;
 
     // Check if the response contains an error
-    if response_json.get("error").is_some() {
-        return Err(format!(
-            "Failed to fetch projects: Error in response from '{}'",
-            projects_url
-        )
-        .into());
-    }
-
-    // Determine the platform and parse projects accordingly
+    // if response_json.get("error").is_some() {
+    //     return Err(format!(
+    //         "Failed to fetch projects: Error in response from '{}'",
+    //         projects_url
+    //     )
+    //     .into());
+    // }
+    //
+    // // Determine the platform and parse projects accordingly
     let platform = &config.platform; // Assuming you have a field `platform` in your config
     let projects = match platform.as_str() {
         "bitbucket" => {

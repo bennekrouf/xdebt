@@ -7,7 +7,7 @@ use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
 use crate::types::MyError;
 
-pub fn analyze_specific_project(
+pub async fn analyze_specific_project(
     config: &AppConfig,
 ) -> Result<(), MyError> {
 
@@ -17,7 +17,7 @@ pub fn analyze_specific_project(
         .interact()?;
 
     // Fetch all repositories for the given project
-    let all_repos = fetch_repositories(config, &project_name)?;
+    let all_repos = fetch_repositories(config, &project_name).await?;
 
     // Initialize a vector to accumulate analysis results for all repositories
     let mut project_analysis_results = Vec::new();
@@ -30,7 +30,7 @@ pub fn analyze_specific_project(
                 .ok_or("Missing repo name")?;
 
             // Run the analysis for the repository
-            if let Some(json_data) = run_analysis(config, &project_name, repo_name)? {
+            if let Some(json_data) = run_analysis(config, &project_name, repo_name).await? {
                 // Accumulate the analysis result
                 project_analysis_results.push(json_data);
             }

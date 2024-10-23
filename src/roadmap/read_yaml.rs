@@ -8,7 +8,7 @@ use crate::models::AppConfig;
 use crate::types::MyError;
 
 // Read and deserialize YAML from a file and enrich it with data from the End of Life API
-pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, MyError> {
+pub async fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, MyError> {
     trace!("Reading YAML file from path: {}", file_path);
 
     // Read YAML content
@@ -28,7 +28,7 @@ pub fn read_yaml(config: &AppConfig, file_path: &str) -> Result<Roadmaps, MyErro
 
         for product_name in product_names_to_check {
             trace!("Fetching End of Life data for product: {}", product_name);
-            match fetch_endoflife_data(&product_name) {
+            match fetch_endoflife_data(&product_name).await {
                 Ok(eol_data) => {
                     trace!("Fetched end-of-life data for product: {}", product_name);
 

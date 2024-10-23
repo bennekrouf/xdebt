@@ -8,7 +8,7 @@ use crate::utils::run_get_request::run_get_request;
 use crate::plugins::jenkins::parse_groovy_properties::parse_groovy_properties;
 use crate::types::MyError;
 
-pub fn analyze_jenkins(
+pub async fn analyze_jenkins(
     config: &AppConfig,
     project_name: &str,
     repository_name: &str,
@@ -18,11 +18,11 @@ pub fn analyze_jenkins(
 ) -> Result<(), MyError> {
     info!("Start of Jenkins analysis");
 
-    if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repository_name)? {
+    if let Some(jenkins_file_url) = check_jenkins_file_exists(config, project_name, repository_name).await? {
         info!("Found Jenkins file at: {}", jenkins_file_url);
 
         // Fetch the Jenkins file content
-        let jenkins_file_content = run_get_request(config, &jenkins_file_url)?.unwrap_or_else(|| String::new());
+        let jenkins_file_content = run_get_request(config, &jenkins_file_url).await?.unwrap_or_else(|| String::new());
 
         // Parse the Groovy properties
         let properties = parse_groovy_properties(&jenkins_file_content);

@@ -11,7 +11,7 @@ use crate::plugins::maven::generate_and_analyze_effective_pom::generate_and_anal
 use crate::plugins::maven::download_and_read_pom::download_and_read_pom;
 
 /// Main processing function to orchestrate the POM processing.
-pub fn process_pom(
+pub async fn process_pom(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
@@ -20,7 +20,7 @@ pub fn process_pom(
     versions_keywords: &[&str],
 ) -> Result<Map<String, Value>, MyError> {
     // Step 1: Download and read the POM
-    let main_pom_content = download_and_read_pom(config, output_folder, pom_url, repo_name)?;
+    let main_pom_content = download_and_read_pom(config, output_folder, pom_url, repo_name).await?;
 
     // Step 2: Parse the POM and extract modules
     let modules = parse_pom_for_modules(&main_pom_content)?;
@@ -40,7 +40,7 @@ pub fn process_pom(
                 &module_pom_url,
                 module_target_folder.to_str().unwrap(),
                 "pom.xml"
-            )?;
+            ).await?;
 
             debug!("Module POM for '{}' downloaded successfully.", module);
         }

@@ -8,12 +8,14 @@ use serde_json::json;  // For creating empty JSON objects
 
 use crate::types::MyError;
 
-pub fn run_json_get_query(
+pub async fn run_json_get_query(
     config: &AppConfig,
     paginated_repos_url: &str,
 ) -> Result<Value, MyError> {
+        // let null_value = Value::Null;
+        // Ok(null_value)
     // Use the reusable run_get_request function to get the raw body
-    match run_get_request(config, paginated_repos_url)? {
+    match run_get_request(config, paginated_repos_url).await? {
         Some(body) => {
             // info!("run get request for json result : {}", body);
             // Parse the body as JSON

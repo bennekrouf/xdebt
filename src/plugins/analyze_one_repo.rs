@@ -13,7 +13,7 @@ use crate::plugins::dotnet::check_dotnet::check_dotnet;
 use crate::plugins::jenkins::analyze_jenkins::analyze_jenkins;
 use crate::types::MyError;
 
-pub fn analyze_one_repo<'a>(
+pub async fn analyze_one_repo<'a>(
     config: &'a AppConfig,
     project_name: &'a str,
     repository_name_str: &'a str,
@@ -36,31 +36,31 @@ pub fn analyze_one_repo<'a>(
 
     // 2. NPM (package.json) Analysis
     if config.enable_npm_analysis {
-        analyze_npm(config, project_name, repository_name_str, &versions_keywords, &mut analyses)?;
+        analyze_npm(config, project_name, repository_name_str, &versions_keywords, &mut analyses).await?;
     }
 
     // 3. Dockerfile Check
     if config.enable_docker_analysis {
-        check_docker(config, project_name, repository_name_str, &repository_name, &mut analyses)?;
+        check_docker(config, project_name, repository_name_str, &repository_name, &mut analyses).await?;
     }
 
     // 4. C# (.csproj) Analysis
     if config.enable_dotnet_analysis {
-        check_dotnet(config, project_name, repository_name_str, &repository_name, &mut analyses)?;
+        check_dotnet(config, project_name, repository_name_str, &repository_name, &mut analyses).await?;
     }
 
     // 5. PHP File Check
     if config.enable_php_analysis {
-        check_php(config, project_name, repository_name_str, &repository_name, &mut analyses)?;
+        check_php(config, project_name, repository_name_str, &repository_name, &mut analyses).await?;
     }
 
     // 6. Jenkins File Analysis
     if config.enable_jenkins_analysis {
-        analyze_jenkins(config, project_name, repository_name_str, &versions_keywords, &repository_name, &mut analyses)?;
+        analyze_jenkins(config, project_name, repository_name_str, &versions_keywords, &repository_name, &mut analyses).await?;
     }
 
     debug!("Final result of analysis for project '{}', repo '{}': {:?}", project_name, repository_name, analyses);
 
-    let enriched_analyses = enrich_versions_with_roadmap(db, analyses)?;
+    let enriched_analyses = enrich_versions_with_roadmap(db, analyses).await?;
     Ok(enriched_analyses)
 }

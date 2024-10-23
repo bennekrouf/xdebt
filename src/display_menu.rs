@@ -7,11 +7,11 @@ use crate::services::analyze_specific_project::analyze_specific_project;
 use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::services::search_dependency_in_sled::search_dependency_in_sled;
 
-pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error + Send + Sync>> {
+pub async fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error + Send + Sync>> {
     let db = &config.db.as_ref().expect("Db should be initialized");
 
     // Define the menu text and options
-    let menu_text = "Selectionne une option:";
+    let menu_text = "Selectionne une     let cloned_config = config1.clone();option:";
     let menu_options = vec![
         "1. Analyser une application (GPECS, XCAD...etc)",
         "2. Analyser un domaine entier (SES, PTEP...etc)",
@@ -28,16 +28,16 @@ pub fn display_menu(config: &AppConfig) -> Result<(), Box<dyn Error + Send + Syn
 
     match choice.trim() {
         "1" => {
-            analyze_specific_repository(config, None)?;
+            let _ = analyze_specific_repository(config, None).await;
         }
         "2" => {
-            analyze_specific_project(config)?;
+            let _ = analyze_specific_project(config).await;
         }
         "3" => {
-            analyze_all_repositories(config)?;
+            let _ = analyze_all_repositories(config).await;
         }
         "4" => {
-            search_dependency_in_sled(db)?;
+            let _ = search_dependency_in_sled(db).await;
         }
         "5" => {
             tracing::info!("Exiting...");

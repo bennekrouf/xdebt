@@ -9,7 +9,7 @@ use crate::utils::run_get_request::run_get_request;
 use crate::models::AppConfig;
 use crate::types::MyError;
 
-pub fn download_xml_file(
+pub async fn download_xml_file(
     config: &AppConfig,
     url: &str,
     output_folder: &str,
@@ -34,7 +34,7 @@ pub fn download_xml_file(
 
     // Perform the GET request to retrieve the XML content
     debug!("Sending GET request to URL: {}", url);
-    let body = match run_get_request(config, url)? {
+    let body = match run_get_request(config, url).await? {
         Some(content) => content,
         None => {
             debug!("Failed to fetch XML from '{}'.", url);
