@@ -9,7 +9,7 @@ force_git_pull: false
 force_maven_effective: false
 force_sled_db_sourcing: false
 trace_level: info
-output_folder: tmp
+output_folder: ..
 roadmap_folder: roadmap
 enable_maven_analysis: true
 enable_npm_analysis: true

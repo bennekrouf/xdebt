@@ -31,7 +31,7 @@ pub async fn analyze_one_repo<'a>(
 
     // 1. Maven (POM) Analysis
     if config.enable_maven_analysis {
-        analyze_maven(config, project_name, repository_name_str, &output_folder, &versions_keywords, &mut analyses).await;
+        let _ = analyze_maven(config, project_name, repository_name_str, &output_folder, &versions_keywords, &mut analyses).await;
     }
 
     // 2. NPM (package.json) Analysis
