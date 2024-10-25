@@ -3,7 +3,7 @@ use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::models::AppConfig;
 
 use std::sync::Arc;
-use tokio::sync::Mutex;
+// use tokio::sync::Mutex;
 use tonic::{Request, Response, Status};
 use tonic::transport::Server;
 use tracing::{info, error};
@@ -16,7 +16,7 @@ pub mod analyze {
 
 #[derive(Debug, Default)]
 pub struct AnalyzeService {
-    config: Arc<Mutex<AppConfig>>,
+    config: Arc<AppConfig>,
 }
 
 #[tonic::async_trait]
@@ -30,7 +30,7 @@ impl analyze::analyze_server::Analyze for AnalyzeService {
         // Log that we received a request
         info!(repo_name = %repo_name, "Received request to analyze repository");
 
-        let config = self.config.lock().await;
+        let config = &self.config;
         match analyze_specific_repository(&config, Some(&repo_name)).await {
             Ok(_) => {
                 info!(repo_name = %repo_name, "Repository analysis successful");
@@ -46,7 +46,7 @@ impl analyze::analyze_server::Analyze for AnalyzeService {
     }
 }
 
-pub async fn start_grpc_server(config: Arc<Mutex<AppConfig>>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn start_grpc_server(config: Arc<AppConfig>) -> Result<(), Box<dyn std::error::Error>> {
     let addr = "0.0.0.0:50051".parse().unwrap();
 
     // Log server startup information
