@@ -1,20 +1,19 @@
-
+use serde_json::{json, Map, Value};
 use std::error::Error;
-use serde_json::{Value, json, Map};
 
-use crate::plugins::analyze_one_repo::analyze_one_repo;
-use crate::models::AppConfig;
 use crate::kpi::compute_kpi::compute_kpi;
+use crate::models::AppConfig;
 use crate::models::KPIResult;
-use crate::utils::remove_null_values::remove_null_values;
+use crate::plugins::analyze_one_repo::analyze_one_repo;
 use crate::utils::append_json_to_file::append_json_to_file;
-
+use crate::utils::remove_null_values::remove_null_values;
 
 pub fn run_analysis(
     config: &AppConfig,
     project_name: &str,
     repo_name: &str,
 ) -> Result<(), Box<dyn Error>> {
+    tracing::info!("starting analysis for : {}", repo_name);
     if repo_name.ends_with("-configuration") || repo_name.ends_with("-tests") {
         return Ok(());
     }
@@ -23,7 +22,10 @@ pub fn run_analysis(
     match analyze_one_repo(config, project_name, repo_name) {
         Ok(analysis_results) => {
             tracing::info!("Project: {}, Repo: {}", project_name, repo_name);
-            tracing::debug!("Analysis result: {}", serde_json::to_string_pretty(&analysis_results)?);
+            tracing::debug!(
+                "Analysis result: {}",
+                serde_json::to_string_pretty(&analysis_results)?
+            );
 
             // Compute KPIs based on the analysis results
             let kpi_results: Vec<KPIResult> = analysis_results
@@ -50,14 +52,22 @@ pub fn run_analysis(
                 // Append the grouped KPI JSON to the file
                 append_json_to_file(config, project_name, &json_data)?;
             } else {
-                tracing::info!("No KPIs to record for project: {}, repo: {}", project_name, repo_name);
+                tracing::info!(
+                    "No KPIs to record for project: {}, repo: {}",
+                    project_name,
+                    repo_name
+                );
             }
         }
         Err(e) => {
-            tracing::trace!("Failed to generate analysis JSON for project '{}', repo '{}': {}", project_name, repo_name, e);
+            tracing::trace!(
+                "Failed to generate analysis JSON for project '{}', repo '{}': {}",
+                project_name,
+                repo_name,
+                e
+            );
         }
     }
 
     Ok(())
 }
-

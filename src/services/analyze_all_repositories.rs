@@ -20,10 +20,10 @@ pub fn analyze_all_repositories(config: &AppConfig) -> Result<(), Box<dyn Error>
         let project_name = match platform.as_str() {
             "github" => project["full_name"]
                 .as_str()
-                .ok_or("Failed to get project name")?, // Use full_name for GitHub
+                .ok_or("3 - Failed to get project name")?, // Use full_name for GitHub
             "bitbucket" => project["key"]
                 .as_str()
-                .ok_or("Failed to get project name")?, // Use key for Bitbucket
+                .ok_or("1 - Failed to get project name")?, // Use key for Bitbucket
             _ => return Err("Unsupported platform".into()),
         };
 

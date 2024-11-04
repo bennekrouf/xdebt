@@ -1,7 +1,6 @@
-
-use std::error::Error;
-use crate::utils::check_file_exists::check_file_exists;
 use crate::models::AppConfig;
+use crate::utils::check_file_exists::check_file_exists;
+use std::error::Error;
 use tracing::info;
 
 pub fn check_package_json_exists(
@@ -13,7 +12,7 @@ pub fn check_package_json_exists(
     let package_json_paths = [
         "package.json",
         "front/package.json",
-        "ui/package.json",  // add more paths as necessary
+        "ui/package.json", // add more paths as necessary
     ];
 
     // Loop through the possible file paths
@@ -28,20 +27,24 @@ pub fn check_package_json_exists(
         match check_file_exists(config, project_name, repo_name, file) {
             Ok(Some(file_url)) => {
                 info!("Found package.json at: {}", file_url);
-                return Ok(Some(file_url));  // Return the first valid package.json URL
+                return Ok(Some(file_url)); // Return the first valid package.json URL
             }
             Ok(None) => {
                 info!("No package.json found at path: {}", file);
             }
             Err(e) if e.to_string().contains("404") => {
                 // Log the 404 error and continue to the next path
-                info!("404 Not Found at path: {}. Continuing to the next path.", file);
+                info!("Not Found at path: {}. Continuing to the next path.", file);
             }
             Err(e) => {
                 // For other errors, return them
-                info!("Error occurred while checking for package.json at path: {}. Error: {}", file, e);
+                info!(
+                    "Error occurred while checking for package.json at path: {}. Error: {}",
+                    file, e
+                );
                 return Err(e);
-            }        }
+            }
+        }
     }
 
     // If no package.json is found, log the final result and return None
@@ -51,4 +54,3 @@ pub fn check_package_json_exists(
     );
     Ok(None)
 }
-

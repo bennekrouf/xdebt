@@ -1,16 +1,18 @@
 
-platform: bitbucket
-base_url: https://dsigit.etat-de-vaud.ch/outils/git
-# platform: github
-# base_url: https://api.github.com
-# user: bennekrouf
+# platform: bitbucket
+# base_url: https://dsigit.etat-de-vaud.ch/outils/git
+platform: github
+base_url: https://api.github.com
+user: bennekrouf
+#
+#https://github.com/bennekrouf/mayo-firestore-write/blob/master/README.md
 
 force_git_pull: false
 force_maven_effective: false
 trace_level: info
 output_folder: tmp
-enable_maven_analysis: true
-enable_npm_analysis: false
+enable_maven_analysis: false
+enable_npm_analysis: true
 enable_docker_analysis: false
 enable_dotnet_analysis: false
 enable_php_analysis: false

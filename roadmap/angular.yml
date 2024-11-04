@@ -1,4 +1,12 @@
 roadmap_list:
+  - dependency: "typescript"
+    entries:
+      - version: "6.x"
+        start_date: "2024-01-01" # Use YYYY-MM-DD format
+        end_date: null            # Use null for missing optional field
+      - version: "5.x"
+        start_date: null # Use YYYY-MM-DD format
+        end_date: 2022-01-01            # Use null for missing optional field
   - dependency: "angular"
     domain: "hors directive"
     chapter: "#N/A"
