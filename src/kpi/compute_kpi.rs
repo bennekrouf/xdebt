@@ -1,7 +1,6 @@
-
-use chrono::Utc;
 use crate::kpi::compare_versions::compare_versions;
-use crate::models::{KPIResult, Analysis, KPIStatus};
+use crate::models::{Analysis, KPIResult, KPIStatus};
+use chrono::Utc;
 use std::cmp::Ordering;
 
 pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
@@ -21,16 +20,16 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
             }
         });
 
-        let current_version_in_roadmap = sorted_entries.iter().any(|record| {
-            record.version == *current_version
-        });
+        let current_version_in_roadmap = sorted_entries
+            .iter()
+            .any(|record| record.version == *current_version);
 
         if current_version_in_roadmap {
             for record in &sorted_entries {
                 let record_version = &record.version;
 
                 if compare_versions(current_version, record_version) {
-                    kpi_status = KPIStatus::Compliant("Version is compliant.".to_string());
+                    _ = KPIStatus::Compliant("Version is compliant.".to_string());
 
                     if let Some(end_date) = record.end_date {
                         kpi_status = if end_date <= today {
@@ -39,7 +38,9 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
                             KPIStatus::NoActionNeeded("No action needed.".to_string())
                         };
                     } else {
-                        kpi_status = KPIStatus::NoActionNeeded("No action needed (latest version).".to_string());
+                        kpi_status = KPIStatus::NoActionNeeded(
+                            "No action needed (latest version).".to_string(),
+                        );
                     }
 
                     break; // Exit the loop after finding the compliant version
@@ -49,9 +50,15 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
 
         if !current_version_in_roadmap {
             if let Some(record) = sorted_entries.first() {
-                kpi_status = KPIStatus::NonCompliant(format!("Upgrade needed to version {} (latest version)", record.version));
+                kpi_status = KPIStatus::NonCompliant(format!(
+                    "Upgrade needed to version {} (latest version)",
+                    record.version
+                ));
                 if let Some(end_date) = record.end_date {
-                    kpi_status = KPIStatus::UpgradeNeeded(format!("Upgrade needed to version {} (latest version) by {}", record.version, end_date));
+                    kpi_status = KPIStatus::UpgradeNeeded(format!(
+                        "Upgrade needed to version {} (latest version) by {}",
+                        record.version, end_date
+                    ));
                 }
             }
         }
@@ -71,4 +78,3 @@ pub fn compute_kpi<'a>(analysis: &'a Analysis) -> Option<KPIResult> {
         panic!("No roadmap available");
     }
 }
-

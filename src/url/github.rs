@@ -17,7 +17,7 @@ impl UrlConfig for GithubConfig {
     }
 
     // URL for accessing a specific repository (using API)
-    fn repos_url(&self, owner: &str, repo: &str) -> String {
+    fn repos_url(&self, _owner: &str, _repo: &str) -> String {
         format!("{}/users/{}/repos", self.base_url, self.user)
         //format!("{}/repos/{}/{}", self.base_url, owner, repo)
     }
