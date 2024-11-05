@@ -11,9 +11,9 @@ use crate::types::{CustomError, MyError};
 pub async fn process_yaml_files(config: &AppConfig, dir_path: &str) -> Result<(), MyError> {
     if config.db.is_none() {
         info!("Database not initialized");
-        return Err(CustomError::new("Database is not initialized"));  // Custom error for clarity
+        return Err(CustomError::database_error("Database is not initialized"));  // Custom error for clarity
     }
-    let db = config.db.as_ref().ok_or_else(|| CustomError::new("Database is not initialized"))?;
+    let db = config.db.as_ref().ok_or_else(|| CustomError::database_error("Database is not initialized"))?;
 
     // Check if the flag `force_sled_db_sourcing` is set to true
     if config.force_sled_db_sourcing {

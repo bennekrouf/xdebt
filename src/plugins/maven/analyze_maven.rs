@@ -33,7 +33,7 @@ pub async fn analyze_maven(
                 Err(e) => {
                     let msg = format!("Failed to generate POM analysis for project '{}', repo '{}': {}", project_name, repo_name, e);
                     warn!(msg);
-                    Err(CustomError::new(&msg))
+                    Err(CustomError::analysis_failed(&msg))
                 },
             }
         }
@@ -45,7 +45,7 @@ pub async fn analyze_maven(
         Err(e) => {
             let msg = format!("Error while checking for pom.xml: {}", e);
             warn!(msg);
-            Err(CustomError::new(&msg))
+            Err(CustomError::analysis_failed(&msg))
         },
     }
 }

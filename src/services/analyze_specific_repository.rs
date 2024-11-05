@@ -1,68 +1,81 @@
-
-// use dialoguer::Input;
 use serde_json::json;
-
+use tokio::io::{self, BufReader};
+use tokio::io::AsyncBufReadExt;
 use crate::fetch_repositories::fetch_repositories;
 use crate::services::get_projects::get_projects;
 use crate::services::run_analysis::run_analysis;
 use crate::models::AppConfig;
 use crate::utils::append_json_to_file::append_json_to_file;
-use crate::types::MyError;
-use tokio::io::{self, BufReader};
-use tokio::io::AsyncBufReadExt;
+use crate::types::{MyError, CustomError};
 
 pub async fn analyze_specific_repository(
     config: &AppConfig,
-    repo_name_arg: Option<&str>, // Accept repository name as an optional argument
+    repo_name_arg: Option<&str>,
 ) -> Result<(), MyError> {
-    // Determine the repository name: use the argument if provided, otherwise prompt the user
+    // Get repository name
     let repo_name = match repo_name_arg {
-        Some(name) => name.to_string(), // Use the argument
+        Some(name) => name.to_string(),
         None => {
             let mut input = String::new();
             let mut stdin = BufReader::new(io::stdin());
-            // Prompt the user if no argument was provided
-            // Input::new()
-            //     .with_prompt("Enter the repository name (e.g., xcad)")
-            //     .interact()?
-            stdin.read_line(&mut input).await.unwrap();
-                input.trim().to_string()
+            stdin.read_line(&mut input)
+                .await
+                .map_err(|e| CustomError::IoError(e))?;
+            input.trim().to_string()
         }
     };
 
-    // Fetch all projects
-    let projects = get_projects(config).await?;
-    for project in projects {
-        let project_name = project["key"].as_str().ok_or("Failed to get project name")?;
+    if repo_name.is_empty() {
+        return Err(CustomError::InvalidInput("Repository name cannot be empty".to_string()).into());
+    }
 
-        // Initialize a vector to store analysis results for all repositories in this project
+    // Fetch all projects
+    let projects = get_projects(config)
+        .await
+        .map_err(|e| CustomError::ProjectError(e.to_string()))?;
+
+    let mut repository_found = false;
+
+    for project in projects {
+        let project_name = project["key"]
+            .as_str()
+            .ok_or_else(|| CustomError::ProjectError("Failed to get project name".to_string()))?;
+
         let mut project_analysis_results = Vec::new();
 
-        // Fetch all repositories for the project
-        let all_repos = fetch_repositories(config, project_name).await?;
-        for repo in all_repos {
-            let repo_actual_name = repo["name"].as_str().ok_or("Missing repo name")?;
+        // Fetch repositories for the project
+        let all_repos = fetch_repositories(config, project_name)
+            .await
+            .map_err(|e| CustomError::ProjectError(format!("Failed to fetch repositories: {}", e)))?;
 
-            // Check if the repository matches the desired repository
+        for repo in all_repos {
+            let repo_actual_name = repo["name"]
+                .as_str()
+                .ok_or_else(|| CustomError::NotFound("Missing repo name".to_string()))?;
+
             if repo_actual_name == repo_name {
-                // Run the analysis and store the result
-                if let Some(json_data) = run_analysis(config, &project_name, &repo_name).await? {
+                repository_found = true;
+                // Run analysis
+                if let Some(json_data) = run_analysis(config, project_name, &repo_name)
+                    .await
+                    .map_err(|e| CustomError::AnalysisFailed(e.to_string()))? {
                     project_analysis_results.push(json_data);
                 }
-
-                // Since we've found the repository, no need to continue in this project
                 break;
             }
         }
 
-        // Once all repositories for this project are analyzed, append the combined result to a file
+        // Append results if any
         if !project_analysis_results.is_empty() {
-            // Create a JSON array from the accumulated results
             let json_project_result = json!(project_analysis_results);
-            append_json_to_file(config, &project_name, &json_project_result)?;
+            append_json_to_file(config, project_name, &json_project_result)
+                .map_err(|e| CustomError::project_error(format!("Failed to write results: {}", e)))?;
         }
+    }
+
+    if !repository_found {
+        return Err(CustomError::NotFound(format!("Repository '{}' not found in any project", repo_name)).into());
     }
 
     Ok(())
 }
-

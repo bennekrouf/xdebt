@@ -11,6 +11,8 @@ mod utils;
 mod fetch_repositories;
 mod grpc_server;
 mod types;
+mod consume_messages;
+// mod error;
 
 use std::env;
 use std::sync::Arc;
@@ -41,11 +43,11 @@ async fn main() -> Result<(), MyError> {
         Ok(Ok(db)) => db,
         Ok(Err(e)) => {
             error!("Failed to open the database: {}", e);
-            return Err(CustomError::new("Failed to initialize the database"));
+            return Err(CustomError::database_error("Failed to initialize the database"));
         }
         Err(e) => {
             error!("Failed to spawn database initialization task: {}", e);
-            return Err(CustomError::new("Failed to initialize the database task"));
+            return Err(CustomError::database_error("Failed to initialize the database task"));
         }
     };
 
