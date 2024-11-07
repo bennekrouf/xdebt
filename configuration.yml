@@ -18,7 +18,6 @@ enable_dotnet_analysis: false
 enable_php_analysis: false
 enable_jenkins_analysis: true
 
-
 sources_priorities:
   - roadmap
   - ACT-INT

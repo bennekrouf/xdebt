@@ -1,14 +1,12 @@
-
-use crate::services::analyze_specific_repository::analyze_specific_repository;
 use crate::models::AppConfig;
+use crate::services::analyze_specific_repository::analyze_specific_repository;
 
 use std::sync::Arc;
-// use tokio::sync::Mutex;
-use tonic::{Request, Response, Status};
 use tonic::transport::Server;
-use tracing::{info, error};
-use tracing_futures::Instrument;
+use tonic::{Request, Response, Status};
 use tonic_reflection::server::Builder as ReflectionBuilder;
+use tracing::{error, info};
+use tracing_futures::Instrument;
 
 pub mod analyze {
     tonic::include_proto!("analyze"); // Generated from your proto package
@@ -47,7 +45,7 @@ impl analyze::analyze_server::Analyze for AnalyzeService {
 }
 
 pub async fn start_grpc_server(config: Arc<AppConfig>) -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "0.0.0.0:50051".parse().unwrap();
+    let addr = "0.0.0.0:50052".parse().unwrap();
 
     // Log server startup information
     info!(address = %addr, "Starting gRPC server");
@@ -74,5 +72,3 @@ pub async fn start_grpc_server(config: Arc<AppConfig>) -> Result<(), Box<dyn std
 
     Ok(())
 }
-
-
