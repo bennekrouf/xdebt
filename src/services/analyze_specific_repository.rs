@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use serde_json::json;
 use tokio::io::{self, BufReader};
 use tokio::io::AsyncBufReadExt;
@@ -35,6 +36,7 @@ pub async fn analyze_specific_repository(
         .map_err(|e| CustomError::ProjectError(e.to_string()))?;
 
     let mut repository_found = false;
+    let mut all_analysis_results: HashMap<String, Vec<serde_json::Value>> = HashMap::new();
 
     for project in projects {
         let project_name = project["key"]
@@ -65,9 +67,18 @@ pub async fn analyze_specific_repository(
             }
         }
 
-        // Append results if any
+        // If we found results for this project, add them to the HashMap
         if !project_analysis_results.is_empty() {
-            let json_project_result = json!(project_analysis_results);
+            all_analysis_results.insert(project_name.to_string(), project_analysis_results.clone());
+            
+            // Create the nested structure for this project
+            let project_result = HashMap::from([(
+                project_name.to_string(),
+                project_analysis_results
+            )]);
+            
+            // Convert to JSON and save
+            let json_project_result = json!(project_result);
             append_json_to_file(config, project_name, &json_project_result)
                 .map_err(|e| CustomError::project_error(format!("Failed to write results: {}", e)))?;
         }
